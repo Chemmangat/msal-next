@@ -86,13 +86,6 @@ export default function Navigation() {
               Quick Start
             </a>
             <a
-              href="#docs"
-              className="block text-dark-muted hover:text-dark-text transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Docs
-            </a>
-            <a
               href="https://github.com/chemmangat/msal-next"
               target="_blank"
               rel="noopener noreferrer"
