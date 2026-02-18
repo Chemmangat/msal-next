@@ -1,0 +1,61 @@
+{
+  "name": "@chemmangat/msal-next",
+  "version": "1.0.0",
+  "description": "Fully configurable MSAL authentication package for Next.js App Router",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "msal",
+    "nextjs",
+    "authentication",
+    "azure-ad",
+    "microsoft",
+    "oauth",
+    "next.js",
+    "app-router",
+    "typescript"
+  ],
+  "author": "Chemmangat",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chemmangat/msal-next.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/chemmangat/msal-next#readme",
+  "bugs": {
+    "url": "https://github.com/chemmangat/msal-next/issues"
+  },
+  "peerDependencies": {
+    "@azure/msal-browser": "^3.11.0",
+    "@azure/msal-react": "^2.0.0",
+    "next": ">=14.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@azure/msal-browser": "^3.11.1",
+    "@azure/msal-react": "^2.0.15",
+    "@types/react": "^18.2.0",
+    "react": "^18.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.0"
+  }
+}

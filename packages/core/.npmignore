@@ -1,0 +1,20 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Config files
+tsconfig.json
+tsup.config.ts
+
+# Development
+node_modules/
+.git/
+
+# Documentation (use README.md only)
+PUBLISHING.md
+
+# Misc
+*.log
+*.tgz
+.DS_Store
