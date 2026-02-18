@@ -1,26 +1,32 @@
 {
-  "name": "msal-nextjs-boilerplate",
+  "name": "msal-next-docs",
   "version": "1.0.0",
-  "description": "Clean, scalable MSAL authentication boilerplate for Next.js",
+  "private": true,
+  "description": "Documentation website for @chemmangat/msal-next",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:package": "cd packages/core && npm run build",
+    "publish:package": "cd packages/core && npm publish"
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.11.1",
-    "@azure/msal-react": "^2.0.15",
     "next": "^14.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.344.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.17",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5.3.0"
   }
 }

@@ -1,0 +1,28 @@
+# Source files
+lib/
+src/
+example/
+
+# Config files
+tsconfig.json
+tsup.config.ts
+next.config.js
+next-env.d.ts
+
+# Development files
+.env
+.env.local
+.env.example
+.vscode/
+.git/
+.gitignore
+.next/
+node_modules/
+
+# Documentation
+CONTRIBUTING.md
+
+# Misc
+*.log
+*.tgz
+.DS_Store
