@@ -32,8 +32,7 @@ npm install
 npm run dev
 ```
 
-### 3. **Example App** (`example/`)
-Working example showing real-world usage
+
 
 ---
 

@@ -22,7 +22,6 @@ Visit: http://localhost:3000
 ```
 packages/core/  → NPM package (publish this)
 src/           → Documentation website
-example/       → Example usage
 ```
 
 ## Key Files
@@ -33,7 +32,7 @@ example/       → Example usage
 | `packages/core/dist/` | Built package (generated) |
 | `src/app/` | Docs website pages |
 | `src/components/` | Docs website components |
-| `example/` | Example implementation |
+
 
 ## Commands
 
@@ -78,7 +77,6 @@ Everything else stays local.
 
 **Package**: npm (via `npm publish`)
 **Docs**: Vercel, Netlify, etc.
-**Example**: For testing only
 
 ## Version Updates
 

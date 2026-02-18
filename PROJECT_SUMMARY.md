@@ -21,8 +21,7 @@ A stunning dark-themed website featuring:
 - Responsive navigation
 - Beautiful footer
 
-### 3. **Example App** (`example/`)
-Working example showing real-world usage
+
 
 ## 🎨 Design Features
 

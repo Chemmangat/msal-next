@@ -98,21 +98,17 @@ npm run dev
 
 Visit `http://localhost:3000` to see the docs site.
 
-### 3. Testing with the Example
+### 3. Testing the Package
+
+After publishing, test it in a new Next.js project:
 
 ```bash
-# Create .env file in example/
-cp .env.example example/.env
-
-# Edit example/.env with your Azure AD credentials
-
-# Run the example
-cd example
-npm install
-npm run dev
+npx create-next-app@latest test-app
+cd test-app
+npm install @chemmangat/msal-next @azure/msal-browser @azure/msal-react
 ```
 
-Visit `http://localhost:3000` to test the example.
+Then use it as shown in the documentation.
 
 ## 📦 Publishing the Package
 

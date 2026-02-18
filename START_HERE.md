@@ -31,13 +31,7 @@ npm run dev
 
 Visit http://localhost:3000 to see your beautiful docs site.
 
-### Option 3: Test with the Example
 
-```bash
-cd example
-npm install
-npm run dev
-```
 
 ---
 
@@ -83,7 +77,6 @@ npm publish --access public
 msal-next/
 ├── packages/core/     ← The npm package (PUBLISH THIS)
 ├── src/              ← Documentation website
-├── example/          ← Example usage
 └── *.md              ← Documentation files
 ```
 

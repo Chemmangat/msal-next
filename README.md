@@ -81,8 +81,6 @@ msal-next/
 ├── src/                    # 🌐 Documentation website
 │   ├── app/
 │   └── components/
-├── example/                # 📚 Example usage
-│   └── app/
 └── README.md
 ```
 
