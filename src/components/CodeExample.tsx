@@ -84,11 +84,11 @@ const fetchUserProfile = async () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             <span className="text-dark-text">See It In </span>
             <span className="text-gradient">Action</span>
           </h2>
-          <p className="text-xl text-dark-muted max-w-3xl mx-auto">
+          <p className="text-base text-dark-muted max-w-3xl mx-auto">
             Three simple steps to add Microsoft authentication to your Next.js app.
           </p>
         </motion.div>

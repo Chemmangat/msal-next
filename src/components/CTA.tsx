@@ -19,12 +19,12 @@ export default function CTA() {
           viewport={{ once: true }}
           className="space-y-8"
         >
-          <h2 className="text-4xl md:text-5xl font-bold">
+          <h2 className="text-2xl md:text-3xl font-bold">
             <span className="text-dark-text">Ready to </span>
             <span className="text-gradient">Get Started?</span>
           </h2>
           
-          <p className="text-xl text-dark-muted max-w-2xl mx-auto">
+          <p className="text-base text-dark-muted max-w-2xl mx-auto">
             Join developers who are building secure, production-ready authentication with @chemmangat/msal-next.
           </p>
 

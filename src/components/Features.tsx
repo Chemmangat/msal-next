@@ -52,11 +52,11 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             <span className="text-dark-text">Powerful </span>
             <span className="text-gradient">Features</span>
           </h2>
-          <p className="text-xl text-dark-muted max-w-3xl mx-auto">
+          <p className="text-base text-dark-muted max-w-3xl mx-auto">
             Everything you need for enterprise-grade authentication in a simple, elegant package.
           </p>
         </motion.div>

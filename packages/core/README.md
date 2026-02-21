@@ -73,6 +73,22 @@ Visit [https://msal-next.chemmangat.dev](https://msal-next.chemmangat.dev) for f
 </MsalAuthProvider>
 ```
 
+### MicrosoftSignInButton
+
+Pre-built button component with official Microsoft branding:
+
+```tsx
+<MicrosoftSignInButton
+  variant="dark" // 'dark' | 'light'
+  size="medium" // 'small' | 'medium' | 'large'
+  text="Sign in with Microsoft"
+  useRedirect={false}
+  scopes={['User.Read']}
+  onSuccess={() => console.log('Success!')}
+  onError={(error) => console.error(error)}
+/>
+```
+
 ### useMsalAuth Hook
 
 ```tsx

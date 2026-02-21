@@ -40,11 +40,11 @@ export default function QuickStart() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             <span className="text-dark-text">Quick </span>
             <span className="text-gradient">Start</span>
           </h2>
-          <p className="text-xl text-dark-muted max-w-3xl mx-auto">
+          <p className="text-base text-dark-muted max-w-3xl mx-auto">
             Get up and running in less than 5 minutes. No complex configuration required.
           </p>
         </motion.div>
@@ -85,9 +85,7 @@ export default function QuickStart() {
           className="mt-12 text-center"
         >
           <a
-            href="https://github.com/chemmangat/msal-next#readme"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/docs"
             className="inline-flex items-center space-x-2 px-6 py-3 bg-dark-elevated border border-dark-border rounded-lg hover:border-accent-primary transition-all"
           >
             <span className="text-dark-text">Read Full Documentation</span>

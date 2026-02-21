@@ -29,11 +29,11 @@ export default function ProblemSolution() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             <span className="text-dark-text">The Problem We </span>
             <span className="text-gradient">Solve</span>
           </h2>
-          <p className="text-xl text-dark-muted max-w-3xl mx-auto">
+          <p className="text-base text-dark-muted max-w-3xl mx-auto">
             MSAL authentication shouldn't be complicated. We've done the heavy lifting so you don't have to.
           </p>
         </motion.div>

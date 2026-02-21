@@ -39,6 +39,9 @@ export default function Navigation() {
             <a href="#quickstart" className="text-dark-muted hover:text-dark-text transition-colors">
               Quick Start
             </a>
+            <a href="/docs" className="text-dark-muted hover:text-dark-text transition-colors">
+              Documentation
+            </a>
             <a
               href="https://github.com/chemmangat/msal-next"
               target="_blank"
@@ -84,6 +87,13 @@ export default function Navigation() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Quick Start
+            </a>
+            <a
+              href="/docs"
+              className="block text-dark-muted hover:text-dark-text transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Documentation
             </a>
             <a
               href="https://github.com/chemmangat/msal-next"
