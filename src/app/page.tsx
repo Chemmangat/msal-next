@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, Copy, Github, BookOpen, ArrowDown, Lock, Key, Shield, CheckCircle } from 'lucide-react';
+import { ArrowRight, Check, Copy, Github, BookOpen, ArrowDown, Lock, Key, Shield, CheckCircle, Zap, Code2, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Home() {
@@ -224,6 +224,9 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Why This Package Section */}
+      <WhyThisPackage />
     </div>
   );
 }
@@ -295,6 +298,301 @@ function FeatureCard({ title, description }: { title: string; description: strin
       <h3 className="text-lg font-semibold text-dark-text mb-2">{title}</h3>
       <p className="text-sm text-dark-muted">{description}</p>
     </div>
+  );
+}
+
+// Why This Package Section
+function WhyThisPackage() {
+  const [activeTab, setActiveTab] = useState<'before' | 'after'>('before');
+
+  return (
+    <section className="py-20 bg-dark-bg border-t border-dark-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <span className="text-dark-text">Why </span>
+            <span className="text-gradient">@chemmangat/msal-next</span>
+            <span className="text-dark-text">?</span>
+          </h2>
+          <p className="text-lg text-dark-muted max-w-2xl mx-auto">
+            Stop writing boilerplate. Start shipping features.
+          </p>
+        </motion.div>
+
+        {/* Metrics Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
+        >
+          <MetricCard value="6 → 0" label="Boilerplate files" />
+          <MetricCard value="~200 → ~30" label="Lines of code" />
+          <MetricCard value="3 → 1" label="Packages to import" />
+          <MetricCard value="0" label="Direct MSAL imports" />
+        </motion.div>
+
+        {/* Before/After Comparison */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="mb-16"
+        >
+          <h3 className="text-2xl font-bold text-dark-text mb-6 text-center">Before vs After</h3>
+          
+          {/* Tabs */}
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex bg-dark-elevated border border-dark-border rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('before')}
+                className={`px-6 py-2 rounded-md transition-all ${
+                  activeTab === 'before'
+                    ? 'bg-accent-primary text-white'
+                    : 'text-dark-muted hover:text-dark-text'
+                }`}
+              >
+                Before (Legacy MSAL)
+              </button>
+              <button
+                onClick={() => setActiveTab('after')}
+                className={`px-6 py-2 rounded-md transition-all ${
+                  activeTab === 'after'
+                    ? 'bg-accent-primary text-white'
+                    : 'text-dark-muted hover:text-dark-text'
+                }`}
+              >
+                After (This Package)
+              </button>
+            </div>
+          </div>
+
+          {/* Code Comparison */}
+          <div className="bg-dark-elevated border border-dark-border rounded-xl overflow-hidden">
+            {activeTab === 'before' ? (
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm text-dark-muted">~200 lines across 6 files</span>
+                  <span className="text-xs px-3 py-1 bg-red-500/10 text-red-400 rounded-full">Complex</span>
+                </div>
+                <div className="space-y-4 text-sm text-dark-muted">
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Manually create <code className="text-accent-primary">PublicClientApplication</code> and track initialization with <code className="text-accent-primary">isInitialized</code> flag</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Write <code className="text-accent-primary">initializeMsal()</code>, <code className="text-accent-primary">signInWithPopup()</code>, <code className="text-accent-primary">signOut()</code>, <code className="text-accent-primary">getCurrentUser()</code>, <code className="text-accent-primary">isAuthenticated()</code> utility functions</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Build a custom <code className="text-accent-primary">AuthProvider</code> with <code className="text-accent-primary">useState(isReady)</code> + <code className="text-accent-primary">useEffect</code> to call <code className="text-accent-primary">initializeMsal()</code></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Wrap children with <code className="text-accent-primary">&lt;MsalProvider instance={'{msalInstance}'}&gt;</code></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Write a <code className="text-accent-primary">useAuth</code> hook wrapping <code className="text-accent-primary">useMsal</code> from <code className="text-accent-primary">@azure/msal-react</code></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Import <code className="text-accent-primary">InteractionStatus</code> enum from <code className="text-accent-primary">@azure/msal-browser</code> and compare <code className="text-accent-primary">inProgress !== InteractionStatus.None</code></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <span>Build bridge components to access MSAL instance outside React (e.g., Axios interceptors)</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm text-dark-muted">~30 lines across 2 files</span>
+                  <span className="text-xs px-3 py-1 bg-accent-success/10 text-accent-success rounded-full">Simple</span>
+                </div>
+                <CodeDisplay
+                  code={`// app/layout.tsx
+<MsalAuthProvider clientId="..." scopes={["User.Read"]}>
+  {children}
+</MsalAuthProvider>
+
+// app/page.tsx
+const { isAuthenticated, loginPopup, clearSession, inProgress } = useMsalAuth();
+
+// Non-React code (API clients, middleware)
+const instance = getMsalInstance();`}
+                />
+                <div className="mt-4 flex items-center gap-2 text-accent-success text-sm">
+                  <Check className="w-4 h-4" />
+                  <span>Done. That's it.</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Feature Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+        >
+          <AdvantageCard
+            icon={Zap}
+            title="Zero Config"
+            description="Just pass clientId and you're ready. Scopes, authority, cache — all have smart defaults."
+          />
+          <AdvantageCard
+            icon={Code2}
+            title="One Hook"
+            description="useMsalAuth() replaces useMsal() + useAccount() + InteractionStatus enum checks."
+          />
+          <AdvantageCard
+            icon={Shield}
+            title="Silent Logout"
+            description="clearSession() clears MSAL cache without triggering Microsoft's logout popup/redirect."
+          />
+          <AdvantageCard
+            icon={Sparkles}
+            title="Non-React Access"
+            description="getMsalInstance() gives direct MSAL instance access for Axios interceptors and middleware."
+          />
+          <AdvantageCard
+            icon={Check}
+            title="SSR Safe"
+            description="Handles server-side rendering internally. No typeof window checks needed in your code."
+          />
+          <AdvantageCard
+            icon={Code2}
+            title="Props-Based Config"
+            description="No manual Configuration object construction. Pass clientId, authorityType, scopes as simple props."
+          />
+          <AdvantageCard
+            icon={Sparkles}
+            title="Pre-Built Button"
+            description="<MicrosoftSignInButton /> with official Microsoft branding, dark/light variants, and loading state."
+          />
+          <AdvantageCard
+            icon={Check}
+            title="Full TypeScript"
+            description="Complete type definitions with JSDoc comments. MsalAuthConfig, UseMsalAuthReturn exported."
+          />
+        </motion.div>
+
+        {/* Elimination Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          <h3 className="text-2xl font-bold text-dark-text mb-6 text-center">What You No Longer Need to Write</h3>
+          <div className="bg-dark-elevated border border-dark-border rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-dark-bg border-b border-dark-border">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-dark-text">What you used to write</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-dark-text">Now handled by</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-dark-border">
+                  <EliminationRow
+                    before="new PublicClientApplication(config)"
+                    after="MsalAuthProvider"
+                  />
+                  <EliminationRow
+                    before="await msalInstance.initialize()"
+                    after="Automatic on mount"
+                  />
+                  <EliminationRow
+                    before="isInitialized flag + isReady state"
+                    after="Automatic"
+                  />
+                  <EliminationRow
+                    before="signInWithPopup() wrapper"
+                    after="loginPopup()"
+                  />
+                  <EliminationRow
+                    before="Custom signOut() function"
+                    after="clearSession()"
+                  />
+                  <EliminationRow
+                    before="<MsalProvider instance={...}>"
+                    after='<MsalAuthProvider clientId="..." />'
+                  />
+                  <EliminationRow
+                    before="useMsal() + InteractionStatus enum"
+                    after="useMsalAuth().inProgress (boolean)"
+                  />
+                  <EliminationRow
+                    before="Bridge components for non-React access"
+                    after="getMsalInstance()"
+                  />
+                  <EliminationRow
+                    before="useAccount() + null checks"
+                    after="useMsalAuth().account"
+                  />
+                  <EliminationRow
+                    before="Token acquisition with fallback logic"
+                    after="acquireToken() (auto silent→popup fallback)"
+                  />
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function MetricCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="bg-dark-elevated border border-dark-border rounded-xl p-6 text-center hover:border-accent-primary/50 transition-all">
+      <div className="text-2xl md:text-3xl font-bold text-gradient mb-2">{value}</div>
+      <div className="text-sm text-dark-muted">{label}</div>
+    </div>
+  );
+}
+
+function AdvantageCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
+  return (
+    <div className="bg-dark-elevated border border-dark-border rounded-xl p-6 hover:border-accent-primary/50 transition-all">
+      <div className="w-10 h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg flex items-center justify-center mb-4">
+        <Icon className="w-5 h-5 text-white" />
+      </div>
+      <h4 className="text-lg font-semibold text-dark-text mb-2">{title}</h4>
+      <p className="text-sm text-dark-muted">{description}</p>
+    </div>
+  );
+}
+
+function EliminationRow({ before, after }: { before: string; after: string }) {
+  return (
+    <tr className="hover:bg-dark-bg/50 transition-colors">
+      <td className="px-6 py-4 text-sm text-dark-muted">
+        <code className="text-accent-primary">{before}</code>
+      </td>
+      <td className="px-6 py-4 text-sm">
+        <div className="flex items-center gap-2">
+          <Check className="w-4 h-4 text-accent-success flex-shrink-0" />
+          <code className="text-accent-primary">{after}</code>
+        </div>
+      </td>
+    </tr>
   );
 }
 
