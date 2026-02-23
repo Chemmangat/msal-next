@@ -58,14 +58,14 @@ export default function Home() {
             </motion.div>
 
             {/* Main heading */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
               <span className="text-dark-text">MSAL for Next.js</span>
               <br />
               <span className="text-gradient">Made Simple</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-lg md:text-xl text-dark-muted max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-dark-muted max-w-2xl mx-auto px-4">
               Production-ready Microsoft authentication for Next.js App Router.
               <br className="hidden sm:block" />
               Three steps. Five minutes. Zero complexity.
@@ -76,23 +76,23 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4 px-4"
             >
               <a
                 href="/docs"
-                className="group px-8 py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg font-semibold transition-all flex items-center space-x-2"
+                className="w-full sm:w-auto group px-6 sm:px-8 py-3 sm:py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
               >
-                <BookOpen className="w-5 h-5" />
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Documentation</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="https://github.com/chemmangat/msal-next"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-lg font-semibold transition-all border border-dark-border flex items-center space-x-2"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-lg font-semibold transition-all border border-dark-border flex items-center justify-center space-x-2"
               >
-                <Github className="w-5 h-5" />
+                <Github className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>GitHub</span>
               </a>
             </motion.div>
@@ -207,7 +207,7 @@ export default function Home() {
             style={{
               transform: `translate(${mousePosition.x * 0.2}px, ${mousePosition.y * 0.2}px)`,
             }}
-            className="mt-24 grid md:grid-cols-3 gap-6"
+            className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"
           >
             <FeatureCard
               title="Zero Config"
@@ -251,14 +251,14 @@ function SetupStep({
       transition={{ delay, duration: 0.5 }}
       className="relative"
     >
-      <div className="bg-dark-elevated border border-dark-border rounded-2xl p-6 hover:border-accent-primary/50 transition-all">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-xl flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-lg">{number}</span>
+      <div className="bg-dark-elevated border border-dark-border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-accent-primary/50 transition-all">
+        <div className="flex items-center gap-3 sm:gap-4 mb-4">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-base sm:text-lg">{number}</span>
           </div>
-          <div>
-            <h3 className="text-xl font-bold text-dark-text">{title}</h3>
-            {subtitle && <p className="text-sm text-dark-muted">{subtitle}</p>}
+          <div className="min-w-0">
+            <h3 className="text-lg sm:text-xl font-bold text-dark-text truncate">{title}</h3>
+            {subtitle && <p className="text-xs sm:text-sm text-dark-muted truncate">{subtitle}</p>}
           </div>
         </div>
         {children}
@@ -282,9 +282,9 @@ function FlowArrow({ delay }: { delay: number }) {
 
 function CodeDisplay({ code }: { code: string }) {
   return (
-    <div className="bg-dark-bg border border-dark-border rounded-xl overflow-hidden">
-      <div className="p-4 overflow-x-auto">
-        <pre className="text-sm">
+    <div className="bg-dark-bg border border-dark-border rounded-lg sm:rounded-xl overflow-hidden">
+      <div className="p-3 sm:p-4 overflow-x-auto">
+        <pre className="text-xs sm:text-sm">
           <code className="text-dark-text">{code}</code>
         </pre>
       </div>
@@ -294,8 +294,8 @@ function CodeDisplay({ code }: { code: string }) {
 
 function FeatureCard({ title, description }: { title: string; description: string }) {
   return (
-    <div className="bg-dark-elevated border border-dark-border rounded-xl p-6 hover:border-accent-primary/50 transition-all">
-      <h3 className="text-lg font-semibold text-dark-text mb-2">{title}</h3>
+    <div className="bg-dark-elevated border border-dark-border rounded-lg sm:rounded-xl p-4 sm:p-6 hover:border-accent-primary/50 transition-all">
+      <h3 className="text-base sm:text-lg font-semibold text-dark-text mb-2">{title}</h3>
       <p className="text-sm text-dark-muted">{description}</p>
     </div>
   );
@@ -306,21 +306,21 @@ function WhyThisPackage() {
   const [activeTab, setActiveTab] = useState<'before' | 'after'>('before');
 
   return (
-    <section className="py-20 bg-dark-bg border-t border-dark-border">
+    <section className="py-12 sm:py-16 md:py-20 bg-dark-bg border-t border-dark-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">
             <span className="text-dark-text">Why </span>
             <span className="text-gradient">@chemmangat/msal-next</span>
             <span className="text-dark-text">?</span>
           </h2>
-          <p className="text-lg text-dark-muted max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-dark-muted max-w-2xl mx-auto px-4">
             Stop writing boilerplate. Start shipping features.
           </p>
         </motion.div>
@@ -331,7 +331,7 @@ function WhyThisPackage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 sm:mb-16"
         >
           <MetricCard value="6 → 0" label="Boilerplate files" />
           <MetricCard value="~200 → ~30" label="Lines of code" />
@@ -345,32 +345,32 @@ function WhyThisPackage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="mb-16"
+          className="mb-12 sm:mb-16"
         >
-          <h3 className="text-2xl font-bold text-dark-text mb-6 text-center">Before vs After</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-dark-text mb-4 sm:mb-6 text-center px-4">Before vs After</h3>
           
           {/* Tabs */}
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex bg-dark-elevated border border-dark-border rounded-lg p-1">
+          <div className="flex justify-center mb-4 sm:mb-6 px-4">
+            <div className="inline-flex bg-dark-elevated border border-dark-border rounded-lg p-1 w-full sm:w-auto">
               <button
                 onClick={() => setActiveTab('before')}
-                className={`px-6 py-2 rounded-md transition-all ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md transition-all text-sm sm:text-base ${
                   activeTab === 'before'
                     ? 'bg-accent-primary text-white'
                     : 'text-dark-muted hover:text-dark-text'
                 }`}
               >
-                Before (Legacy MSAL)
+                Before
               </button>
               <button
                 onClick={() => setActiveTab('after')}
-                className={`px-6 py-2 rounded-md transition-all ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md transition-all text-sm sm:text-base ${
                   activeTab === 'after'
                     ? 'bg-accent-primary text-white'
                     : 'text-dark-muted hover:text-dark-text'
                 }`}
               >
-                After (This Package)
+                After
               </button>
             </div>
           </div>
@@ -378,47 +378,47 @@ function WhyThisPackage() {
           {/* Code Comparison */}
           <div className="bg-dark-elevated border border-dark-border rounded-xl overflow-hidden">
             {activeTab === 'before' ? (
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-dark-muted">~200 lines across 6 files</span>
-                  <span className="text-xs px-3 py-1 bg-red-500/10 text-red-400 rounded-full">Complex</span>
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                  <span className="text-xs sm:text-sm text-dark-muted">~200 lines across 6 files</span>
+                  <span className="text-xs px-3 py-1 bg-red-500/10 text-red-400 rounded-full w-fit">Complex</span>
                 </div>
-                <div className="space-y-4 text-sm text-dark-muted">
+                <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-dark-muted">
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Manually create <code className="text-accent-primary">PublicClientApplication</code> and track initialization with <code className="text-accent-primary">isInitialized</code> flag</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Write <code className="text-accent-primary">initializeMsal()</code>, <code className="text-accent-primary">signInWithPopup()</code>, <code className="text-accent-primary">signOut()</code>, <code className="text-accent-primary">getCurrentUser()</code>, <code className="text-accent-primary">isAuthenticated()</code> utility functions</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Build a custom <code className="text-accent-primary">AuthProvider</code> with <code className="text-accent-primary">useState(isReady)</code> + <code className="text-accent-primary">useEffect</code> to call <code className="text-accent-primary">initializeMsal()</code></span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Wrap children with <code className="text-accent-primary">&lt;MsalProvider instance={'{msalInstance}'}&gt;</code></span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Write a <code className="text-accent-primary">useAuth</code> hook wrapping <code className="text-accent-primary">useMsal</code> from <code className="text-accent-primary">@azure/msal-react</code></span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Import <code className="text-accent-primary">InteractionStatus</code> enum from <code className="text-accent-primary">@azure/msal-browser</code> and compare <code className="text-accent-primary">inProgress !== InteractionStatus.None</code></span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     <span>Build bridge components to access MSAL instance outside React (e.g., Axios interceptors)</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-dark-muted">~30 lines across 2 files</span>
-                  <span className="text-xs px-3 py-1 bg-accent-success/10 text-accent-success rounded-full">Simple</span>
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                  <span className="text-xs sm:text-sm text-dark-muted">~30 lines across 2 files</span>
+                  <span className="text-xs px-3 py-1 bg-accent-success/10 text-accent-success rounded-full w-fit">Simple</span>
                 </div>
                 <CodeDisplay
                   code={`// app/layout.tsx
@@ -432,8 +432,8 @@ const { isAuthenticated, loginPopup, clearSession, inProgress } = useMsalAuth();
 // Non-React code (API clients, middleware)
 const instance = getMsalInstance();`}
                 />
-                <div className="mt-4 flex items-center gap-2 text-accent-success text-sm">
-                  <Check className="w-4 h-4" />
+                <div className="mt-4 flex items-center gap-2 text-accent-success text-xs sm:text-sm">
+                  <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>Done. That's it.</span>
                 </div>
               </div>
@@ -447,7 +447,7 @@ const instance = getMsalInstance();`}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16"
         >
           <AdvantageCard
             icon={Zap}
@@ -498,14 +498,14 @@ const instance = getMsalInstance();`}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
         >
-          <h3 className="text-2xl font-bold text-dark-text mb-6 text-center">What You No Longer Need to Write</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-dark-text mb-4 sm:mb-6 text-center px-4">What You No Longer Need to Write</h3>
           <div className="bg-dark-elevated border border-dark-border rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-dark-bg border-b border-dark-border">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-dark-text">What you used to write</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-dark-text">Now handled by</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-dark-text">What you used to write</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-dark-text">Now handled by</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border">
@@ -561,21 +561,21 @@ const instance = getMsalInstance();`}
 
 function MetricCard({ value, label }: { value: string; label: string }) {
   return (
-    <div className="bg-dark-elevated border border-dark-border rounded-xl p-6 text-center hover:border-accent-primary/50 transition-all">
-      <div className="text-2xl md:text-3xl font-bold text-gradient mb-2">{value}</div>
-      <div className="text-sm text-dark-muted">{label}</div>
+    <div className="bg-dark-elevated border border-dark-border rounded-lg sm:rounded-xl p-4 sm:p-6 text-center hover:border-accent-primary/50 transition-all">
+      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gradient mb-2">{value}</div>
+      <div className="text-xs sm:text-sm text-dark-muted">{label}</div>
     </div>
   );
 }
 
 function AdvantageCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
   return (
-    <div className="bg-dark-elevated border border-dark-border rounded-xl p-6 hover:border-accent-primary/50 transition-all">
-      <div className="w-10 h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg flex items-center justify-center mb-4">
-        <Icon className="w-5 h-5 text-white" />
+    <div className="bg-dark-elevated border border-dark-border rounded-lg sm:rounded-xl p-4 sm:p-6 hover:border-accent-primary/50 transition-all">
+      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
       </div>
-      <h4 className="text-lg font-semibold text-dark-text mb-2">{title}</h4>
-      <p className="text-sm text-dark-muted">{description}</p>
+      <h4 className="text-base sm:text-lg font-semibold text-dark-text mb-2">{title}</h4>
+      <p className="text-xs sm:text-sm text-dark-muted">{description}</p>
     </div>
   );
 }
@@ -583,13 +583,13 @@ function AdvantageCard({ icon: Icon, title, description }: { icon: any; title: s
 function EliminationRow({ before, after }: { before: string; after: string }) {
   return (
     <tr className="hover:bg-dark-bg/50 transition-colors">
-      <td className="px-6 py-4 text-sm text-dark-muted">
-        <code className="text-accent-primary">{before}</code>
+      <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-dark-muted">
+        <code className="text-accent-primary break-all">{before}</code>
       </td>
-      <td className="px-6 py-4 text-sm">
+      <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">
         <div className="flex items-center gap-2">
-          <Check className="w-4 h-4 text-accent-success flex-shrink-0" />
-          <code className="text-accent-primary">{after}</code>
+          <Check className="w-3 h-3 sm:w-4 sm:h-4 text-accent-success flex-shrink-0" />
+          <code className="text-accent-primary break-all">{after}</code>
         </div>
       </td>
     </tr>
