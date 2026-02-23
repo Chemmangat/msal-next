@@ -23,7 +23,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg" onMouseMove={handleMouseMove}>
+    <div className="min-h-screen bg-dark-bg overflow-x-hidden" onMouseMove={handleMouseMove}>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         {/* Cool Authentication Background */}
@@ -41,9 +41,6 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{
-              transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`,
-            }}
             className="text-center space-y-8 mb-20"
           >
             {/* Badge */}
@@ -103,25 +100,22 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            style={{
-              transform: `translate(${mousePosition.x * 0.3}px, ${mousePosition.y * 0.3}px)`,
-            }}
-            className="max-w-4xl mx-auto"
+            className="max-w-4xl mx-auto w-full"
           >
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
               {/* Step 1: Install */}
               <SetupStep
                 number={1}
                 title="Install"
                 delay={0.6}
               >
-                <div className="flex items-center bg-dark-bg border border-dark-border rounded-lg overflow-hidden">
-                  <code className="px-6 py-4 text-accent-primary text-sm flex-1">
+                <div className="flex items-center bg-dark-bg border border-dark-border rounded-lg overflow-hidden w-full">
+                  <code className="px-4 sm:px-6 py-3 sm:py-4 text-accent-primary text-xs sm:text-sm flex-1 overflow-x-auto whitespace-nowrap">
                     npm install @chemmangat/msal-next
                   </code>
                   <button
                     onClick={copyInstall}
-                    className="px-4 py-4 border-l border-dark-border hover:bg-dark-elevated transition-colors"
+                    className="px-3 sm:px-4 py-3 sm:py-4 border-l border-dark-border hover:bg-dark-elevated transition-colors flex-shrink-0"
                     title="Copy to clipboard"
                   >
                     {copied ? (
@@ -204,9 +198,6 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.3 }}
-            style={{
-              transform: `translate(${mousePosition.x * 0.2}px, ${mousePosition.y * 0.2}px)`,
-            }}
             className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"
           >
             <FeatureCard
@@ -249,19 +240,21 @@ function SetupStep({
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.5 }}
-      className="relative"
+      className="relative w-full"
     >
-      <div className="bg-dark-elevated border border-dark-border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-accent-primary/50 transition-all">
+      <div className="bg-dark-elevated border border-dark-border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-accent-primary/50 transition-all w-full">
         <div className="flex items-center gap-3 sm:gap-4 mb-4">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-base sm:text-lg">{number}</span>
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h3 className="text-lg sm:text-xl font-bold text-dark-text truncate">{title}</h3>
             {subtitle && <p className="text-xs sm:text-sm text-dark-muted truncate">{subtitle}</p>}
           </div>
         </div>
-        {children}
+        <div className="w-full overflow-hidden">
+          {children}
+        </div>
       </div>
     </motion.div>
   );
@@ -282,9 +275,9 @@ function FlowArrow({ delay }: { delay: number }) {
 
 function CodeDisplay({ code }: { code: string }) {
   return (
-    <div className="bg-dark-bg border border-dark-border rounded-lg sm:rounded-xl overflow-hidden">
+    <div className="bg-dark-bg border border-dark-border rounded-lg sm:rounded-xl overflow-hidden w-full">
       <div className="p-3 sm:p-4 overflow-x-auto">
-        <pre className="text-xs sm:text-sm">
+        <pre className="text-xs sm:text-sm whitespace-pre">
           <code className="text-dark-text">{code}</code>
         </pre>
       </div>
