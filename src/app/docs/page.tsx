@@ -76,7 +76,7 @@ export default function DocsPage() {
             <div className="sticky top-24 space-y-1">
               <div className="mb-6">
                 <h2 className="text-lg font-bold text-dark-text mb-2">Documentation</h2>
-                <p className="text-sm text-dark-muted">@chemmangat/msal-next v1.2.0</p>
+                <p className="text-sm text-dark-muted">@chemmangat/msal-next v1.2.1</p>
               </div>
               <nav className="space-y-1">
                 {sections.map((section) => (

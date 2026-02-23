@@ -54,7 +54,7 @@ export default function Home() {
               className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full text-sm text-dark-muted"
             >
               <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse" />
-              <span>v1.2.0 - Now with SSR support & v3/v4 compatibility</span>
+              <span>v1.2.1 - Now with SSR support & v3/v4 compatibility</span>
             </motion.div>
 
             {/* Main heading */}
