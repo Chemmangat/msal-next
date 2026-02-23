@@ -285,13 +285,6 @@ export default function Page() {
 }
 ```
 
-## 🔗 Links
-
-- [Documentation](https://msal-next.chemmangat.dev)
-- [GitHub](https://github.com/chemmangat/msal-next)
-- [npm](https://www.npmjs.com/package/@chemmangat/msal-next)
-- [Examples](https://github.com/chemmangat/msal-next/tree/main/example)
-
 ## 📄 License
 
 MIT © Chemmangat
