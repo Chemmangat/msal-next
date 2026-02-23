@@ -534,7 +534,7 @@ function AuthBackground() {
           }}
           animate={{
             x: [0, 100],
-            y: [0, window.innerHeight || 1000],
+            y: [0, typeof window !== 'undefined' ? window.innerHeight : 1000],
             opacity: [0, 0.3, 0],
           }}
           transition={{
