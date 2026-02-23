@@ -36,36 +36,36 @@ export default function Home() {
           <AuthBackground />
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-8 mb-20"
+            className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 md:mb-20 w-full"
           >
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
-              className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full text-sm text-dark-muted"
+              className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-elevated border border-dark-border rounded-full text-xs sm:text-sm text-dark-muted max-w-full"
             >
-              <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse" />
-              <span>v1.2.1 - Now with SSR support & v3/v4 compatibility</span>
+              <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse flex-shrink-0" />
+              <span className="truncate">v1.2.1 - SSR support & v3/v4 compatibility</span>
             </motion.div>
 
             {/* Main heading */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight px-2">
               <span className="text-dark-text">MSAL for Next.js</span>
               <br />
               <span className="text-gradient">Made Simple</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-base sm:text-lg md:text-xl text-dark-muted max-w-2xl mx-auto px-4">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-dark-muted max-w-2xl mx-auto px-4 sm:px-6">
               Production-ready Microsoft authentication for Next.js App Router.
               <br className="hidden sm:block" />
-              Three steps. Five minutes. Zero complexity.
+              <span className="block sm:inline"> Three steps. Five minutes. Zero complexity.</span>
             </p>
 
             {/* CTA Buttons */}
@@ -73,23 +73,23 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4 px-4"
+              className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 sm:pt-4 w-full max-w-md sm:max-w-none mx-auto"
             >
               <a
                 href="/docs"
-                className="w-full sm:w-auto group px-6 sm:px-8 py-3 sm:py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
+                className="group px-6 py-3 sm:px-8 sm:py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 text-sm sm:text-base"
               >
-                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span>Documentation</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" />
               </a>
               <a
                 href="https://github.com/chemmangat/msal-next"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-lg font-semibold transition-all border border-dark-border flex items-center justify-center space-x-2"
+                className="px-6 py-3 sm:px-8 sm:py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-lg font-semibold transition-all border border-dark-border flex items-center justify-center space-x-2 text-sm sm:text-base"
               >
-                <Github className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Github className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span>GitHub</span>
               </a>
             </motion.div>
@@ -100,9 +100,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="max-w-4xl mx-auto w-full"
+            className="w-full max-w-4xl mx-auto"
           >
-            <div className="space-y-6 w-full">
+            <div className="space-y-4 sm:space-y-6 w-full">
               {/* Step 1: Install */}
               <SetupStep
                 number={1}
@@ -183,11 +183,11 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.2 }}
-                className="flex justify-center pt-6"
+                className="flex justify-center pt-4 sm:pt-6 px-4"
               >
-                <div className="inline-flex items-center space-x-2 px-6 py-3 bg-accent-success/10 border border-accent-success/30 rounded-full">
-                  <Check className="w-5 h-5 text-accent-success" />
-                  <span className="text-accent-success font-semibold">That's it! You're ready to go.</span>
+                <div className="inline-flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-accent-success/10 border border-accent-success/30 rounded-full max-w-full">
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent-success flex-shrink-0" />
+                  <span className="text-accent-success font-semibold text-sm sm:text-base">That's it! You're ready to go.</span>
                 </div>
               </motion.div>
             </div>
@@ -198,7 +198,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.3 }}
-            className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"
+            className="mt-12 sm:mt-16 md:mt-20 lg:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full"
           >
             <FeatureCard
               title="Zero Config"
