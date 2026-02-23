@@ -32,16 +32,13 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-dark-muted hover:text-dark-text transition-colors">
-              Features
-            </a>
-            <a href="#quickstart" className="text-dark-muted hover:text-dark-text transition-colors">
-              Quick Start
-            </a>
-            <a href="/docs" className="text-dark-muted hover:text-dark-text transition-colors">
+          <div className="hidden md:flex items-center space-x-6">
+            <Link href="/" className="text-dark-muted hover:text-dark-text transition-colors">
+              Home
+            </Link>
+            <Link href="/docs" className="text-dark-muted hover:text-dark-text transition-colors">
               Documentation
-            </a>
+            </Link>
             <a
               href="https://github.com/chemmangat/msal-next"
               target="_blank"
@@ -54,9 +51,9 @@ export default function Navigation() {
               href="https://www.npmjs.com/package/@chemmangat/msal-next"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg transition-colors text-sm font-medium"
             >
-              Get Started
+              npm
             </a>
           </div>
 
@@ -74,27 +71,20 @@ export default function Navigation() {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-dark-surface border-t border-dark-border">
           <div className="px-4 py-4 space-y-3">
-            <a
-              href="#features"
+            <Link
+              href="/"
               className="block text-dark-muted hover:text-dark-text transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Features
-            </a>
-            <a
-              href="#quickstart"
-              className="block text-dark-muted hover:text-dark-text transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Quick Start
-            </a>
-            <a
+              Home
+            </Link>
+            <Link
               href="/docs"
               className="block text-dark-muted hover:text-dark-text transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Documentation
-            </a>
+            </Link>
             <a
               href="https://github.com/chemmangat/msal-next"
               target="_blank"
@@ -102,6 +92,14 @@ export default function Navigation() {
               className="block text-dark-muted hover:text-dark-text transition-colors"
             >
               GitHub
+            </a>
+            <a
+              href="https://www.npmjs.com/package/@chemmangat/msal-next"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-dark-muted hover:text-dark-text transition-colors"
+            >
+              npm Package
             </a>
           </div>
         </div>

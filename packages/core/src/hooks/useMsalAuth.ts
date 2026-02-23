@@ -64,6 +64,11 @@ export interface UseMsalAuthReturn {
    * Acquire access token using redirect
    */
   acquireTokenRedirect: (scopes: string[]) => Promise<void>;
+
+  /**
+   * Clear MSAL session without triggering Microsoft logout
+   */
+  clearSession: () => Promise<void>;
 }
 
 export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAuthReturn {
@@ -200,6 +205,11 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
     [acquireTokenSilent, acquireTokenPopup, defaultScopes]
   );
 
+  const clearSession = useCallback(async () => {
+    instance.setActiveAccount(null);
+    await instance.clearCache();
+  }, [instance]);
+
   return {
     account,
     accounts,
@@ -213,5 +223,6 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
     acquireTokenSilent,
     acquireTokenPopup,
     acquireTokenRedirect,
+    clearSession,
   };
 }

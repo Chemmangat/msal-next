@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Fully configurable MSAL authentication package for Next.js App Router",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -44,8 +44,8 @@
     "url": "https://github.com/chemmangat/msal-next/issues"
   },
   "peerDependencies": {
-    "@azure/msal-browser": "^3.11.0",
-    "@azure/msal-react": "^2.0.0",
+    "@azure/msal-browser": "^3.11.0 || ^4.0.0",
+    "@azure/msal-react": "^2.0.0 || ^3.0.0",
     "next": ">=14.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"

@@ -1,4 +1,4 @@
-import { Configuration, LogLevel } from '@azure/msal-browser';
+import { Configuration, LogLevel, IPublicClientApplication } from '@azure/msal-browser';
 import { ReactNode } from 'react';
 
 export interface MsalAuthConfig {
@@ -74,6 +74,11 @@ export interface MsalAuthConfig {
    * Loading component to show while MSAL initializes
    */
   loadingComponent?: ReactNode;
+
+  /**
+   * Callback invoked after MSAL initialization completes successfully
+   */
+  onInitialized?: (instance: IPublicClientApplication) => void;
 }
 
 export interface MsalAuthProviderProps extends MsalAuthConfig {
