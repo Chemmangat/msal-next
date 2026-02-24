@@ -22,15 +22,25 @@ export default function Hero() {
             className="space-y-8"
           >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full"
-            >
-              <Sparkles className="w-4 h-4 text-accent-primary" />
-              <span className="text-sm text-dark-muted">Production-ready MSAL for Next.js</span>
-            </motion.div>
+            <div className="flex flex-wrap items-center gap-3">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full"
+              >
+                <Sparkles className="w-4 h-4 text-accent-primary" />
+                <span className="text-sm text-dark-muted">Production-ready MSAL for Next.js</span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-sm text-dark-muted"
+              >
+                335 weekly downloads
+              </motion.div>
+            </div>
 
             {/* Main heading */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
