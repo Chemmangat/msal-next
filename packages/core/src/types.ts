@@ -1,6 +1,24 @@
 import { Configuration, LogLevel, IPublicClientApplication } from '@azure/msal-browser';
 import { ReactNode } from 'react';
 
+/**
+ * Custom token claims interface for TypeScript generics
+ * Extend this interface to add your custom claims
+ * 
+ * @example
+ * ```tsx
+ * interface MyCustomClaims extends CustomTokenClaims {
+ *   roles: string[];
+ *   department: string;
+ * }
+ * 
+ * const claims = account.idTokenClaims as MyCustomClaims;
+ * ```
+ */
+export interface CustomTokenClaims {
+  [key: string]: any;
+}
+
 export interface MsalAuthConfig {
   /**
    * Azure AD Application (client) ID

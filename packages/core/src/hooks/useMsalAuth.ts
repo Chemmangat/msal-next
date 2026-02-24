@@ -141,6 +141,7 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         const request: SilentRequest = {
           scopes,
           account,
+          forceRefresh: false,
         };
         const response = await instance.acquireTokenSilent(request);
         return response.accessToken;

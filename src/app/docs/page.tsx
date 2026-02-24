@@ -51,6 +51,8 @@ export default function DocsPage() {
     { id: 'provider', label: 'MsalAuthProvider' },
     { id: 'hook', label: 'useMsalAuth Hook' },
     { id: 'button', label: 'Sign In Button' },
+    { id: 'newcomponents', label: 'New Components (v2.0)' },
+    { id: 'newhooks', label: 'New Hooks (v2.0)' },
     { id: 'advanced', label: 'Advanced Usage' },
     { id: 'api', label: 'API Reference' },
     { id: 'changelog', label: 'Changelog' },

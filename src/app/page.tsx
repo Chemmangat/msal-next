@@ -1,20 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, Copy, Github, BookOpen, ArrowDown, Lock, Key, Shield, CheckCircle, Zap, Code2, Sparkles, X } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowRight, Check, Copy, BookOpen, ArrowDown, Lock, Key, Shield, CheckCircle, Zap, Code2, Sparkles, X, User, LogOut, ShieldCheck } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { RealMsalDemo } from '@/components/RealMsalDemo';
 
 export default function Home() {
   const [copied, setCopied] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  // Parallax effect
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 20;
-    const y = (clientY / window.innerHeight - 0.5) * 20;
-    setMousePosition({ x, y });
-  };
 
   const copyInstall = () => {
     navigator.clipboard.writeText('npm install @chemmangat/msal-next');
@@ -23,7 +15,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg overflow-x-hidden" onMouseMove={handleMouseMove}>
+    <div className="min-h-screen bg-dark-bg overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         {/* Cool Authentication Background */}
@@ -51,7 +43,7 @@ export default function Home() {
               className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-elevated border border-dark-border rounded-full text-xs sm:text-sm text-dark-muted max-w-full"
             >
               <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse flex-shrink-0" />
-              <span className="truncate">v1.2.1 - SSR support & v3/v4 compatibility</span>
+              <span className="truncate">v2.0.0 - Production-grade with 7+ new components</span>
             </motion.div>
 
             {/* Main heading */}
@@ -89,7 +81,9 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="px-6 py-3 sm:px-8 sm:py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-lg font-semibold transition-all border border-dark-border flex items-center justify-center space-x-2 text-sm sm:text-base"
               >
-                <Github className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                </svg>
                 <span>GitHub</span>
               </a>
             </motion.div>
@@ -205,12 +199,24 @@ export default function Home() {
               description="Just add your client ID and you're ready to go. Sensible defaults for everything."
             />
             <FeatureCard
+              title="7+ Components"
+              description="AuthGuard, UserAvatar, SignOutButton, and more. Production-ready UI components."
+            />
+            <FeatureCard
+              title="4+ Hooks"
+              description="useGraphApi, useUserProfile, useRoles. Everything you need for auth."
+            />
+            <FeatureCard
               title="TypeScript First"
               description="Full type definitions included. Autocomplete and type safety out of the box."
             />
             <FeatureCard
+              title="Edge Compatible"
+              description="Middleware support for protecting routes at the edge with custom auth checks."
+            />
+            <FeatureCard
               title="Production Ready"
-              description="Built-in token refresh, error handling, and security best practices."
+              description="Built-in token refresh, error handling, retry logic, and security best practices."
             />
           </motion.div>
         </div>
@@ -218,8 +224,133 @@ export default function Home() {
 
       {/* Why This Package Section */}
       <WhyThisPackage />
+
+      {/* New Components Showcase */}
+      <NewComponentsShowcase />
+
+      {/* Interactive Demo */}
+      <InteractiveDemo />
     </div>
   );
+}
+
+// Interactive Demo Section with Real MSAL
+function InteractiveDemo() {
+  const [clientId, setClientId] = useState('');
+  const [showDemo, setShowDemo] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  // Get current URL on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.origin);
+    }
+  }, []);
+
+  const handleTryDemo = () => {
+    if (!clientId.trim()) {
+      alert('Please enter your Azure AD Client ID');
+      return;
+    }
+    setShowDemo(true);
+  };
+
+        return (
+          <section className="py-12 sm:py-16 md:py-20 bg-dark-bg border-t border-dark-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center mb-12 sm:mb-16"
+              >
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">
+                  <span className="text-dark-text">Try It </span>
+                  <span className="text-gradient">Live</span>
+                </h2>
+                <p className="text-base sm:text-lg text-dark-muted max-w-2xl mx-auto px-4">
+                  Paste your Azure AD Client ID and see real MSAL authentication
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="max-w-4xl mx-auto"
+              >
+                {!showDemo ? (
+                  <div className="bg-dark-elevated border border-dark-border rounded-xl sm:rounded-2xl p-6 sm:p-8">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-dark-text mb-3">
+                          Azure AD Client ID
+                        </label>
+                        <input
+                          type="text"
+                          value={clientId}
+                          onChange={(e) => setClientId(e.target.value)}
+                          placeholder="00000000-0000-0000-0000-000000000000"
+                          className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-dark-text placeholder-dark-muted focus:outline-none focus:border-accent-primary transition-colors"
+                        />
+                        <p className="mt-2 text-xs text-dark-muted">
+                          Don't have one? <a href="https://portal.azure.com" target="_blank" rel="noopener noreferrer" className="text-accent-primary hover:underline">Create an Azure AD app</a>
+                        </p>
+                      </div>
+
+                      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <span className="text-yellow-500 text-xl flex-shrink-0">⚠️</span>
+                          <div className="text-xs text-dark-muted">
+                            <p className="font-semibold text-dark-text mb-1">Important:</p>
+                            <p>Add <code className="text-accent-primary bg-dark-bg px-1 py-0.5 rounded">{currentUrl || 'your website URL'}</code> to your Azure AD app's redirect URIs before testing.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={handleTryDemo}
+                        className="w-full px-6 py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        <span>Try Real Authentication</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <RealMsalDemo clientId={clientId} onReset={() => setShowDemo(false)} />
+                )}
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="mt-12 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
+              >
+                <div className="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1">7+</div>
+                  <div className="text-xs sm:text-sm text-dark-muted">New Components</div>
+                </div>
+                <div className="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1">4+</div>
+                  <div className="text-xs sm:text-sm text-dark-muted">New Hooks</div>
+                </div>
+                <div className="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1">100%</div>
+                  <div className="text-xs sm:text-sm text-dark-muted">TypeScript</div>
+                </div>
+                <div className="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1">MIT</div>
+                  <div className="text-xs sm:text-sm text-dark-muted">Open Source</div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        );
 }
 
 function SetupStep({
@@ -586,6 +717,277 @@ function EliminationRow({ before, after }: { before: string; after: string }) {
         </div>
       </td>
     </tr>
+  );
+}
+
+// New Components Showcase Section
+function NewComponentsShowcase() {
+  const [activeComponent, setActiveComponent] = useState<'authguard' | 'avatar' | 'signout'>('authguard');
+
+  const components = {
+    authguard: {
+      title: 'AuthGuard',
+      icon: ShieldCheck,
+      description: 'Protect pages and components with automatic redirect to login',
+      features: [
+        'Auto-redirect to login',
+        'Custom loading states',
+        'Configurable scopes',
+        'Fallback components',
+      ],
+      code: `import { AuthGuard } from '@chemmangat/msal-next';
+
+export default function ProtectedPage() {
+  return (
+    <AuthGuard
+      loadingComponent={<div>Loading...</div>}
+      fallbackComponent={<div>Redirecting...</div>}
+    >
+      <div>
+        <h1>Protected Content</h1>
+        <p>Only authenticated users can see this!</p>
+      </div>
+    </AuthGuard>
+  );
+}`,
+    },
+    avatar: {
+      title: 'UserAvatar',
+      icon: User,
+      description: 'Display user photo from MS Graph with fallback initials',
+      features: [
+        'MS Graph photo fetch',
+        'Fallback to initials',
+        'Customizable size',
+        'Tooltip with username',
+      ],
+      code: `import { UserAvatar } from '@chemmangat/msal-next';
+
+export default function Profile() {
+  return (
+    <div className="flex items-center gap-4">
+      <UserAvatar 
+        size={48} 
+        showTooltip={true}
+        fallbackImage="/default-avatar.png"
+      />
+      <div>
+        <h2>Welcome back!</h2>
+        <p>Your profile</p>
+      </div>
+    </div>
+  );
+}`,
+    },
+    signout: {
+      title: 'SignOutButton',
+      icon: LogOut,
+      description: 'Pre-styled sign-out button matching Microsoft branding',
+      features: [
+        'Microsoft branding',
+        'Dark/light variants',
+        'Multiple sizes',
+        'Success/error callbacks',
+      ],
+      code: `import { SignOutButton } from '@chemmangat/msal-next';
+
+export default function Header() {
+  return (
+    <header>
+      <nav>
+        <SignOutButton
+          variant="light"
+          size="medium"
+          onSuccess={() => {
+            console.log('Signed out successfully');
+          }}
+        />
+      </nav>
+    </header>
+  );
+}`,
+    },
+  };
+
+  const activeData = components[activeComponent];
+
+  return (
+    <section className="py-12 sm:py-16 md:py-20 bg-dark-surface border-t border-dark-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">
+            <span className="text-dark-text">New in </span>
+            <span className="text-gradient">v2.0</span>
+          </h2>
+          <p className="text-base sm:text-lg text-dark-muted max-w-2xl mx-auto px-4">
+            Production-ready components that developers actually want
+          </p>
+        </motion.div>
+
+        {/* Component Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 px-4"
+        >
+          {(Object.keys(components) as Array<keyof typeof components>).map((key) => {
+            const comp = components[key];
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveComponent(key)}
+                className={`flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-xl transition-all text-sm sm:text-base ${
+                  activeComponent === key
+                    ? 'bg-accent-primary text-white shadow-lg'
+                    : 'bg-dark-elevated text-dark-muted hover:text-dark-text border border-dark-border'
+                }`}
+              >
+                <comp.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="font-semibold">{comp.title}</span>
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* Component Display */}
+        <motion.div
+          key={activeComponent}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="grid md:grid-cols-2 gap-6 sm:gap-8"
+        >
+          {/* Left: Info */}
+          <div className="bg-dark-elevated border border-dark-border rounded-xl sm:rounded-2xl p-6 sm:p-8">
+            <div className="flex items-center gap-4 mb-4 sm:mb-6">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                <activeData.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-dark-text">{activeData.title}</h3>
+                <p className="text-sm text-dark-muted mt-1">{activeData.description}</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <h4 className="text-base sm:text-lg font-semibold text-dark-text">Features:</h4>
+              {activeData.features.map((feature, index) => (
+                <div key={index} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent-success mt-0.5 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-dark-muted">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Visual Preview */}
+            <div className="bg-dark-bg border border-dark-border rounded-lg p-6 sm:p-8">
+              <div className="flex items-center justify-center">
+                {activeComponent === 'authguard' && (
+                  <div className="text-center space-y-4">
+                    <ShieldCheck className="w-16 h-16 sm:w-20 sm:h-20 text-accent-primary mx-auto" />
+                    <div className="text-sm text-dark-muted">
+                      <div className="mb-2">🔒 Protected Content</div>
+                      <div className="text-xs">Automatically redirects unauthenticated users</div>
+                    </div>
+                  </div>
+                )}
+                {activeComponent === 'avatar' && (
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
+                      JD
+                    </div>
+                    <div className="text-left">
+                      <div className="text-base sm:text-lg font-semibold text-dark-text">John Doe</div>
+                      <div className="text-xs sm:text-sm text-dark-muted">john@example.com</div>
+                    </div>
+                  </div>
+                )}
+                {activeComponent === 'signout' && (
+                  <button
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded font-semibold hover:bg-gray-50 transition-colors"
+                  >
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                      <rect width="10" height="10" fill="#F25022" />
+                      <rect x="11" width="10" height="10" fill="#7FBA00" />
+                      <rect y="11" width="10" height="10" fill="#00A4EF" />
+                      <rect x="11" y="11" width="10" height="10" fill="#FFB900" />
+                    </svg>
+                    <span>Sign out</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Code */}
+          <div className="bg-dark-elevated border border-dark-border rounded-xl sm:rounded-2xl overflow-hidden">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-dark-border bg-dark-bg">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="ml-2 text-xs sm:text-sm text-dark-muted">example.tsx</span>
+              </div>
+            </div>
+            <div className="p-4 sm:p-6 overflow-x-auto">
+              <pre className="text-xs sm:text-sm">
+                <code className="text-dark-text whitespace-pre">{activeData.code}</code>
+              </pre>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Additional Features Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+        >
+          <FeatureCardWithIcon
+            icon={Code2}
+            title="useGraphApi()"
+            description="Pre-configured MS Graph API wrapper with auto token injection"
+          />
+          <FeatureCardWithIcon
+            icon={User}
+            title="useUserProfile()"
+            description="Fetch and cache user profile data with 5-minute TTL"
+          />
+          <FeatureCardWithIcon
+            icon={Shield}
+            title="useRoles()"
+            description="Access Azure AD roles and groups with helper methods"
+          />
+          <FeatureCardWithIcon
+            icon={ShieldCheck}
+            title="Middleware"
+            description="Edge-compatible route protection with custom auth checks"
+          />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function FeatureCardWithIcon({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
+  return (
+    <div className="bg-dark-elevated border border-dark-border rounded-lg sm:rounded-xl p-4 sm:p-6 hover:border-accent-primary/50 transition-all">
+      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg flex items-center justify-center mb-3">
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+      </div>
+      <h3 className="text-base sm:text-lg font-semibold text-dark-text mb-2">{title}</h3>
+      <p className="text-sm text-dark-muted">{description}</p>
+    </div>
   );
 }
 

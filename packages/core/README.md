@@ -1,14 +1,29 @@
 # @chemmangat/msal-next
 
-Fully configurable MSAL (Microsoft Authentication Library) package for Next.js App Router with TypeScript support.
+Production-grade MSAL authentication library for Next.js App Router with minimal boilerplate.
 
-## 🚀 Quick Start
+[![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Features
+
+✨ **Minimal Setup** - Just provide your `clientId` to get started  
+🔐 **Production Ready** - Comprehensive error handling, retry logic, and SSR support  
+🎨 **Beautiful Components** - Pre-styled Microsoft-branded UI components  
+🪝 **Powerful Hooks** - Easy-to-use hooks for auth, Graph API, and user data  
+🛡️ **Type Safe** - Full TypeScript support with generics for custom claims  
+⚡ **Edge Compatible** - Middleware support for protecting routes at the edge  
+📦 **Zero Config** - Sensible defaults with full customization options
+
+## Installation
 
 ```bash
 npm install @chemmangat/msal-next @azure/msal-browser @azure/msal-react
 ```
 
-> Supports both v3 and v4 of `@azure/msal-browser` and v2/v3 of `@azure/msal-react`
+## Quick Start
+
+### 1. Wrap your app with MsalAuthProvider
 
 ```tsx
 // app/layout.tsx
@@ -18,7 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <MsalAuthProvider clientId="your-client-id">
+        <MsalAuthProvider clientId="YOUR_CLIENT_ID">
           {children}
         </MsalAuthProvider>
       </body>
@@ -27,264 +42,510 @@ export default function RootLayout({ children }) {
 }
 ```
 
+### 2. Add sign-in button
+
 ```tsx
 // app/page.tsx
 'use client';
-import { useMsalAuth } from '@chemmangat/msal-next';
+
+import { MicrosoftSignInButton, useMsalAuth } from '@chemmangat/msal-next';
 
 export default function Home() {
-  const { isAuthenticated, loginPopup } = useMsalAuth();
-  
-  if (!isAuthenticated) {
-    return <button onClick={() => loginPopup()}>Sign In</button>;
+  const { isAuthenticated } = useMsalAuth();
+
+  if (isAuthenticated) {
+    return <div>Welcome! You're signed in.</div>;
   }
-  
-  return <div>Welcome!</div>;
+
+  return <MicrosoftSignInButton />;
 }
 ```
 
-## 📚 Documentation
+That's it! 🎉
 
-Visit [https://msal-next.chemmangat.dev](https://msal-next.chemmangat.dev) for full documentation.
-
-## ✨ Features
-
-- ✅ Next.js 14+ App Router support
-- ✅ TypeScript with full type definitions
-- ✅ Multi-tenant and single-tenant authentication
-- ✅ Popup and redirect authentication flows
-- ✅ Automatic token acquisition with silent refresh
-- ✅ Zero configuration for simple use cases
-- ✅ Highly configurable when needed
-- ✅ SSR/SSG safe - works seamlessly with server-rendered pages
-
-## 📖 API
+## Components
 
 ### MsalAuthProvider
 
+The root provider that initializes MSAL.
+
 ```tsx
 <MsalAuthProvider
-  clientId="required"
-  tenantId="optional"
-  authorityType="common" // 'common' | 'organizations' | 'consumers' | 'tenant'
-  scopes={['User.Read']}
-  cacheLocation="sessionStorage"
-  enableLogging={false}
-  loadingComponent={<div>Loading...</div>}
-  onInitialized={(instance) => {
-    // Optional: Access MSAL instance after initialization
-    console.log('MSAL initialized');
-  }}
+  clientId="YOUR_CLIENT_ID"
+  tenantId="YOUR_TENANT_ID" // Optional
+  scopes={['User.Read', 'Mail.Read']} // Optional
+  enableLogging={true} // Optional
 >
   {children}
 </MsalAuthProvider>
 ```
 
-#### Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `clientId` | `string` | required | Azure AD Application (client) ID |
-| `tenantId` | `string` | optional | Azure AD Directory (tenant) ID |
-| `authorityType` | `'common' \| 'organizations' \| 'consumers' \| 'tenant'` | `'common'` | Authority type |
-| `scopes` | `string[]` | `['User.Read']` | Default scopes |
-| `cacheLocation` | `'sessionStorage' \| 'localStorage' \| 'memoryStorage'` | `'sessionStorage'` | Cache location |
-| `enableLogging` | `boolean` | `false` | Enable debug logging |
-| `loadingComponent` | `ReactNode` | Loading message | Custom loading component |
-| `onInitialized` | `(instance: IPublicClientApplication) => void` | optional | Callback after initialization |
-
 ### MicrosoftSignInButton
 
-Pre-built button component with official Microsoft branding:
+Pre-styled sign-in button with Microsoft branding.
 
 ```tsx
 <MicrosoftSignInButton
-  variant="dark" // 'dark' | 'light'
-  size="medium" // 'small' | 'medium' | 'large'
-  text="Sign in with Microsoft"
-  useRedirect={false}
-  scopes={['User.Read']}
-  onSuccess={() => console.log('Success!')}
-  onError={(error) => console.error(error)}
+  variant="dark" // or "light"
+  size="medium" // "small", "medium", "large"
+  useRedirect={false} // Use popup by default
+  onSuccess={() => console.log('Signed in!')}
 />
 ```
 
-### useMsalAuth Hook
+### SignOutButton
+
+Pre-styled sign-out button matching the sign-in button style.
+
+```tsx
+<SignOutButton
+  variant="light"
+  size="medium"
+  onSuccess={() => console.log('Signed out!')}
+/>
+```
+
+### AuthGuard
+
+Protect pages/components that require authentication.
+
+```tsx
+<AuthGuard
+  loadingComponent={<div>Loading...</div>}
+  fallbackComponent={<div>Redirecting to login...</div>}
+>
+  <ProtectedContent />
+</AuthGuard>
+```
+
+### UserAvatar
+
+Display user photo from MS Graph with fallback initials.
+
+```tsx
+<UserAvatar
+  size={48}
+  showTooltip={true}
+  fallbackImage="/default-avatar.png"
+/>
+```
+
+### AuthStatus
+
+Show current authentication state.
+
+```tsx
+<AuthStatus
+  showDetails={true}
+  renderAuthenticated={(username) => (
+    <div>Logged in as {username}</div>
+  )}
+/>
+```
+
+### ErrorBoundary
+
+Catch and handle authentication errors gracefully.
+
+```tsx
+<ErrorBoundary
+  fallback={(error, reset) => (
+    <div>
+      <p>Error: {error.message}</p>
+      <button onClick={reset}>Try Again</button>
+    </div>
+  )}
+>
+  <App />
+</ErrorBoundary>
+```
+
+## Hooks
+
+### useMsalAuth
+
+Main authentication hook with all auth operations.
 
 ```tsx
 const {
-  isAuthenticated,
   account,
-  accounts,
+  isAuthenticated,
   inProgress,
   loginPopup,
   loginRedirect,
   logoutPopup,
   logoutRedirect,
   acquireToken,
-  acquireTokenSilent,
-  acquireTokenPopup,
-  acquireTokenRedirect,
-  clearSession,
 } = useMsalAuth();
+
+// Login
+await loginPopup(['User.Read']);
+
+// Get token
+const token = await acquireToken(['User.Read']);
+
+// Logout
+await logoutPopup();
 ```
 
-#### Return Values
+### useGraphApi
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `isAuthenticated` | `boolean` | Whether user is authenticated |
-| `account` | `AccountInfo \| null` | Current authenticated account |
-| `accounts` | `AccountInfo[]` | All accounts in cache |
-| `inProgress` | `boolean` | Whether MSAL is performing an interaction |
-| `loginPopup` | `(scopes?: string[]) => Promise<void>` | Login using popup |
-| `loginRedirect` | `(scopes?: string[]) => Promise<void>` | Login using redirect |
-| `logoutPopup` | `() => Promise<void>` | Logout using popup |
-| `logoutRedirect` | `() => Promise<void>` | Logout using redirect |
-| `acquireToken` | `(scopes: string[]) => Promise<string>` | Acquire token silently with popup fallback |
-| `acquireTokenSilent` | `(scopes: string[]) => Promise<string>` | Acquire token silently only |
-| `acquireTokenPopup` | `(scopes: string[]) => Promise<string>` | Acquire token using popup |
-| `acquireTokenRedirect` | `(scopes: string[]) => Promise<void>` | Acquire token using redirect |
-| `clearSession` | `() => Promise<void>` | Clear MSAL cache without Microsoft logout |
-
-### getMsalInstance()
-
-Access the MSAL instance outside of React components:
+Pre-configured fetch wrapper for MS Graph API.
 
 ```tsx
-import { getMsalInstance } from '@chemmangat/msal-next';
+const graph = useGraphApi();
 
-// In API clients, middleware, etc.
-const instance = getMsalInstance();
-if (instance) {
-  const accounts = instance.getAllAccounts();
+// GET request
+const user = await graph.get('/me');
+
+// POST request
+const message = await graph.post('/me/messages', {
+  subject: 'Hello',
+  body: { content: 'World' }
+});
+
+// Custom request
+const data = await graph.request('/me/drive', {
+  scopes: ['Files.Read'],
+  version: 'beta'
+});
+```
+
+### useUserProfile
+
+Fetch and cache user profile from MS Graph.
+
+```tsx
+const { profile, loading, error, refetch } = useUserProfile();
+
+if (loading) return <div>Loading...</div>;
+if (error) return <div>Error: {error.message}</div>;
+
+return (
+  <div>
+    <h1>{profile.displayName}</h1>
+    <p>{profile.mail}</p>
+    <p>{profile.jobTitle}</p>
+  </div>
+);
+```
+
+### useRoles
+
+Access user's Azure AD roles and groups.
+
+```tsx
+const { roles, groups, hasRole, hasAnyRole } = useRoles();
+
+if (hasRole('Admin')) {
+  return <AdminPanel />;
+}
+
+if (hasAnyRole(['Editor', 'Contributor'])) {
+  return <EditorPanel />;
+}
+
+return <ViewerPanel />;
+```
+
+## Utilities
+
+### withAuth
+
+Higher-order component for protecting pages.
+
+```tsx
+const ProtectedPage = withAuth(MyPage, {
+  useRedirect: true,
+  scopes: ['User.Read']
+});
+
+export default ProtectedPage;
+```
+
+### getServerSession
+
+Server-side session helper for App Router.
+
+**Important:** Import from `@chemmangat/msal-next/server` in Server Components only.
+
+```tsx
+// app/dashboard/page.tsx
+import { getServerSession } from '@chemmangat/msal-next/server';
+import { redirect } from 'next/navigation';
+
+export default async function DashboardPage() {
+  const session = await getServerSession();
+
+  if (!session.isAuthenticated) {
+    redirect('/login');
+  }
+
+  return <div>Welcome {session.username}</div>;
 }
 ```
 
-## 🔧 Advanced Usage
+### createAuthMiddleware
 
-### Using onInitialized for Axios Interceptors
-
-Access the MSAL instance to set up API interceptors:
+Protect routes at the edge with middleware.
 
 ```tsx
-// app/layout.tsx
-'use client';
-import { MsalAuthProvider } from '@chemmangat/msal-next';
-import { setupAxiosInterceptors } from '@/lib/axios';
+// middleware.ts
+import { createAuthMiddleware } from '@chemmangat/msal-next';
 
-export default function RootLayout({ children }) {
+export const middleware = createAuthMiddleware({
+  protectedRoutes: ['/dashboard', '/profile', '/api/protected'],
+  publicOnlyRoutes: ['/login'],
+  loginPath: '/login',
+  debug: true,
+});
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+};
+```
+
+### Retry Logic
+
+Built-in exponential backoff for token acquisition.
+
+```tsx
+import { retryWithBackoff, createRetryWrapper } from '@chemmangat/msal-next';
+
+// Wrap any async function with retry logic
+const token = await retryWithBackoff(
+  () => acquireToken(['User.Read']),
+  {
+    maxRetries: 3,
+    initialDelay: 1000,
+    backoffMultiplier: 2,
+    debug: true
+  }
+);
+
+// Create a reusable retry wrapper
+const acquireTokenWithRetry = createRetryWrapper(acquireToken, {
+  maxRetries: 3
+});
+```
+
+### Debug Logger
+
+Comprehensive logging for troubleshooting.
+
+```tsx
+import { getDebugLogger } from '@chemmangat/msal-next';
+
+const logger = getDebugLogger({
+  enabled: true,
+  level: 'debug',
+  showTimestamp: true
+});
+
+logger.info('User logged in', { username: 'user@example.com' });
+logger.error('Authentication failed', { error });
+```
+
+## TypeScript Support
+
+### Custom Token Claims
+
+Extend the `CustomTokenClaims` interface for type-safe custom claims.
+
+```tsx
+import { CustomTokenClaims } from '@chemmangat/msal-next';
+
+interface MyCustomClaims extends CustomTokenClaims {
+  roles: string[];
+  department: string;
+  employeeId: string;
+}
+
+const { account } = useMsalAuth();
+const claims = account?.idTokenClaims as MyCustomClaims;
+
+console.log(claims.roles); // Type-safe!
+console.log(claims.department); // Type-safe!
+```
+
+## Advanced Examples
+
+### Multi-Tenant Support
+
+```tsx
+<MsalAuthProvider
+  clientId="YOUR_CLIENT_ID"
+  authorityType="common" // Supports any Azure AD tenant
+>
+  {children}
+</MsalAuthProvider>
+```
+
+### Custom Scopes
+
+```tsx
+<MsalAuthProvider
+  clientId="YOUR_CLIENT_ID"
+  scopes={[
+    'User.Read',
+    'Mail.Read',
+    'Calendars.Read',
+    'Files.Read.All'
+  ]}
+>
+  {children}
+</MsalAuthProvider>
+```
+
+### Multiple Account Selection
+
+```tsx
+const { accounts, loginPopup } = useMsalAuth();
+
+// Show account picker
+await loginPopup(scopes, {
+  prompt: 'select_account'
+});
+
+// List all accounts
+accounts.map(account => (
+  <div key={account.homeAccountId}>
+    {account.username}
+  </div>
+));
+```
+
+### Server-Side Rendering
+
+```tsx
+// app/profile/page.tsx
+import { getServerSession } from '@chemmangat/msal-next';
+
+export default async function ProfilePage() {
+  const session = await getServerSession();
+
   return (
-    <MsalAuthProvider
-      clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
-      onInitialized={(instance) => {
-        // Set up Axios interceptors with MSAL instance
-        setupAxiosInterceptors(instance);
-      }}
-    >
-      {children}
-    </MsalAuthProvider>
+    <div>
+      <h1>Profile</h1>
+      {session.isAuthenticated ? (
+        <p>Welcome {session.username}</p>
+      ) : (
+        <p>Please sign in</p>
+      )}
+    </div>
   );
 }
 ```
 
-```tsx
-// lib/axios.ts
-import axios from 'axios';
-import { IPublicClientApplication } from '@azure/msal-browser';
-
-export function setupAxiosInterceptors(msalInstance: IPublicClientApplication) {
-  axios.interceptors.request.use(async (config) => {
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      try {
-        const response = await msalInstance.acquireTokenSilent({
-          scopes: ['User.Read'],
-          account: accounts[0],
-        });
-        config.headers.Authorization = `Bearer ${response.accessToken}`;
-      } catch (error) {
-        console.error('Token acquisition failed:', error);
-      }
-    }
-    return config;
-  });
-}
-```
-
-### Using getMsalInstance() in API Clients
-
-For non-React code like API clients or middleware:
-
-```tsx
-// lib/api-client.ts
-import { getMsalInstance } from '@chemmangat/msal-next';
-
-export async function fetchUserData() {
-  const instance = getMsalInstance();
-  if (!instance) {
-    throw new Error('MSAL not initialized');
-  }
-
-  const accounts = instance.getAllAccounts();
-  if (accounts.length === 0) {
-    throw new Error('No authenticated user');
-  }
-
-  const response = await instance.acquireTokenSilent({
-    scopes: ['User.Read'],
-    account: accounts[0],
-  });
-
-  return fetch('/api/user', {
-    headers: {
-      Authorization: `Bearer ${response.accessToken}`,
-    },
-  });
-}
-```
-
-### Silent Logout with clearSession()
-
-Clear MSAL cache without redirecting to Microsoft logout:
+### Role-Based Access Control
 
 ```tsx
 'use client';
-import { useMsalAuth } from '@chemmangat/msal-next';
 
-export function LogoutButton() {
-  const { clearSession } = useMsalAuth();
+import { useRoles, AuthGuard } from '@chemmangat/msal-next';
 
-  const handleLogout = async () => {
-    // Call your backend logout API
-    await fetch('/api/logout', { method: 'POST' });
-    
-    // Clear local MSAL cache without Microsoft redirect
-    await clearSession();
-    
-    // Redirect to home
-    window.location.href = '/';
-  };
+function AdminPanel() {
+  const { hasRole, hasAnyRole, hasAllRoles } = useRoles();
 
-  return <button onClick={handleLogout}>Logout</button>;
+  if (!hasRole('Admin')) {
+    return <div>Access denied</div>;
+  }
+
+  return <div>Admin content</div>;
 }
-```
 
-### SSR/SSG Notes
-
-This package is safe to use in server-rendered pages. The `MsalAuthProvider` automatically detects server-side rendering and skips MSAL initialization on the server, rendering the loading component instead. MSAL will initialize normally on the client side.
-
-```tsx
-// This works in both SSR and SSG pages
-export default function Page() {
+export default function AdminPage() {
   return (
-    <MsalAuthProvider clientId="...">
-      <YourApp />
-    </MsalAuthProvider>
+    <AuthGuard>
+      <AdminPanel />
+    </AuthGuard>
   );
 }
 ```
 
-## 📄 License
+## Configuration Options
 
-MIT © Chemmangat
+### MsalAuthConfig
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `clientId` | `string` | **Required** | Azure AD Application (client) ID |
+| `tenantId` | `string` | `undefined` | Azure AD Directory (tenant) ID |
+| `authorityType` | `'common' \| 'organizations' \| 'consumers' \| 'tenant'` | `'common'` | Authority type |
+| `redirectUri` | `string` | `window.location.origin` | Redirect URI after auth |
+| `scopes` | `string[]` | `['User.Read']` | Default scopes |
+| `cacheLocation` | `'sessionStorage' \| 'localStorage' \| 'memoryStorage'` | `'sessionStorage'` | Token cache location |
+| `enableLogging` | `boolean` | `false` | Enable debug logging |
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue**: "No active account" error  
+**Solution**: Ensure user is logged in before calling `acquireToken`
+
+**Issue**: Token acquisition fails  
+**Solution**: Check that required scopes are granted in Azure AD
+
+**Issue**: SSR hydration mismatch  
+**Solution**: Use `'use client'` directive for components using auth hooks
+
+**Issue**: Middleware not protecting routes  
+**Solution**: Ensure session cookies are being set after login
+
+### Debug Mode
+
+Enable debug logging to troubleshoot issues:
+
+```tsx
+<MsalAuthProvider
+  clientId="YOUR_CLIENT_ID"
+  enableLogging={true}
+>
+  {children}
+</MsalAuthProvider>
+```
+
+## Migration Guide
+
+### From v1.x to v2.x
+
+v2.0 is backward compatible with v1.x. New features are additive:
+
+```tsx
+// v1.x - Still works!
+import { MsalAuthProvider, useMsalAuth } from '@chemmangat/msal-next';
+
+// v2.x - New features
+import {
+  AuthGuard,
+  SignOutButton,
+  UserAvatar,
+  useGraphApi,
+  useUserProfile,
+  useRoles,
+  withAuth,
+  createAuthMiddleware,
+} from '@chemmangat/msal-next';
+```
+
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](../../CONTRIBUTING.md) for details.
+
+## License
+
+MIT © [Chemmangat](https://github.com/chemmangat)
+
+## Support
+
+- 📖 [Documentation](https://github.com/chemmangat/msal-next#readme)
+- 🐛 [Issue Tracker](https://github.com/chemmangat/msal-next/issues)
+- 💬 [Discussions](https://github.com/chemmangat/msal-next/discussions)
+
+## Acknowledgments
+
+Built with:
+- [@azure/msal-browser](https://github.com/AzureAD/microsoft-authentication-library-for-js)
+- [@azure/msal-react](https://github.com/AzureAD/microsoft-authentication-library-for-js)
+- [Next.js](https://nextjs.org/)
