@@ -36,15 +36,28 @@ export default function Home() {
             className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 md:mb-20 w-full"
           >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-elevated border border-dark-border rounded-full text-xs sm:text-sm text-dark-muted max-w-full"
-            >
-              <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse flex-shrink-0" />
-              <span className="truncate">v2.0.0 - Production-grade with 7+ new components</span>
-            </motion.div>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 }}
+                className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-elevated border border-dark-border rounded-full text-xs sm:text-sm text-dark-muted"
+              >
+                <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse flex-shrink-0" />
+                <span className="truncate">v2.0.0 - Production-grade with 7+ new components</span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full"
+              >
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-accent-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                <span className="text-xs sm:text-sm font-semibold text-accent-primary">335 weekly downloads</span>
+              </motion.div>
+            </div>
 
             {/* Main heading */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight px-2">
@@ -59,6 +72,24 @@ export default function Home() {
               <br className="hidden sm:block" />
               <span className="block sm:inline"> Three steps. Five minutes. Zero complexity.</span>
             </p>
+
+            {/* Weekly Downloads - Prominent */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center"
+            >
+              <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-primary/20 to-accent-secondary/20 border-2 border-accent-primary/40 rounded-xl">
+                <svg className="w-5 h-5 text-accent-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-bold text-gradient">335</span>
+                  <span className="text-sm sm:text-base text-dark-text font-medium">weekly downloads</span>
+                </div>
+              </div>
+            </motion.div>
 
             {/* CTA Buttons */}
             <motion.div
