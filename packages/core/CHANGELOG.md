@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.1.3] - 2024-03-05
+## [2.2.0] - 2024-03-05
 
 ### 🔒 Security Patch Release
 
@@ -68,7 +68,7 @@ npm install @chemmangat/msal-next@2.1.3
 
 ---
 
-## [2.1.2] - 2024-03-05
+## [2.1.3] - 2024-03-05
 
 ### 🔒 Security Patch Release
 
