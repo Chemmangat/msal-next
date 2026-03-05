@@ -17,6 +17,8 @@ export default function DocsPage() {
         'provider',
         'hook',
         'button',
+        'cli',
+        'debugging',
         'advanced',
         'api',
         'changelog',
@@ -51,8 +53,8 @@ export default function DocsPage() {
     { id: 'provider', label: 'MsalAuthProvider' },
     { id: 'hook', label: 'useMsalAuth Hook' },
     { id: 'button', label: 'Sign In Button' },
-    { id: 'newcomponents', label: 'New Components (v2.0)' },
-    { id: 'newhooks', label: 'New Hooks (v2.0)' },
+    { id: 'cli', label: 'CLI Tool (v3.0)' },
+    { id: 'debugging', label: 'Enhanced Debugging (v3.0)' },
     { id: 'advanced', label: 'Advanced Usage' },
     { id: 'api', label: 'API Reference' },
     { id: 'changelog', label: 'Changelog' },
@@ -78,7 +80,7 @@ export default function DocsPage() {
             <div className="sticky top-24 space-y-1">
               <div className="mb-6">
                 <h2 className="text-lg font-bold text-dark-text mb-2">Documentation</h2>
-                <p className="text-sm text-dark-muted">@chemmangat/msal-next v1.2.1</p>
+                <p className="text-sm text-dark-muted">@chemmangat/msal-next v3.0.0</p>
               </div>
               <nav className="space-y-1">
                 {sections.map((section) => (
@@ -392,6 +394,74 @@ const fetchUserProfile = async () => {
                 />
               </section>
 
+              {/* CLI Tool (v3.0) */}
+              <section id="cli">
+                <h2 className="text-3xl font-bold text-dark-text mb-6">
+                  CLI Tool <span className="text-sm text-accent-primary">(v3.0)</span>
+                </h2>
+                <p className="text-dark-muted mb-6">
+                  Get started in under 2 minutes with the new CLI tool. It automatically detects your project structure and generates all necessary files.
+                </p>
+                
+                <CodeBlock
+                  language="bash"
+                  code={`# One command setup
+npx @chemmangat/msal-next init
+
+# What it does:
+# ✅ Detects Next.js structure (App Router/Pages Router)
+# ✅ Installs dependencies
+# ✅ Creates .env.local
+# ✅ Generates layout with MsalAuthProvider
+# ✅ Creates middleware
+# ✅ Adds example auth page`}
+                  onCopy={() => copyToClipboard(`npx @chemmangat/msal-next init`, 7)}
+                  copied={copiedIndex === 7}
+                />
+
+                <div className="mt-6 p-4 bg-accent-primary/10 border border-accent-primary/30 rounded-lg">
+                  <p className="text-sm text-dark-text">
+                    <strong>Setup time reduced from 30+ minutes to under 2 minutes!</strong>
+                  </p>
+                </div>
+              </section>
+
+              {/* Enhanced Debugging (v3.0) */}
+              <section id="debugging">
+                <h2 className="text-3xl font-bold text-dark-text mb-6">
+                  Enhanced Debugging <span className="text-sm text-accent-primary">(v3.0)</span>
+                </h2>
+                <p className="text-dark-muted mb-6">
+                  New debug logger with performance tracking, network logs, and log export capabilities.
+                </p>
+                
+                <CodeBlock
+                  language="typescript"
+                  code={`import { getDebugLogger } from '@chemmangat/msal-next';
+
+const logger = getDebugLogger({
+  enabled: true,
+  enablePerformance: true,    // Track operation timing
+  enableNetworkLogs: true,    // Log all requests/responses
+  maxHistorySize: 100,        // Keep last 100 log entries
+});
+
+// Performance tracking
+logger.startTiming('token-acquisition');
+const token = await acquireToken(['User.Read']);
+logger.endTiming('token-acquisition'); // Logs: "⏱️ Completed: token-acquisition (45ms)"
+
+// Network logging
+logger.logRequest('GET', '/me');
+logger.logResponse('GET', '/me', 200, userData);
+
+// Export logs for debugging
+logger.downloadLogs('debug-logs.json');`}
+                  onCopy={() => copyToClipboard(`import { getDebugLogger } from '@chemmangat/msal-next';\n\nconst logger = getDebugLogger({\n  enabled: true,\n  enablePerformance: true,\n  enableNetworkLogs: true,\n});`, 8)}
+                  copied={copiedIndex === 8}
+                />
+              </section>
+
               {/* Advanced Usage */}
               <section id="advanced">
                 <h2 className="text-3xl font-bold text-dark-text mb-6">Advanced Usage</h2>
@@ -572,11 +642,77 @@ const handleLogout = async () => {
                 <h2 className="text-3xl font-bold text-dark-text mb-6">Changelog</h2>
                 
                 <div className="space-y-8">
-                  {/* v1.2.0 */}
+                  {/* v3.0.0 */}
                   <div className="border-l-4 border-accent-primary pl-6">
                     <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-2xl font-bold text-dark-text">v1.2.0</h3>
+                      <h3 className="text-2xl font-bold text-dark-text">v3.0.0</h3>
                       <span className="text-sm px-3 py-1 bg-accent-primary/20 text-accent-primary rounded-full">Latest</span>
+                      <span className="text-sm text-dark-muted">March 2026</span>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="text-sm font-semibold text-accent-success mb-2">✨ Added</h4>
+                        <ul className="space-y-2 text-sm text-dark-muted">
+                          <li className="flex items-start gap-2">
+                            <span className="text-accent-success mt-1">•</span>
+                            <span><strong>CLI Tool</strong> - npx @chemmangat/msal-next init for instant setup</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-accent-success mt-1">•</span>
+                            <span><strong>Enhanced Debug Logger</strong> - Performance tracking, network logs, log export</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-accent-success mt-1">•</span>
+                            <span><strong>New Examples</strong> - Role-based routing and multi-tenant SaaS patterns</span>
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-sm font-semibold text-red-400 mb-2">⚠️ Breaking Changes</h4>
+                        <ul className="space-y-2 text-sm text-dark-muted">
+                          <li className="flex items-start gap-2">
+                            <span className="text-red-400 mt-1">•</span>
+                            <span>Requires Node.js 18+, Next.js 14.1+, MSAL v4+</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-red-400 mt-1">•</span>
+                            <span>Removed ServerSession.accessToken (use client-side acquireToken)</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* v2.0.0 */}
+                  <div className="border-l-4 border-dark-border pl-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-2xl font-bold text-dark-text">v2.0.0</h3>
+                      <span className="text-sm text-dark-muted">February 2024</span>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="text-sm font-semibold text-accent-success mb-2">✨ Added</h4>
+                        <ul className="space-y-2 text-sm text-dark-muted">
+                          <li className="flex items-start gap-2">
+                            <span className="text-accent-success mt-1">•</span>
+                            <span>7+ new components (AuthGuard, UserAvatar, SignOutButton, etc.)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-accent-success mt-1">•</span>
+                            <span>New hooks (useGraphApi, useUserProfile, useRoles)</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* v1.2.0 */}
+                  <div className="border-l-4 border-dark-border pl-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-2xl font-bold text-dark-text">v1.2.0</h3>
                       <span className="text-sm text-dark-muted">February 23, 2024</span>
                     </div>
                     

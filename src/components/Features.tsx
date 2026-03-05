@@ -6,16 +6,16 @@ import { Zap, Shield, Settings, Code2, Layers, Rocket } from 'lucide-react';
 export default function Features() {
   const features = [
     {
-      icon: Zap,
-      title: 'Zero Config',
-      description: 'Get started with just your client ID. Sensible defaults for everything else.',
-      color: 'from-yellow-500 to-orange-500',
+      icon: Rocket,
+      title: 'CLI Setup (NEW)',
+      description: 'Get started in under 2 minutes with npx @chemmangat/msal-next init. Auto-detects your project structure.',
+      color: 'from-red-500 to-pink-500',
     },
     {
-      icon: Settings,
-      title: 'Fully Configurable',
-      description: 'Override any setting when you need more control. From cache location to custom loggers.',
-      color: 'from-blue-500 to-cyan-500',
+      icon: Zap,
+      title: 'Enhanced Debugging (NEW)',
+      description: 'Performance tracking, network logs, and log export. Debug authentication issues 10x faster.',
+      color: 'from-yellow-500 to-orange-500',
     },
     {
       icon: Shield,
@@ -36,10 +36,10 @@ export default function Features() {
       color: 'from-indigo-500 to-blue-500',
     },
     {
-      icon: Rocket,
-      title: 'Developer Experience',
-      description: 'Simple hooks, clear errors, and comprehensive documentation.',
-      color: 'from-red-500 to-pink-500',
+      icon: Settings,
+      title: 'Fully Configurable',
+      description: 'Override any setting when you need more control. From cache location to custom loggers.',
+      color: 'from-blue-500 to-cyan-500',
     },
   ];
 
@@ -53,11 +53,11 @@ export default function Features() {
           className="text-center mb-16"
         >
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            <span className="text-dark-text">Powerful </span>
-            <span className="text-gradient">Features</span>
+            <span className="text-dark-text">What's New in </span>
+            <span className="text-gradient">v3.0.0</span>
           </h2>
           <p className="text-base text-dark-muted max-w-3xl mx-auto">
-            Everything you need for enterprise-grade authentication in a simple, elegant package.
+            New CLI tool, enhanced debugging, and better developer experience. Setup time reduced from 30+ minutes to under 2 minutes!
           </p>
         </motion.div>
 
