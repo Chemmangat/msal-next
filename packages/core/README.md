@@ -7,6 +7,8 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 
 > **v3.0.0 is here!** 🎉 New CLI tool, enhanced debugging, and better DX. [See what's new](#whats-new-in-v30)
 
+> **Having issues?** Check the [Troubleshooting Guide](./TROUBLESHOOTING.md) for common problems and solutions.
+
 ## Features
 
 ✨ **CLI Setup** - Get started in under 2 minutes with `npx @chemmangat/msal-next init`  
@@ -85,19 +87,24 @@ npm install @chemmangat/msal-next@3.0.0 @azure/msal-browser@^4.0.0 @azure/msal-r
 
 ## Quick Start
 
-### 1. Wrap your app with MsalAuthProvider
+> **Important:** Use `MSALProvider` (not `MsalAuthProvider`) in your layout.tsx to avoid the "createContext only works in Client Components" error.
+
+### 1. Wrap your app with MSALProvider
 
 ```tsx
 // app/layout.tsx
-import { MsalAuthProvider } from '@chemmangat/msal-next';
+import { MSALProvider } from '@chemmangat/msal-next';
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <MsalAuthProvider clientId="YOUR_CLIENT_ID">
+        <MSALProvider 
+          clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+          tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+        >
           {children}
-        </MsalAuthProvider>
+        </MSALProvider>
       </body>
     </html>
   );
@@ -127,19 +134,52 @@ That's it! 🎉
 
 ## Components
 
-### MsalAuthProvider
+### MSALProvider (Recommended for App Router)
 
-The root provider that initializes MSAL.
+Pre-configured wrapper component that's already marked as `'use client'`. Use this in your server-side layout.tsx.
 
 ```tsx
-<MsalAuthProvider
-  clientId="YOUR_CLIENT_ID"
-  tenantId="YOUR_TENANT_ID" // Optional
-  scopes={['User.Read', 'Mail.Read']} // Optional
-  enableLogging={true} // Optional
->
-  {children}
-</MsalAuthProvider>
+// app/layout.tsx (Server Component)
+import { MSALProvider } from '@chemmangat/msal-next';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <MSALProvider
+          clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+          tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+          scopes={['User.Read', 'Mail.Read']} // Optional
+          enableLogging={true} // Optional
+        >
+          {children}
+        </MSALProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### MsalAuthProvider (Advanced Usage)
+
+The underlying provider component. Only use this if you're creating your own client component wrapper.
+
+```tsx
+// app/providers.tsx
+'use client'
+
+import { MsalAuthProvider } from '@chemmangat/msal-next';
+
+export function MyProviders({ children }) {
+  return (
+    <MsalAuthProvider
+      clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+      tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+    >
+      {children}
+    </MsalAuthProvider>
+  );
+}
 ```
 
 ### MicrosoftSignInButton

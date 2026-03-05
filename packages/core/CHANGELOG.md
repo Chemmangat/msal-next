@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.3] - 2026-03-05
+
+### 🔄 Breaking Changes
+
+#### Component Rename
+- **`Providers` renamed to `MSALProvider`** - More descriptive and follows common naming conventions
+- All documentation and examples updated to use `MSALProvider`
+- If you were using `Providers` from v3.0.2, simply rename the import:
+  ```tsx
+  // Before (v3.0.2)
+  import { Providers } from '@chemmangat/msal-next';
+  
+  // After (v3.0.3+)
+  import { MSALProvider } from '@chemmangat/msal-next';
+  ```
+
+### 📝 Documentation
+
+#### Clarity Improvements
+- **Updated README** - Made it crystal clear to use `MSALProvider` instead of `MsalAuthProvider` in layout.tsx
+- **Added prominent warning** - Helps users avoid the "createContext only works in Client Components" error
+- **Reorganized Components section** - Clear distinction between `MSALProvider` (recommended) and `MsalAuthProvider` (advanced)
+- **Updated all examples** - All code examples now use environment variables and best practices
+
+### 💡 Usage Clarification
+
+**Use `MSALProvider` in your layout.tsx:**
+```tsx
+import { MSALProvider } from '@chemmangat/msal-next';
+// ✅ This works in server components
+```
+
+**Don't use `MsalAuthProvider` directly in layout.tsx:**
+```tsx
+import { MsalAuthProvider } from '@chemmangat/msal-next';
+// ❌ This will cause "createContext only works in Client Components" error
+```
+
 ## [3.0.2] - 2026-03-05
 
 ### 🐛 Bug Fixes
@@ -20,27 +58,27 @@ All notable changes to this project will be documented in this file.
 
 ### ✨ New Features
 
-#### Providers Component
-- **New `Providers` export** - Pre-configured client component wrapper for easier setup
-- Users can now import `Providers` directly in server-side layouts without creating a separate client component file
+#### MSALProvider Component
+- **New `MSALProvider` export** - Pre-configured client component wrapper for easier setup
+- Users can now import `MSALProvider` directly in server-side layouts without creating a separate client component file
 - Simplifies the setup process significantly
 
 ### 📝 Example Usage
 
 ```tsx
 // app/layout.tsx (Server Component)
-import { Providers } from '@chemmangat/msal-next'
+import { MSALProvider } from '@chemmangat/msal-next'
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <Providers
+        <MSALProvider
           clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
           tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
         >
           {children}
-        </Providers>
+        </MSALProvider>
       </body>
     </html>
   )
