@@ -22,35 +22,38 @@ export default function Hero() {
             className="space-y-8"
           >
             {/* Badge */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full text-sm text-dark-muted"
               >
                 <Sparkles className="w-4 h-4 text-accent-primary" />
-                <span className="text-sm text-dark-muted">v3.0.0 - Now with CLI Tool!</span>
+                <span>v3.0.0 - Now with CLI Tool</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-sm text-dark-muted"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full"
               >
-                335 weekly downloads
+                <svg className="w-4 h-4 text-accent-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                <span className="text-sm font-semibold text-accent-primary">600+ Installs</span>
               </motion.div>
             </div>
 
             {/* Main heading */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">
               <span className="text-dark-text">Setup in</span>
               <br />
               <span className="text-gradient">Under 2 Minutes</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-base md:text-lg text-dark-muted">
+            <p className="text-base md:text-lg text-dark-muted mb-8 leading-relaxed">
               Production-ready MSAL authentication for Next.js App Router.
               <br />
               New CLI tool, enhanced debugging, and better developer experience.

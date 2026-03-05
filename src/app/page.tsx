@@ -36,98 +36,88 @@ export default function Home() {
             className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 md:mb-20 w-full"
           >
             {/* Badge */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-elevated border border-dark-border rounded-full text-xs sm:text-sm text-dark-muted"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full text-sm text-dark-muted"
               >
-                <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse flex-shrink-0" />
-                <span className="truncate">v3.0.0 - New CLI Tool & Enhanced Debugging</span>
+                <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse" />
+                <span>v3.0.0 - New CLI Tool</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full"
               >
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-accent-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-accent-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                 </svg>
-                <span className="text-xs sm:text-sm font-semibold text-accent-primary">335 weekly downloads</span>
+                <span className="text-sm font-semibold text-accent-primary">600+ Installs</span>
               </motion.div>
             </div>
 
             {/* Main heading */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight px-2">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8">
               <span className="text-dark-text">MSAL for Next.js</span>
               <br />
               <span className="text-gradient">Made Simple</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-dark-muted max-w-2xl mx-auto px-4 sm:px-6">
+            <p className="text-lg md:text-xl text-dark-muted max-w-2xl mx-auto mb-12 leading-relaxed">
               Production-ready Microsoft authentication for Next.js App Router.
-              <br className="hidden sm:block" />
-              <span className="block sm:inline"> Three steps. Five minutes. Zero complexity.</span>
+              <br />
+              Setup in under 2 minutes. Zero complexity.
             </p>
-
-            {/* Weekly Downloads - Prominent */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center"
-            >
-              <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-primary/20 to-accent-secondary/20 border-2 border-accent-primary/40 rounded-xl">
-                <svg className="w-5 h-5 text-accent-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                </svg>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-3xl font-bold text-gradient">335</span>
-                  <span className="text-sm sm:text-base text-dark-text font-medium">weekly downloads</span>
-                </div>
-              </div>
-            </motion.div>
 
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 sm:pt-4 w-full max-w-md sm:max-w-none mx-auto"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
             >
               <a
                 href="/docs"
-                className="group px-6 py-3 sm:px-8 sm:py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 text-sm sm:text-base"
+                className="group px-8 py-4 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-xl font-semibold transition-all flex items-center space-x-2 shadow-lg shadow-accent-primary/20"
               >
-                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                <span>Documentation</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+                <BookOpen className="w-5 h-5" />
+                <span>Get Started</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="https://github.com/chemmangat/msal-next"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3 sm:px-8 sm:py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-lg font-semibold transition-all border border-dark-border flex items-center justify-center space-x-2 text-sm sm:text-base"
+                className="px-8 py-4 bg-dark-elevated hover:bg-dark-border text-dark-text rounded-xl font-semibold transition-all border border-dark-border flex items-center space-x-2"
               >
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
                 </svg>
-                <span>GitHub</span>
+                <span>View on GitHub</span>
               </a>
             </motion.div>
           </motion.div>
+
+          {/* Spacer */}
+          <div className="h-24"></div>
 
           {/* Flow Chart - Actual Setup Steps */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="w-full max-w-4xl mx-auto"
+            className="w-full max-w-3xl mx-auto"
           >
-            <div className="space-y-4 sm:space-y-6 w-full">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-dark-text mb-4">Three Simple Steps</h2>
+              <p className="text-dark-muted">Get authentication running in under 2 minutes</p>
+            </div>
+
+            <div className="space-y-8">
               {/* Step 1: Install */}
               <SetupStep
                 number={1}
