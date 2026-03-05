@@ -1,9 +1,8 @@
 'use client';
 
 import { useMsal, useAccount } from '@azure/msal-react';
-import { AccountInfo, InteractionStatus, PopupRequest, RedirectRequest, SilentRequest } from '@azure/msal-browser';
-import { useCallback, useMemo, useRef } from 'react';
-import { getPopupRedirectUri } from '../utils/createMsalConfig';
+import { AccountInfo, InteractionStatus, RedirectRequest, SilentRequest } from '@azure/msal-browser';
+import { useCallback, useMemo } from 'react';
 
 export interface UseMsalAuthReturn {
   /**
@@ -27,19 +26,9 @@ export interface UseMsalAuthReturn {
   inProgress: boolean;
 
   /**
-   * Login using popup
-   */
-  loginPopup: (scopes?: string[]) => Promise<void>;
-
-  /**
    * Login using redirect
    */
   loginRedirect: (scopes?: string[]) => Promise<void>;
-
-  /**
-   * Logout using popup
-   */
-  logoutPopup: () => Promise<void>;
 
   /**
    * Logout using redirect
@@ -47,7 +36,7 @@ export interface UseMsalAuthReturn {
   logoutRedirect: () => Promise<void>;
 
   /**
-   * Acquire access token silently (with fallback to popup)
+   * Acquire access token silently
    */
   acquireToken: (scopes: string[]) => Promise<string>;
 
@@ -55,11 +44,6 @@ export interface UseMsalAuthReturn {
    * Acquire access token silently only (no fallback)
    */
   acquireTokenSilent: (scopes: string[]) => Promise<string>;
-
-  /**
-   * Acquire access token using popup
-   */
-  acquireTokenPopup: (scopes: string[]) => Promise<string>;
 
   /**
    * Acquire access token using redirect
@@ -78,44 +62,8 @@ const pendingTokenRequests = new Map<string, Promise<string>>();
 export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAuthReturn {
   const { instance, accounts, inProgress } = useMsal();
   const account = useAccount(accounts[0] || null);
-  const popupInProgressRef = useRef(false);
 
   const isAuthenticated = useMemo(() => accounts.length > 0, [accounts]);
-
-  const loginPopup = useCallback(
-    async (scopes: string[] = defaultScopes) => {
-      // Prevent login if already in progress
-      if (inProgress !== InteractionStatus.None) {
-        console.warn('[MSAL] Interaction already in progress');
-        return;
-      }
-
-      try {
-        const popupRedirectUri = getPopupRedirectUri();
-        const request: PopupRequest = {
-          scopes,
-          prompt: 'select_account',
-          // Use popup-specific redirect URI (defaults to /blank.html)
-          redirectUri: popupRedirectUri,
-        };
-        const response = await instance.loginPopup(request);
-        
-        // Ensure active account is set
-        if (response?.account) {
-          instance.setActiveAccount(response.account);
-        }
-      } catch (error: any) {
-        // Handle user cancellation gracefully
-        if (error?.errorCode === 'user_cancelled') {
-          console.log('[MSAL] User cancelled login');
-          return;
-        }
-        console.error('[MSAL] Login popup failed:', error);
-        throw error;
-      }
-    },
-    [instance, defaultScopes, inProgress]
-  );
 
   const loginRedirect = useCallback(
     async (scopes: string[] = defaultScopes) => {
@@ -143,17 +91,6 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
     },
     [instance, defaultScopes, inProgress]
   );
-
-  const logoutPopup = useCallback(async () => {
-    try {
-      await instance.logoutPopup({
-        account: account || undefined,
-      });
-    } catch (error) {
-      console.error('[MSAL] Logout popup failed:', error);
-      throw error;
-    }
-  }, [instance, account]);
 
   const logoutRedirect = useCallback(async () => {
     try {
@@ -183,35 +120,6 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
       } catch (error) {
         console.error('[MSAL] Silent token acquisition failed:', error);
         throw error;
-      }
-    },
-    [instance, account, defaultScopes]
-  );
-
-  const acquireTokenPopup = useCallback(
-    async (scopes: string[] = defaultScopes): Promise<string> => {
-      if (!account) {
-        throw new Error('[MSAL] No active account. Please login first.');
-      }
-
-      // Prevent multiple concurrent popup requests
-      if (popupInProgressRef.current) {
-        throw new Error('[MSAL] Popup already in progress. Please wait.');
-      }
-
-      try {
-        popupInProgressRef.current = true;
-        const request: PopupRequest = {
-          scopes,
-          account,
-        };
-        const response = await instance.acquireTokenPopup(request);
-        return response.accessToken;
-      } catch (error) {
-        console.error('[MSAL] Token popup acquisition failed:', error);
-        throw error;
-      } finally {
-        popupInProgressRef.current = false;
       }
     },
     [instance, account, defaultScopes]
@@ -253,8 +161,9 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         try {
           return await acquireTokenSilent(scopes);
         } catch (error) {
-          console.warn('[MSAL] Silent token acquisition failed, falling back to popup');
-          return await acquireTokenPopup(scopes);
+          console.warn('[MSAL] Silent token acquisition failed, falling back to redirect');
+          await acquireTokenRedirect(scopes);
+          throw new Error('[MSAL] Redirecting for token acquisition');
         } finally {
           // Clean up pending request
           pendingTokenRequests.delete(requestKey);
@@ -266,7 +175,7 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
 
       return tokenRequest;
     },
-    [acquireTokenSilent, acquireTokenPopup, defaultScopes, account]
+    [acquireTokenSilent, acquireTokenRedirect, defaultScopes, account]
   );
 
   const clearSession = useCallback(async () => {
@@ -279,13 +188,10 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
     accounts,
     isAuthenticated,
     inProgress: inProgress !== InteractionStatus.None,
-    loginPopup,
     loginRedirect,
-    logoutPopup,
     logoutRedirect,
     acquireToken,
     acquireTokenSilent,
-    acquireTokenPopup,
     acquireTokenRedirect,
     clearSession,
   };

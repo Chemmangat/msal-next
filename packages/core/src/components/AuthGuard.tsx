@@ -20,12 +20,6 @@ export interface AuthGuardProps {
   fallbackComponent?: ReactNode;
 
   /**
-   * Use redirect flow instead of popup
-   * @default true
-   */
-  useRedirect?: boolean;
-
-  /**
    * Scopes to request during authentication
    */
   scopes?: string[];
@@ -50,11 +44,10 @@ export function AuthGuard({
   children,
   loadingComponent,
   fallbackComponent,
-  useRedirect = true,
   scopes,
   onAuthRequired,
 }: AuthGuardProps) {
-  const { isAuthenticated, inProgress, loginRedirect, loginPopup } = useMsalAuth();
+  const { isAuthenticated, inProgress, loginRedirect } = useMsalAuth();
 
   useEffect(() => {
     if (!isAuthenticated && !inProgress) {
@@ -62,11 +55,7 @@ export function AuthGuard({
       
       const login = async () => {
         try {
-          if (useRedirect) {
-            await loginRedirect(scopes);
-          } else {
-            await loginPopup(scopes);
-          }
+          await loginRedirect(scopes);
         } catch (error) {
           console.error('[AuthGuard] Authentication failed:', error);
         }
@@ -74,7 +63,7 @@ export function AuthGuard({
 
       login();
     }
-  }, [isAuthenticated, inProgress, useRedirect, scopes, loginRedirect, loginPopup, onAuthRequired]);
+  }, [isAuthenticated, inProgress, scopes, loginRedirect, onAuthRequired]);
 
   if (inProgress) {
     return <>{loadingComponent || <div>Authenticating...</div>}</>;

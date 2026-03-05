@@ -23,12 +23,6 @@ export interface SignOutButtonProps {
   size?: 'small' | 'medium' | 'large';
   
   /**
-   * Use redirect flow instead of popup
-   * @default false
-   */
-  useRedirect?: boolean;
-  
-  /**
    * Custom className
    */
   className?: string;
@@ -51,6 +45,7 @@ export interface SignOutButtonProps {
 
 /**
  * SignOutButton component with Microsoft branding
+ * Uses redirect flow (full page redirect)
  * 
  * @example
  * ```tsx
@@ -61,21 +56,16 @@ export function SignOutButton({
   text = 'Sign out',
   variant = 'dark',
   size = 'medium',
-  useRedirect = false,
   className = '',
   style,
   onSuccess,
   onError,
 }: SignOutButtonProps) {
-  const { logoutPopup, logoutRedirect, inProgress } = useMsalAuth();
+  const { logoutRedirect, inProgress } = useMsalAuth();
 
   const handleClick = async () => {
     try {
-      if (useRedirect) {
-        await logoutRedirect();
-      } else {
-        await logoutPopup();
-      }
+      await logoutRedirect();
       onSuccess?.();
     } catch (error) {
       onError?.(error as Error);

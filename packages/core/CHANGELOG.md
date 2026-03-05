@@ -2,57 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.1.5] - 2026-03-05
+## [3.1.6] - 2026-03-05
 
-### 🔄 Breaking Change - Redirect Flow by Default
+### 🔄 Breaking Change - Redirect-Only Flow
 
-**MicrosoftSignInButton now uses redirect flow by default** instead of popup flow.
+**Removed all popup authentication support** - Package now only supports redirect flow for cleaner, simpler authentication.
 
 **Why this change?**
-- Popup flow requires additional setup (blank.html page)
-- Popup flow causes the full app to load in popup window
-- Redirect flow is simpler and works out of the box
-- Most users prefer redirect flow for better UX
+- Popup flow had persistent issues (full app loading in popup, logout popups, etc.)
+- Redirect flow is simpler, more reliable, and works out of the box
+- No need for blank.html or special Azure AD configuration
+- Better user experience with full-page redirects
+
+**What was removed:**
+- `loginPopup()` method
+- `logoutPopup()` method  
+- `acquireTokenPopup()` method
+- `useRedirect` prop from MicrosoftSignInButton
+- `useRedirect` prop from SignOutButton
+- `popupRedirectUri` configuration option
+- `getPopupRedirectUri()` utility
+- All popup-related code and configuration
 
 **Migration:**
 
-If you were using the default popup behavior:
 ```tsx
-// Before (v3.1.4 and earlier) - used popup by default
-<MicrosoftSignInButton />
+// Before (v3.1.4 and earlier)
+const { loginPopup, logoutPopup } = useMsalAuth();
+await loginPopup();
+await logoutPopup();
 
-// After (v3.1.5) - uses redirect by default
-<MicrosoftSignInButton />  // Now redirects full page
-
-// To keep popup behavior:
 <MicrosoftSignInButton useRedirect={false} />
-```
+<SignOutButton useRedirect={false} />
 
-**New Default Behavior:**
-- Button redirects the entire browser window to Microsoft login
-- After authentication, redirects back to your app
-- No popup windows, no blank.html needed
-- Works with your existing Azure AD redirect URI
+// After (v3.1.5) - redirect only
+const { loginRedirect, logoutRedirect } = useMsalAuth();
+await loginRedirect();
+await logoutRedirect();
 
-### ✨ Optional Popup Support
-
-**Added optional `popupRedirectUri` prop** - Only use if you prefer popup flow.
-
-**For Popup Flow (Optional):**
-1. Create `public/blank.html`
-2. Add `/blank.html` to Azure AD redirect URIs
-3. Use:
-```tsx
-<MSALProvider popupRedirectUri="/blank.html">
-  <MicrosoftSignInButton useRedirect={false} />
-</MSALProvider>
+<MicrosoftSignInButton />
+<SignOutButton />
 ```
 
 **Benefits:**
-- Simpler default experience (no setup required)
-- Redirect flow works out of the box
-- Popup flow still available for those who need it
-- Backward compatible (just set `useRedirect={false}`)
+- Simpler API - no popup vs redirect decisions
+- No popup-related bugs or issues
+- Works perfectly out of the box
+- Cleaner codebase and smaller bundle size
+- Better user experience
 
 ## [3.1.4] - 2026-03-05
 
