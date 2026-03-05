@@ -1,7 +1,7 @@
 'use client';
 
 import { useMsalAuth } from '../hooks/useMsalAuth';
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 
 export interface MicrosoftSignInButtonProps {
   /**
@@ -66,8 +66,10 @@ export function MicrosoftSignInButton({
   onError,
 }: MicrosoftSignInButtonProps) {
   const { loginPopup, loginRedirect, inProgress } = useMsalAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
+    setIsLoading(true);
     try {
       if (useRedirect) {
         await loginRedirect(scopes);
@@ -77,6 +79,9 @@ export function MicrosoftSignInButton({
       onSuccess?.();
     } catch (error) {
       onError?.(error as Error);
+    } finally {
+      // Reset loading state after a short delay to ensure MSAL state updates
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
 
@@ -111,6 +116,8 @@ export function MicrosoftSignInButton({
     },
   };
 
+  const isDisabled = inProgress || isLoading;
+
   const baseStyles: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -119,9 +126,9 @@ export function MicrosoftSignInButton({
     fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
     fontWeight: 600,
     borderRadius: '2px',
-    cursor: inProgress ? 'not-allowed' : 'pointer',
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
     transition: 'all 0.2s ease',
-    opacity: inProgress ? 0.6 : 1,
+    opacity: isDisabled ? 0.6 : 1,
     ...variantStyles[variant],
     ...sizeStyles[size],
     ...style,
@@ -130,7 +137,7 @@ export function MicrosoftSignInButton({
   return (
     <button
       onClick={handleClick}
-      disabled={inProgress}
+      disabled={isDisabled}
       className={className}
       style={baseStyles}
       aria-label={text}
