@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.2] - 2026-03-05
+
+### 🐛 Bug Fixes
+
+#### Critical Edge Case Handling
+- **Fixed `no_token_request_cache_error`** - Properly handle redirect promise errors when no cached token request exists (e.g., page refresh during auth flow)
+- **Fixed BOM character issue** - Removed UTF-8 BOM from package.json that was causing build failures
+- **Enhanced error handling** - Gracefully handle user cancellation and other MSAL errors without breaking the app
+- **Active account management** - Automatically set and maintain active account across login, logout, and token acquisition flows
+- **Prevent concurrent interactions** - Added guards to prevent multiple simultaneous login attempts
+
+#### Improvements
+- Added comprehensive event callbacks for all MSAL events (LOGIN_SUCCESS, ACQUIRE_TOKEN_SUCCESS, etc.)
+- Better logging for debugging authentication flows
+- Improved error messages with specific error code handling
+
+### ✨ New Features
+
+#### Providers Component
+- **New `Providers` export** - Pre-configured client component wrapper for easier setup
+- Users can now import `Providers` directly in server-side layouts without creating a separate client component file
+- Simplifies the setup process significantly
+
+### 📝 Example Usage
+
+```tsx
+// app/layout.tsx (Server Component)
+import { Providers } from '@chemmangat/msal-next'
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <Providers
+          clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+          tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+        >
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+## [3.0.1] - 2026-03-05
+
+### 🐛 Bug Fixes
+- Fixed UTF-8 BOM character in package.json causing parse errors
+
 ## [3.0.0] - 2026-04-XX (Planned)
 
 ### 🎉 Major Release - Enhanced Developer Experience

@@ -83,34 +83,61 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
 
   const loginPopup = useCallback(
     async (scopes: string[] = defaultScopes) => {
+      // Prevent login if already in progress
+      if (inProgress !== InteractionStatus.None) {
+        console.warn('[MSAL] Interaction already in progress');
+        return;
+      }
+
       try {
         const request: PopupRequest = {
           scopes,
           prompt: 'select_account',
         };
-        await instance.loginPopup(request);
-      } catch (error) {
+        const response = await instance.loginPopup(request);
+        
+        // Ensure active account is set
+        if (response?.account) {
+          instance.setActiveAccount(response.account);
+        }
+      } catch (error: any) {
+        // Handle user cancellation gracefully
+        if (error?.errorCode === 'user_cancelled') {
+          console.log('[MSAL] User cancelled login');
+          return;
+        }
         console.error('[MSAL] Login popup failed:', error);
         throw error;
       }
     },
-    [instance, defaultScopes]
+    [instance, defaultScopes, inProgress]
   );
 
   const loginRedirect = useCallback(
     async (scopes: string[] = defaultScopes) => {
+      // Prevent login if already in progress
+      if (inProgress !== InteractionStatus.None) {
+        console.warn('[MSAL] Interaction already in progress');
+        return;
+      }
+
       try {
         const request: RedirectRequest = {
           scopes,
           prompt: 'select_account',
         };
         await instance.loginRedirect(request);
-      } catch (error) {
+      } catch (error: any) {
+        // Handle user cancellation gracefully
+        if (error?.errorCode === 'user_cancelled') {
+          console.log('[MSAL] User cancelled login');
+          return;
+        }
         console.error('[MSAL] Login redirect failed:', error);
         throw error;
       }
     },
-    [instance, defaultScopes]
+    [instance, defaultScopes, inProgress]
   );
 
   const logoutPopup = useCallback(async () => {

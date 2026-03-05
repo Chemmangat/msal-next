@@ -12,6 +12,7 @@ export { UserAvatar } from './components/UserAvatar';
 export { AuthStatus } from './components/AuthStatus';
 export { AuthGuard } from './components/AuthGuard';
 export { ErrorBoundary } from './components/ErrorBoundary';
+export { Providers } from './components/Providers';
 
 // ============================================================================
 // Hooks
