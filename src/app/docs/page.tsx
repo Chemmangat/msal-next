@@ -159,23 +159,23 @@ export default function DocsPage() {
                     <h3 className="text-xl font-semibold text-dark-text mb-3">3. Wrap Your App</h3>
                     <CodeBlock
                       title="app/layout.tsx"
-                      code={`import { MsalAuthProvider } from '@chemmangat/msal-next';
+                      code={`import { MSALProvider } from '@chemmangat/msal-next';
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <MsalAuthProvider
+        <MSALProvider
           clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
           tenantId={process.env.NEXT_PUBLIC_TENANT_ID}
         >
           {children}
-        </MsalAuthProvider>
+        </MSALProvider>
       </body>
     </html>
   );
 }`}
-                      onCopy={() => copyToClipboard(`import { MsalAuthProvider } from '@chemmangat/msal-next';\n\nexport default function RootLayout({ children }) {\n  return (\n    <html>\n      <body>\n        <MsalAuthProvider\n          clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}\n          tenantId={process.env.NEXT_PUBLIC_TENANT_ID}\n        >\n          {children}\n        </MsalAuthProvider>\n      </body>\n    </html>\n  );\n}`, 2)}
+                      onCopy={() => copyToClipboard(`import { MSALProvider } from '@chemmangat/msal-next';\n\nexport default function RootLayout({ children }) {\n  return (\n    <html>\n      <body>\n        <MSALProvider\n          clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}\n          tenantId={process.env.NEXT_PUBLIC_TENANT_ID}\n        >\n          {children}\n        </MSALProvider>\n      </body>\n    </html>\n  );\n}`, 2)}
                       copied={copiedIndex === 2}
                     />
                   </div>
@@ -250,12 +250,12 @@ export default function Home() {
                   <h3 className="text-lg font-semibold text-dark-text mb-3">Example with onInitialized</h3>
                   <CodeBlock
                     title="app/layout.tsx"
-                    code={`import { MsalAuthProvider } from '@chemmangat/msal-next';
+                    code={`import { MSALProvider } from '@chemmangat/msal-next';
 import { setupAxiosInterceptors } from '@/lib/axios';
 
 export default function RootLayout({ children }) {
   return (
-    <MsalAuthProvider
+    <MSALProvider
       clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
       onInitialized={(instance) => {
         // Set up Axios interceptors with MSAL instance
@@ -263,10 +263,10 @@ export default function RootLayout({ children }) {
       }}
     >
       {children}
-    </MsalAuthProvider>
+    </MSALProvider>
   );
 }`}
-                    onCopy={() => copyToClipboard(`import { MsalAuthProvider } from '@chemmangat/msal-next';\nimport { setupAxiosInterceptors } from '@/lib/axios';\n\nexport default function RootLayout({ children }) {\n  return (\n    <MsalAuthProvider\n      clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}\n      onInitialized={(instance) => {\n        setupAxiosInterceptors(instance);\n      }}\n    >\n      {children}\n    </MsalAuthProvider>\n  );\n}`, 4)}
+                    onCopy={() => copyToClipboard(`import { MSALProvider } from '@chemmangat/msal-next';\nimport { setupAxiosInterceptors } from '@/lib/axios';\n\nexport default function RootLayout({ children }) {\n  return (\n    <MSALProvider\n      clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}\n      onInitialized={(instance) => {\n        setupAxiosInterceptors(instance);\n      }}\n    >\n      {children}\n    </MSALProvider>\n  );\n}`, 4)}
                     copied={copiedIndex === 4}
                   />
                 </div>

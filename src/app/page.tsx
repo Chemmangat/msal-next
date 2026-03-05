@@ -152,15 +152,15 @@ export default function Home() {
                 delay={0.8}
               >
                 <CodeDisplay
-                  code={`import { MsalAuthProvider } from '@chemmangat/msal-next';
+                  code={`import { MSALProvider } from '@chemmangat/msal-next';
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <MsalAuthProvider clientId="your-client-id">
+        <MSALProvider clientId="your-client-id">
           {children}
-        </MsalAuthProvider>
+        </MSALProvider>
       </body>
     </html>
   );

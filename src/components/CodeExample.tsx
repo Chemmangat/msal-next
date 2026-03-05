@@ -10,20 +10,20 @@ export default function CodeExample() {
   const examples = [
     {
       title: 'Setup Provider',
-      description: 'Wrap your app with MsalAuthProvider',
+      description: 'Wrap your app with MSALProvider',
       code: `// app/layout.tsx
-import { MsalAuthProvider } from '@chemmangat/msal-next';
+import { MSALProvider } from '@chemmangat/msal-next';
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <MsalAuthProvider
+        <MSALProvider
           clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
           scopes={['User.Read']}
         >
           {children}
-        </MsalAuthProvider>
+        </MSALProvider>
       </body>
     </html>
   );
