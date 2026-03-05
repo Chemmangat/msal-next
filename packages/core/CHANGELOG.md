@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.5] - 2026-03-05
+
+### 🐛 Critical Bug Fix
+
+#### 'use client' Directive Fix
+- **Added 'use client' directive to compiled output** - The dist/index.js and dist/index.mjs files now have "use client" at the top
+- **Fixed tsup configuration** - Split build config into separate entries for client and server to properly apply directives
+- **Server files remain server-side** - dist/server.js and dist/server.mjs correctly do NOT have "use client"
+- **Package now works in Next.js App Router** - No more "createContext only works in Client Components" errors
+
+### Verification
+```bash
+# Client files (with 'use client')
+head -n 1 dist/index.js   # "use client";
+head -n 1 dist/index.mjs  # "use client";
+
+# Server files (without 'use client')
+head -n 1 dist/server.js  # "use strict";
+head -n 1 dist/server.mjs # // src/utils/getServerSession.ts
+```
+
 ## [3.0.4] - 2026-03-05
 
 ### 🐛 Critical Bug Fix
