@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Production-grade MSAL authentication package for Next.js App Router with minimal boilerplate",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -20,7 +20,8 @@
   "files": [
     "dist",
     "README.md",
-    "SECURITY.md"
+    "SECURITY.md",
+    "TROUBLESHOOTING.md"
   ],
   "scripts": {
     "build": "tsup",
