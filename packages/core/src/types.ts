@@ -43,8 +43,9 @@ export interface MsalAuthConfig {
   redirectUri?: string;
 
   /**
-   * Redirect URI for popup authentication (recommended: /blank.html)
-   * If not specified, uses redirectUri
+   * Redirect URI for popup authentication (optional)
+   * If not specified, uses the same redirectUri as redirect flow
+   * Only set this if you want a different URI for popup (e.g., /blank.html)
    * @default redirectUri
    */
   popupRedirectUri?: string;

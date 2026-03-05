@@ -91,23 +91,7 @@ npm install @chemmangat/msal-next@latest @azure/msal-browser@^4.0.0 @azure/msal-
 
 > **Important:** Use `MSALProvider` (not `MsalAuthProvider`) in your layout.tsx to avoid the "createContext only works in Client Components" error.
 
-### 1. Create blank.html for popup authentication
-
-Create `public/blank.html`:
-
-```html
-<!DOCTYPE html>
-<html>
-<head><title>Auth</title></head>
-<body></body>
-</html>
-```
-
-Add to Azure AD redirect URIs:
-- `http://localhost:3000/blank.html`
-- `https://yourdomain.com/blank.html`
-
-### 2. Wrap your app with MSALProvider
+### 1. Wrap your app with MSALProvider
 
 ```tsx
 // app/layout.tsx
@@ -120,9 +104,6 @@ export default function RootLayout({ children }) {
         <MSALProvider 
           clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
           tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
-          // Optional: specify custom redirect URIs
-          // redirectUri="/auth/callback"  // For redirect flow
-          // popupRedirectUri="/blank.html"  // For popup flow (default)
         >
           {children}
         </MSALProvider>
@@ -132,7 +113,7 @@ export default function RootLayout({ children }) {
 }
 ```
 
-### 3. Add sign-in button
+### 2. Add sign-in button
 
 ```tsx
 // app/page.tsx
@@ -152,6 +133,60 @@ export default function Home() {
 ```
 
 That's it! 🎉
+
+The button uses redirect flow by default (full page redirect to Microsoft login, then back to your app). No popups, no blank.html needed.
+
+## Optional: Fix Popup Window Issue
+
+**Important:** When using popup authentication, the popup window MUST navigate to your redirect URI to complete the OAuth flow. This is how OAuth works and cannot be avoided.
+
+By default, this means your full Next.js app will briefly load in the popup before it closes. The package detects this and renders minimal content, but you may still see a flash of your app.
+
+### Solution: Use a Blank Page (Recommended for Popup Flow)
+
+For the cleanest popup experience, create a blank HTML page:
+
+### 1. Create blank.html
+
+Create `public/blank.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head><title>Auth</title></head>
+<body></body>
+</html>
+```
+
+### 2. Add to Azure AD
+
+Add to Azure AD redirect URIs:
+- `http://localhost:3000/blank.html`
+- `https://yourdomain.com/blank.html`
+
+### 3. Configure MSALProvider
+
+```tsx
+<MSALProvider 
+  clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+  tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+  popupRedirectUri="/blank.html"  // Add this line
+>
+  {children}
+</MSALProvider>
+```
+
+This ensures the popup shows only a blank page and closes immediately.
+
+### Alternative: Use Redirect Flow
+
+If you don't want to set up blank.html, use redirect flow instead:
+
+```tsx
+<MicrosoftSignInButton useRedirect={true} />
+```
+
+Redirect flow navigates the entire browser window (no popup), so there's no "app in popup" issue.
 
 ## Components
 
@@ -205,15 +240,18 @@ export function MyProviders({ children }) {
 
 ### MicrosoftSignInButton
 
-Pre-styled sign-in button with Microsoft branding.
+Pre-styled sign-in button with Microsoft branding. Uses redirect flow by default (no popups).
 
 ```tsx
 <MicrosoftSignInButton
   variant="dark" // or "light"
   size="medium" // "small", "medium", "large"
-  useRedirect={false} // Use popup by default
+  useRedirect={true} // Default: true (full page redirect)
   onSuccess={() => console.log('Signed in!')}
 />
+
+// If you prefer popup (requires blank.html setup):
+<MicrosoftSignInButton useRedirect={false} />
 ```
 
 ### SignOutButton

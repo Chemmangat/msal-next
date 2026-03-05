@@ -4,29 +4,55 @@ All notable changes to this project will be documented in this file.
 
 ## [3.1.5] - 2026-03-05
 
-### ✨ New Feature - Separate Popup Redirect URI
+### 🔄 Breaking Change - Redirect Flow by Default
 
-**Added `popupRedirectUri` prop** - Now you can have different redirect URIs for popup vs redirect flows!
+**MicrosoftSignInButton now uses redirect flow by default** instead of popup flow.
 
-**Changes:**
-- Added `popupRedirectUri` prop to MSALProvider (defaults to `/blank.html`)
-- `redirectUri` prop is now used only for redirect flow
-- Popup authentication automatically uses `popupRedirectUri`
-- Exported `getPopupRedirectUri()` utility function
+**Why this change?**
+- Popup flow requires additional setup (blank.html page)
+- Popup flow causes the full app to load in popup window
+- Redirect flow is simpler and works out of the box
+- Most users prefer redirect flow for better UX
 
-**Usage:**
+**Migration:**
+
+If you were using the default popup behavior:
 ```tsx
-<MSALProvider
-  clientId="..."
-  redirectUri="/auth/callback"      // For redirect flow
-  popupRedirectUri="/blank.html"    // For popup flow (default)
->
+// Before (v3.1.4 and earlier) - used popup by default
+<MicrosoftSignInButton />
+
+// After (v3.1.5) - uses redirect by default
+<MicrosoftSignInButton />  // Now redirects full page
+
+// To keep popup behavior:
+<MicrosoftSignInButton useRedirect={false} />
+```
+
+**New Default Behavior:**
+- Button redirects the entire browser window to Microsoft login
+- After authentication, redirects back to your app
+- No popup windows, no blank.html needed
+- Works with your existing Azure AD redirect URI
+
+### ✨ Optional Popup Support
+
+**Added optional `popupRedirectUri` prop** - Only use if you prefer popup flow.
+
+**For Popup Flow (Optional):**
+1. Create `public/blank.html`
+2. Add `/blank.html` to Azure AD redirect URIs
+3. Use:
+```tsx
+<MSALProvider popupRedirectUri="/blank.html">
+  <MicrosoftSignInButton useRedirect={false} />
+</MSALProvider>
 ```
 
 **Benefits:**
-- Use your custom redirect URI for redirect flow
-- Popup always uses blank.html (no full app loading in popup)
-- More flexible configuration
+- Simpler default experience (no setup required)
+- Redirect flow works out of the box
+- Popup flow still available for those who need it
+- Backward compatible (just set `useRedirect={false}`)
 
 ## [3.1.4] - 2026-03-05
 

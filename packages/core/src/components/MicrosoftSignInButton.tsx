@@ -24,7 +24,7 @@ export interface MicrosoftSignInButtonProps {
   
   /**
    * Use redirect flow instead of popup
-   * @default false
+   * @default true
    */
   useRedirect?: boolean;
   
@@ -58,7 +58,7 @@ export function MicrosoftSignInButton({
   text = 'Sign in with Microsoft',
   variant = 'dark',
   size = 'medium',
-  useRedirect = false,
+  useRedirect = true,
   scopes,
   className = '',
   style,

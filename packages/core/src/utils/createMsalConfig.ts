@@ -49,9 +49,8 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
   const defaultRedirectUri = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
   const finalRedirectUri = redirectUri || defaultRedirectUri;
   
-  // Popup redirect URI - defaults to /blank.html if not specified
-  const defaultPopupRedirectUri = typeof window !== 'undefined' ? `${window.location.origin}/blank.html` : 'http://localhost:3000/blank.html';
-  const finalPopupRedirectUri = popupRedirectUri || defaultPopupRedirectUri;
+  // Popup redirect URI - only use if explicitly provided, otherwise use redirectUri
+  const finalPopupRedirectUri = popupRedirectUri || finalRedirectUri;
   
   // Store for use in hooks
   storedPopupRedirectUri = finalPopupRedirectUri;

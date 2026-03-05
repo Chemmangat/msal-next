@@ -21,16 +21,16 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
   const [msalInstance, setMsalInstance] = useState<PublicClientApplication | null>(null);
   const instanceRef = useRef<PublicClientApplication | null>(null);
 
+  // Early popup detection - before any rendering
+  const isInPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+
   useEffect(() => {
     // SSR safety guard
     if (typeof window === 'undefined') {
       return;
     }
 
-    // Check if we're in a popup window BEFORE initializing
-    const isInPopup = window.opener && window.opener !== window;
-    
-    // If we're in a popup, don't render the full provider
+    // If we're in a popup, don't initialize the full provider
     // MSAL will handle the popup internally
     if (isInPopup) {
       if (config.enableLogging) {
@@ -169,9 +169,8 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
   }
 
   // If we're in a popup window, render nothing (MSAL handles it)
-  const isInPopup = window.opener && window.opener !== window;
   if (isInPopup) {
-    return null;
+    return <div style={{ display: 'none' }}>Completing authentication...</div>;
   }
 
   if (!msalInstance) {

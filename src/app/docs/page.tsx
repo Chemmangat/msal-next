@@ -364,8 +364,8 @@ const fetchUserProfile = async () => {
                     <PropDoc name="text" type="string" defaultValue="'Sign in with Microsoft'">
                       Button text
                     </PropDoc>
-                    <PropDoc name="useRedirect" type="boolean" defaultValue="false">
-                      Use redirect flow instead of popup
+                    <PropDoc name="useRedirect" type="boolean" defaultValue="true">
+                      Use redirect flow instead of popup (default: true)
                     </PropDoc>
                     <PropDoc name="scopes" type="string[]">
                       Scopes to request (uses provider scopes if not specified)
