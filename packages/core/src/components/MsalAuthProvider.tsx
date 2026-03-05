@@ -39,18 +39,53 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
         
         await instance.initialize();
 
-        // Handle redirect promise
-        const response = await instance.handleRedirectPromise();
-        if (response && config.enableLogging) {
-          console.log('[MSAL] Redirect authentication successful');
+        // Handle redirect promise with proper error handling
+        try {
+          const response = await instance.handleRedirectPromise();
+          if (response) {
+            if (config.enableLogging) {
+              console.log('[MSAL] Redirect authentication successful');
+            }
+            // Set the active account after successful redirect
+            if (response.account) {
+              instance.setActiveAccount(response.account);
+            }
+          }
+        } catch (redirectError: any) {
+          // Handle specific MSAL errors gracefully
+          if (redirectError?.errorCode === 'no_token_request_cache_error') {
+            // This error occurs when there's no cached token request (e.g., page refresh during auth)
+            // It's safe to ignore as it just means there's no pending redirect
+            if (config.enableLogging) {
+              console.log('[MSAL] No pending redirect found (this is normal)');
+            }
+          } else if (redirectError?.errorCode === 'user_cancelled') {
+            // User cancelled the authentication flow
+            if (config.enableLogging) {
+              console.log('[MSAL] User cancelled authentication');
+            }
+          } else {
+            // Log other errors but don't throw - allow app to continue
+            console.error('[MSAL] Redirect handling error:', redirectError);
+          }
+        }
+
+        // Set active account if there's an existing account in cache
+        const accounts = instance.getAllAccounts();
+        if (accounts.length > 0 && !instance.getActiveAccount()) {
+          instance.setActiveAccount(accounts[0]);
         }
 
         // Set up event callbacks
         const enableLogging = config.enableLogging || false;
         instance.addEventCallback((event: EventMessage) => {
           if (event.eventType === EventType.LOGIN_SUCCESS) {
+            const payload = event.payload as AuthenticationResult;
+            // Set active account on successful login
+            if (payload?.account) {
+              instance.setActiveAccount(payload.account);
+            }
             if (enableLogging) {
-              const payload = event.payload as AuthenticationResult;
               console.log('[MSAL] Login successful:', payload.account?.username);
             }
           }
@@ -61,8 +96,24 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
           }
 
           if (event.eventType === EventType.LOGOUT_SUCCESS) {
+            // Clear active account on logout
+            instance.setActiveAccount(null);
             if (enableLogging) {
               console.log('[MSAL] Logout successful');
+            }
+          }
+
+          if (event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
+            const payload = event.payload as AuthenticationResult;
+            // Ensure active account is set
+            if (payload?.account && !instance.getActiveAccount()) {
+              instance.setActiveAccount(payload.account);
+            }
+          }
+
+          if (event.eventType === EventType.ACQUIRE_TOKEN_FAILURE) {
+            if (enableLogging) {
+              console.error('[MSAL] Token acquisition failed:', event.error);
             }
           }
         });
