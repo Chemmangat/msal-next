@@ -404,7 +404,7 @@ const fetchUserProfile = async () => {
                 </p>
                 
                 <CodeBlock
-                  language="bash"
+                  title="CLI Setup"
                   code={`# One command setup
 npx @chemmangat/msal-next init
 
@@ -436,7 +436,7 @@ npx @chemmangat/msal-next init
                 </p>
                 
                 <CodeBlock
-                  language="typescript"
+                  title="Enhanced Debug Logger"
                   code={`import { getDebugLogger } from '@chemmangat/msal-next';
 
 const logger = getDebugLogger({
