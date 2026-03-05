@@ -21,21 +21,9 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
   const [msalInstance, setMsalInstance] = useState<PublicClientApplication | null>(null);
   const instanceRef = useRef<PublicClientApplication | null>(null);
 
-  // Early popup detection - before any rendering
-  const isInPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-
   useEffect(() => {
     // SSR safety guard
     if (typeof window === 'undefined') {
-      return;
-    }
-
-    // If we're in a popup, don't initialize the full provider
-    // MSAL will handle the popup internally
-    if (isInPopup) {
-      if (config.enableLogging) {
-        console.log('[MSAL] Detected popup window - minimal initialization');
-      }
       return;
     }
 
@@ -51,16 +39,13 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
         
         await instance.initialize();
 
-        // Check if we're in a popup window
-        const isInPopup = window.opener && window.opener !== window;
-        
-        // Always handle redirect promise, but handle differently for popup vs main window
+        // Handle redirect promise
         try {
           const response = await instance.handleRedirectPromise();
           
           if (response) {
             if (config.enableLogging) {
-              console.log('[MSAL] Redirect authentication successful', isInPopup ? '(popup)' : '(main)');
+              console.log('[MSAL] Redirect authentication successful');
             }
             
             // Set the active account after successful redirect
@@ -68,8 +53,8 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
               instance.setActiveAccount(response.account);
             }
             
-            // Only clean URL in main window, not in popup (popup will close automatically)
-            if (!isInPopup && window.location.hash) {
+            // Clean URL hash
+            if (window.location.hash) {
               // Remove hash without triggering a page reload
               window.history.replaceState(null, '', window.location.pathname + window.location.search);
             }
@@ -92,8 +77,8 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
             console.error('[MSAL] Redirect handling error:', redirectError);
           }
           
-          // Clean up URL even on error if there's a hash (only in main window)
-          if (!isInPopup && window.location.hash && (window.location.hash.includes('code=') || window.location.hash.includes('error='))) {
+          // Clean up URL even on error if there's a hash
+          if (window.location.hash && (window.location.hash.includes('code=') || window.location.hash.includes('error='))) {
             window.history.replaceState(null, '', window.location.pathname + window.location.search);
           }
         }
@@ -166,11 +151,6 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
   // SSR safety guard - render children or loading component on server
   if (typeof window === 'undefined') {
     return <>{loadingComponent || <div>Loading authentication...</div>}</>;
-  }
-
-  // If we're in a popup window, render nothing (MSAL handles it)
-  if (isInPopup) {
-    return <div style={{ display: 'none' }}>Completing authentication...</div>;
   }
 
   if (!msalInstance) {

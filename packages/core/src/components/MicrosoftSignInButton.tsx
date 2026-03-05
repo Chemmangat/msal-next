@@ -23,12 +23,6 @@ export interface MicrosoftSignInButtonProps {
   size?: 'small' | 'medium' | 'large';
   
   /**
-   * Use redirect flow instead of popup
-   * @default true
-   */
-  useRedirect?: boolean;
-  
-  /**
    * Scopes to request
    */
   scopes?: string[];
@@ -58,24 +52,19 @@ export function MicrosoftSignInButton({
   text = 'Sign in with Microsoft',
   variant = 'dark',
   size = 'medium',
-  useRedirect = true,
   scopes,
   className = '',
   style,
   onSuccess,
   onError,
 }: MicrosoftSignInButtonProps) {
-  const { loginPopup, loginRedirect, inProgress } = useMsalAuth();
+  const { loginRedirect, inProgress } = useMsalAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
     setIsLoading(true);
     try {
-      if (useRedirect) {
-        await loginRedirect(scopes);
-      } else {
-        await loginPopup(scopes);
-      }
+      await loginRedirect(scopes);
       onSuccess?.();
     } catch (error) {
       onError?.(error as Error);
