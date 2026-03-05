@@ -5,11 +5,11 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **📦 Current Version: 3.0.8** - Critical bug fixes for popup authentication. [See changelog](./CHANGELOG.md)
+> **📦 Current Version: 3.1.2** - Critical bug fixes for popup authentication. [See changelog](./CHANGELOG.md)
 
 > **⚠️ Important:** If you're on v3.0.6 or v3.0.7, please update immediately - those versions have a critical popup authentication bug.
 
-> **Having issues?** Check the [Troubleshooting Guide](./TROUBLESHOOTING.md) for common problems and solutions.
+> **💡 Having issues?** Check the [Troubleshooting Guide](./TROUBLESHOOTING.md) for common problems and solutions.
 
 ## Features
 
