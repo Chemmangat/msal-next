@@ -12,6 +12,7 @@
     "publish:package": "cd packages/core && npm publish"
   },
   "dependencies": {
+    "@chemmangat/msal-next": "file:./packages/core",
     "@azure/msal-browser": "^4.29.0",
     "@azure/msal-react": "^3.0.27",
     "framer-motion": "^11.0.0",

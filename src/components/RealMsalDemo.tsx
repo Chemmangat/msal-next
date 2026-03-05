@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, X } from 'lucide-react';
-import { MsalAuthProvider, useMsalAuth, MicrosoftSignInButton, SignOutButton, UserAvatar, useUserProfile } from '../../packages/core/src/index';
+import { MsalAuthProvider, useMsalAuth, MicrosoftSignInButton, SignOutButton, UserAvatar, useUserProfile } from '@chemmangat/msal-next';
 
 interface RealMsalDemoProps {
   clientId: string;

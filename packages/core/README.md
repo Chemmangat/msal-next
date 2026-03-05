@@ -5,7 +5,9 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **v3.0.0 is here!** 🎉 New CLI tool, enhanced debugging, and better DX. [See what's new](#whats-new-in-v30)
+> **📦 Current Version: 3.0.8** - Critical bug fixes for popup authentication. [See changelog](./CHANGELOG.md)
+
+> **⚠️ Important:** If you're on v3.0.6 or v3.0.7, please update immediately - those versions have a critical popup authentication bug.
 
 > **Having issues?** Check the [Troubleshooting Guide](./TROUBLESHOOTING.md) for common problems and solutions.
 
@@ -82,7 +84,7 @@ npx @chemmangat/msal-next init
 
 ### Option 2: Manual Installation
 ```bash
-npm install @chemmangat/msal-next@3.0.0 @azure/msal-browser@^4.0.0 @azure/msal-react@^3.0.0
+npm install @chemmangat/msal-next@latest @azure/msal-browser@^4.0.0 @azure/msal-react@^3.0.0
 ```
 
 ## Quick Start
