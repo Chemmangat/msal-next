@@ -27,6 +27,18 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
       return;
     }
 
+    // Check if we're in a popup window BEFORE initializing
+    const isInPopup = window.opener && window.opener !== window;
+    
+    // If we're in a popup, don't render the full provider
+    // MSAL will handle the popup internally
+    if (isInPopup) {
+      if (config.enableLogging) {
+        console.log('[MSAL] Detected popup window - minimal initialization');
+      }
+      return;
+    }
+
     // Prevent multiple initializations
     if (instanceRef.current) {
       return;
@@ -154,6 +166,12 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
   // SSR safety guard - render children or loading component on server
   if (typeof window === 'undefined') {
     return <>{loadingComponent || <div>Loading authentication...</div>}</>;
+  }
+
+  // If we're in a popup window, render nothing (MSAL handles it)
+  const isInPopup = window.opener && window.opener !== window;
+  if (isInPopup) {
+    return null;
   }
 
   if (!msalInstance) {

@@ -2,6 +2,13 @@ import { Configuration, LogLevel } from '@azure/msal-browser';
 import { MsalAuthConfig } from '../types';
 import { isValidRedirectUri } from './validation';
 
+// Store popup redirect URI for use in hooks
+let storedPopupRedirectUri: string | undefined;
+
+export function getPopupRedirectUri(): string | undefined {
+  return storedPopupRedirectUri;
+}
+
 export function createMsalConfig(config: MsalAuthConfig): Configuration {
   // If custom config provided, use it
   if (config.msalConfig) {
@@ -13,10 +20,11 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
     tenantId,
     authorityType = 'common',
     redirectUri,
+    popupRedirectUri,
     postLogoutRedirectUri,
     cacheLocation = 'sessionStorage',
     storeAuthStateInCookie = false,
-    navigateToLoginRequestUrl = true,
+    navigateToLoginRequestUrl = false,
     enableLogging = false,
     loggerCallback,
     allowedRedirectUris,
@@ -40,6 +48,13 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
   // Default redirect URI
   const defaultRedirectUri = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
   const finalRedirectUri = redirectUri || defaultRedirectUri;
+  
+  // Popup redirect URI - defaults to /blank.html if not specified
+  const defaultPopupRedirectUri = typeof window !== 'undefined' ? `${window.location.origin}/blank.html` : 'http://localhost:3000/blank.html';
+  const finalPopupRedirectUri = popupRedirectUri || defaultPopupRedirectUri;
+  
+  // Store for use in hooks
+  storedPopupRedirectUri = finalPopupRedirectUri;
 
   // Validate redirect URIs if allowedRedirectUris is provided
   if (allowedRedirectUris && allowedRedirectUris.length > 0) {
@@ -70,6 +85,9 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
       storeAuthStateInCookie,
     },
     system: {
+      windowHashTimeout: 60000, // Increase timeout for popup
+      iframeHashTimeout: 6000,
+      loadFrameTimeout: 0,
       loggerOptions: {
         loggerCallback: loggerCallback || ((level: LogLevel, message: string, containsPii: boolean) => {
           if (containsPii || !enableLogging) return;

@@ -5,7 +5,7 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **📦 Current Version: 3.1.2** - Critical bug fixes for popup authentication. [See changelog](./CHANGELOG.md)
+> **📦 Current Version: 3.1.5** - Separate popup redirect URI support. [See changelog](./CHANGELOG.md)
 
 > **⚠️ Important:** If you're on v3.0.6 or v3.0.7, please update immediately - those versions have a critical popup authentication bug.
 
@@ -91,7 +91,23 @@ npm install @chemmangat/msal-next@latest @azure/msal-browser@^4.0.0 @azure/msal-
 
 > **Important:** Use `MSALProvider` (not `MsalAuthProvider`) in your layout.tsx to avoid the "createContext only works in Client Components" error.
 
-### 1. Wrap your app with MSALProvider
+### 1. Create blank.html for popup authentication
+
+Create `public/blank.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head><title>Auth</title></head>
+<body></body>
+</html>
+```
+
+Add to Azure AD redirect URIs:
+- `http://localhost:3000/blank.html`
+- `https://yourdomain.com/blank.html`
+
+### 2. Wrap your app with MSALProvider
 
 ```tsx
 // app/layout.tsx
@@ -104,6 +120,9 @@ export default function RootLayout({ children }) {
         <MSALProvider 
           clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
           tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+          // Optional: specify custom redirect URIs
+          // redirectUri="/auth/callback"  // For redirect flow
+          // popupRedirectUri="/blank.html"  // For popup flow (default)
         >
           {children}
         </MSALProvider>
@@ -113,7 +132,7 @@ export default function RootLayout({ children }) {
 }
 ```
 
-### 2. Add sign-in button
+### 3. Add sign-in button
 
 ```tsx
 // app/page.tsx

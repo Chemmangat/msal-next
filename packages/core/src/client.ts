@@ -17,7 +17,7 @@ export { useUserProfile } from './hooks/useUserProfile';
 export { useRoles } from './hooks/useRoles';
 
 // Utilities
-export { createMsalConfig } from './utils/createMsalConfig';
+export { createMsalConfig, getPopupRedirectUri } from './utils/createMsalConfig';
 export { withAuth } from './utils/withAuth';
 export { retryWithBackoff, createRetryWrapper } from './utils/tokenRetry';
 export { getDebugLogger, createScopedLogger } from './utils/debugLogger';

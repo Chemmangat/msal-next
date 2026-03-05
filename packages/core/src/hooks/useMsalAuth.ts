@@ -3,6 +3,7 @@
 import { useMsal, useAccount } from '@azure/msal-react';
 import { AccountInfo, InteractionStatus, PopupRequest, RedirectRequest, SilentRequest } from '@azure/msal-browser';
 import { useCallback, useMemo, useRef } from 'react';
+import { getPopupRedirectUri } from '../utils/createMsalConfig';
 
 export interface UseMsalAuthReturn {
   /**
@@ -90,9 +91,12 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
       }
 
       try {
+        const popupRedirectUri = getPopupRedirectUri();
         const request: PopupRequest = {
           scopes,
           prompt: 'select_account',
+          // Use popup-specific redirect URI (defaults to /blank.html)
+          redirectUri: popupRedirectUri,
         };
         const response = await instance.loginPopup(request);
         
