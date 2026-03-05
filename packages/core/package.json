@@ -21,7 +21,9 @@
     "dist",
     "README.md",
     "SECURITY.md",
-    "TROUBLESHOOTING.md"
+    "TROUBLESHOOTING.md",
+    "CHANGELOG.md",
+    "RELEASE_NOTES_v3.0.8.md"
   ],
   "scripts": {
     "build": "tsup",

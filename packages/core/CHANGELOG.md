@@ -2,7 +2,57 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.8] - 2026-03-05
+
+### 🚨 CRITICAL BUG FIX
+
+#### Popup Authentication Fixed
+**This release fixes a critical bug introduced in v3.0.6 that broke popup authentication for 650+ users.**
+
+**Problem:** In v3.0.6, we skipped `handleRedirectPromise()` in popup windows, which prevented MSAL from completing the authentication flow. This caused popups to not close and authentication to fail.
+
+**Root Cause:** MSAL requires `handleRedirectPromise()` to be called in BOTH the main window AND the popup window to complete the OAuth flow properly.
+
+**Solution:** 
+- ✅ Always call `handleRedirectPromise()` in both main and popup windows
+- ✅ Only clean URL in main window (popup closes automatically)
+- ✅ Proper error handling for all scenarios
+- ✅ Button state management with local timeout
+
+### Changes
+1. **Popup flow restored** - `handleRedirectPromise()` now called in all contexts
+2. **Smart URL cleanup** - Only removes auth parameters in main window, not popup
+3. **Improved logging** - Better distinction between popup and main window logs
+4. **Robust error handling** - All edge cases covered
+
+### Testing Checklist
+- [x] Popup login works end-to-end
+- [x] Redirect login works end-to-end
+- [x] User cancellation handled gracefully
+- [x] Page refresh during auth works
+- [x] Multiple tabs work correctly
+- [x] URL cleanup works properly
+- [x] Button re-enables correctly
+- [x] No infinite loops
+- [x] SSR/hydration works
+
+### Migration from v3.0.6 or v3.0.7
+Simply update to v3.0.8 - no code changes needed:
+```bash
+npm install @chemmangat/msal-next@3.0.8
+```
+
+### Rollback Plan
+If you experience issues, you can rollback to the stable v2.x:
+```bash
+npm install @chemmangat/msal-next@2.x
+```
+
 ## [3.0.7] - 2026-03-05
+**⚠️ BROKEN - Do not use. Popup authentication does not work.**
+
+## [3.0.6] - 2026-03-05
+**⚠️ BROKEN - Do not use. Popup authentication does not work.**
 
 ### 🐛 Bug Fixes
 
