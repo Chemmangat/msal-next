@@ -80,7 +80,7 @@ export default function DocsPage() {
             <div className="sticky top-24 space-y-1">
               <div className="mb-6">
                 <h2 className="text-lg font-bold text-dark-text mb-2">Documentation</h2>
-                <p className="text-sm text-dark-muted">@chemmangat/msal-next v3.0.0</p>
+                <p className="text-sm text-dark-muted">@chemmangat/msal-next v3.1.7</p>
               </div>
               <nav className="space-y-1">
                 {sections.map((section) => (
@@ -186,23 +186,23 @@ export default function RootLayout({ children }) {
                       title="app/page.tsx"
                       code={`'use client';
 
-import { useMsalAuth } from '@chemmangat/msal-next';
+import { MicrosoftSignInButton, SignOutButton, useMsalAuth } from '@chemmangat/msal-next';
 
 export default function Home() {
-  const { isAuthenticated, account, loginPopup, logoutPopup } = useMsalAuth();
+  const { isAuthenticated, account } = useMsalAuth();
 
   if (!isAuthenticated) {
-    return <button onClick={() => loginPopup()}>Sign In</button>;
+    return <MicrosoftSignInButton />;
   }
 
   return (
     <div>
       <h1>Hello, {account?.name}!</h1>
-      <button onClick={() => logoutPopup()}>Sign Out</button>
+      <SignOutButton />
     </div>
   );
 }`}
-                      onCopy={() => copyToClipboard(`'use client';\n\nimport { useMsalAuth } from '@chemmangat/msal-next';\n\nexport default function Home() {\n  const { isAuthenticated, account, loginPopup, logoutPopup } = useMsalAuth();\n\n  if (!isAuthenticated) {\n    return <button onClick={() => loginPopup()}>Sign In</button>;\n  }\n\n  return (\n    <div>\n      <h1>Hello, {account?.name}!</h1>\n      <button onClick={() => logoutPopup()}>Sign Out</button>\n    </div>\n  );\n}`, 3)}
+                      onCopy={() => copyToClipboard(`'use client';\n\nimport { MicrosoftSignInButton, SignOutButton, useMsalAuth } from '@chemmangat/msal-next';\n\nexport default function Home() {\n  const { isAuthenticated, account } = useMsalAuth();\n\n  if (!isAuthenticated) {\n    return <MicrosoftSignInButton />;\n  }\n\n  return (\n    <div>\n      <h1>Hello, {account?.name}!</h1>\n      <SignOutButton />\n    </div>\n  );\n}`, 3)}
                       copied={copiedIndex === 3}
                     />
                   </div>
@@ -294,26 +294,17 @@ export default function RootLayout({ children }) {
                     <PropDoc name="inProgress" type="boolean">
                       Whether MSAL is performing an interaction
                     </PropDoc>
-                    <PropDoc name="loginPopup" type="(scopes?: string[]) => Promise<void>">
-                      Login using popup
-                    </PropDoc>
                     <PropDoc name="loginRedirect" type="(scopes?: string[]) => Promise<void>">
-                      Login using redirect
-                    </PropDoc>
-                    <PropDoc name="logoutPopup" type="() => Promise<void>">
-                      Logout using popup
+                      Login using redirect (full page redirect to Microsoft)
                     </PropDoc>
                     <PropDoc name="logoutRedirect" type="() => Promise<void>">
-                      Logout using redirect
+                      Logout using redirect (full page redirect)
                     </PropDoc>
                     <PropDoc name="acquireToken" type="(scopes: string[]) => Promise<string>">
-                      Acquire token silently with popup fallback
+                      Acquire token silently with redirect fallback
                     </PropDoc>
                     <PropDoc name="acquireTokenSilent" type="(scopes: string[]) => Promise<string>">
                       Acquire token silently only (no fallback)
-                    </PropDoc>
-                    <PropDoc name="acquireTokenPopup" type="(scopes: string[]) => Promise<string>">
-                      Acquire token using popup
                     </PropDoc>
                     <PropDoc name="acquireTokenRedirect" type="(scopes: string[]) => Promise<void>">
                       Acquire token using redirect
@@ -363,9 +354,6 @@ const fetchUserProfile = async () => {
                     </PropDoc>
                     <PropDoc name="text" type="string" defaultValue="'Sign in with Microsoft'">
                       Button text
-                    </PropDoc>
-                    <PropDoc name="useRedirect" type="boolean" defaultValue="true">
-                      Use redirect flow instead of popup (default: true)
                     </PropDoc>
                     <PropDoc name="scopes" type="string[]">
                       Scopes to request (uses provider scopes if not specified)
@@ -642,11 +630,38 @@ const handleLogout = async () => {
                 <h2 className="text-3xl font-bold text-dark-text mb-6">Changelog</h2>
                 
                 <div className="space-y-8">
-                  {/* v3.0.0 */}
+                  {/* v3.1.7 */}
                   <div className="border-l-4 border-accent-primary pl-6">
                     <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-2xl font-bold text-dark-text">v3.0.0</h3>
+                      <h3 className="text-2xl font-bold text-dark-text">v3.1.7</h3>
                       <span className="text-sm px-3 py-1 bg-accent-primary/20 text-accent-primary rounded-full">Latest</span>
+                      <span className="text-sm text-dark-muted">March 2026</span>
+                    </div>
+                    <h4 className="text-lg font-semibold text-dark-text mb-2">Redirect-Only Authentication</h4>
+                    <ul className="space-y-2 text-dark-muted">
+                      <li className="flex items-start gap-2">
+                        <span className="text-accent-success mt-1">•</span>
+                        <span>Removed all popup authentication support for cleaner, simpler API</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-accent-success mt-1">•</span>
+                        <span>Redirect-only flow eliminates popup-related bugs and issues</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-accent-success mt-1">•</span>
+                        <span>Smaller bundle size and cleaner codebase</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-accent-success mt-1">•</span>
+                        <span>Better user experience with full-page redirects</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* v3.0.0 */}
+                  <div className="border-l-4 border-dark-border pl-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-2xl font-bold text-dark-text">v3.0.0</h3>
                       <span className="text-sm text-dark-muted">March 2026</span>
                     </div>
                     
