@@ -39,34 +39,44 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
         
         await instance.initialize();
 
-        // Handle redirect promise with proper error handling
-        try {
-          const response = await instance.handleRedirectPromise();
-          if (response) {
-            if (config.enableLogging) {
-              console.log('[MSAL] Redirect authentication successful');
+        // Check if we're in a popup window
+        const isInPopup = window.opener && window.opener !== window;
+        
+        // Only handle redirect promise if NOT in a popup window
+        if (!isInPopup) {
+          try {
+            const response = await instance.handleRedirectPromise();
+            if (response) {
+              if (config.enableLogging) {
+                console.log('[MSAL] Redirect authentication successful');
+              }
+              // Set the active account after successful redirect
+              if (response.account) {
+                instance.setActiveAccount(response.account);
+              }
             }
-            // Set the active account after successful redirect
-            if (response.account) {
-              instance.setActiveAccount(response.account);
+          } catch (redirectError: any) {
+            // Handle specific MSAL errors gracefully
+            if (redirectError?.errorCode === 'no_token_request_cache_error') {
+              // This error occurs when there's no cached token request (e.g., page refresh during auth)
+              // It's safe to ignore as it just means there's no pending redirect
+              if (config.enableLogging) {
+                console.log('[MSAL] No pending redirect found (this is normal)');
+              }
+            } else if (redirectError?.errorCode === 'user_cancelled') {
+              // User cancelled the authentication flow
+              if (config.enableLogging) {
+                console.log('[MSAL] User cancelled authentication');
+              }
+            } else {
+              // Log other errors but don't throw - allow app to continue
+              console.error('[MSAL] Redirect handling error:', redirectError);
             }
           }
-        } catch (redirectError: any) {
-          // Handle specific MSAL errors gracefully
-          if (redirectError?.errorCode === 'no_token_request_cache_error') {
-            // This error occurs when there's no cached token request (e.g., page refresh during auth)
-            // It's safe to ignore as it just means there's no pending redirect
-            if (config.enableLogging) {
-              console.log('[MSAL] No pending redirect found (this is normal)');
-            }
-          } else if (redirectError?.errorCode === 'user_cancelled') {
-            // User cancelled the authentication flow
-            if (config.enableLogging) {
-              console.log('[MSAL] User cancelled authentication');
-            }
-          } else {
-            // Log other errors but don't throw - allow app to continue
-            console.error('[MSAL] Redirect handling error:', redirectError);
+        } else {
+          // In popup window - just handle the redirect without processing
+          if (config.enableLogging) {
+            console.log('[MSAL] Running in popup window, skipping redirect handling');
           }
         }
 
