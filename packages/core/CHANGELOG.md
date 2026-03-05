@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.4] - 2026-03-05
+
+### 🐛 Critical Bug Fix
+
+#### Build System Fix
+- **Fixed empty dist files** - Resolved critical build issue where dist files were empty (0-14 bytes)
+- **Renamed internal entry point** - Changed from `src/index.ts` to `src/client.ts` to avoid tsup caching/conflict issues
+- **Verified build output** - dist/index.js is now 51.61 KB with all exports properly bundled
+- **Package is now functional** - Users can successfully install and use the package
+
+### Technical Details
+The issue was caused by a tsup conflict with the filename "index.ts" that resulted in empty build outputs. Renaming the entry point to "client.ts" resolved the issue while maintaining all functionality.
+
 ## [3.0.3] - 2026-03-05
 
 ### 🔄 Breaking Changes
