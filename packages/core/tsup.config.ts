@@ -9,10 +9,10 @@ export default defineConfig([
     format: ['cjs', 'esm'],
     dts: true,
     splitting: true,
-    sourcemap: true,
+    sourcemap: false, // Disabled to reduce package size
     clean: true,
     treeshake: true,
-    minify: false,
+    minify: true, // Enable minification
     external: [
       'react',
       'react-dom',
@@ -39,10 +39,10 @@ export default defineConfig([
     format: ['cjs', 'esm'],
     dts: true,
     splitting: false,
-    sourcemap: true,
+    sourcemap: false, // Disabled to reduce package size
     clean: false,
     treeshake: true,
-    minify: false,
+    minify: true, // Enable minification
     external: [
       'react',
       'react-dom',
