@@ -1,0 +1,50 @@
+{
+  "name": "@chemmangat/msal-next-cli",
+  "version": "3.0.0",
+  "description": "CLI tool for setting up @chemmangat/msal-next in Next.js projects",
+  "main": "./dist/index.js",
+  "bin": {
+    "msal-next": "./dist/cli.js"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "msal",
+    "nextjs",
+    "cli",
+    "authentication",
+    "azure-ad",
+    "setup",
+    "scaffold"
+  ],
+  "author": "Hari Manoj (chemmangat)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chemmangat/msal-next.git",
+    "directory": "packages/cli"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.10.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.0"
+  }
+}

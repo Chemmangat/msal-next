@@ -30,7 +30,7 @@ export default function Hero() {
                 className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-elevated border border-dark-border rounded-full"
               >
                 <Sparkles className="w-4 h-4 text-accent-primary" />
-                <span className="text-sm text-dark-muted">Production-ready MSAL for Next.js</span>
+                <span className="text-sm text-dark-muted">v3.0.0 - Now with CLI Tool!</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -44,16 +44,16 @@ export default function Hero() {
 
             {/* Main heading */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-              <span className="text-dark-text">Authentication</span>
+              <span className="text-dark-text">Setup in</span>
               <br />
-              <span className="text-gradient">Made Simple</span>
+              <span className="text-gradient">Under 2 Minutes</span>
             </h1>
 
             {/* Subheading */}
             <p className="text-base md:text-lg text-dark-muted">
-              Fully configurable MSAL authentication for Next.js App Router.
+              Production-ready MSAL authentication for Next.js App Router.
               <br />
-              Zero config to get started. Infinite flexibility when you need it.
+              New CLI tool, enhanced debugging, and better developer experience.
             </p>
 
             {/* CTA Buttons */}
@@ -84,9 +84,10 @@ export default function Hero() {
             >
               <div className="inline-block bg-dark-elevated border border-dark-border rounded-lg px-6 py-4">
                 <code className="text-accent-primary text-sm">
-                  npm install @chemmangat/msal-next
+                  npx @chemmangat/msal-next init
                 </code>
               </div>
+              <p className="text-xs text-dark-muted mt-2">One command setup - that's it!</p>
             </motion.div>
           </motion.div>
 

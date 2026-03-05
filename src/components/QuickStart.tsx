@@ -6,28 +6,28 @@ import { Terminal, Package, Settings, Rocket } from 'lucide-react';
 export default function QuickStart() {
   const steps = [
     {
-      icon: Package,
-      title: 'Install Package',
-      command: 'npm install @chemmangat/msal-next @azure/msal-browser @azure/msal-react',
-      description: 'Add the package and peer dependencies to your project',
+      icon: Terminal,
+      title: 'Run CLI Setup',
+      command: 'npx @chemmangat/msal-next init',
+      description: 'One command to set up everything - detects your project structure automatically',
     },
     {
       icon: Settings,
       title: 'Configure Azure AD',
       command: 'NEXT_PUBLIC_CLIENT_ID=your-client-id',
-      description: 'Get your client ID from Azure Portal and add to .env.local',
+      description: 'Get your client ID from Azure Portal (CLI will guide you)',
     },
     {
-      icon: Terminal,
-      title: 'Wrap Your App',
-      command: '<MsalAuthProvider clientId={...}>{children}</MsalAuthProvider>',
-      description: 'Add the provider to your root layout',
+      icon: Package,
+      title: 'Files Generated',
+      command: 'layout.tsx, middleware.ts, .env.local, /auth page',
+      description: 'All boilerplate files created automatically',
     },
     {
       icon: Rocket,
       title: 'Start Building',
-      command: 'const { loginPopup } = useMsalAuth();',
-      description: 'Use the hook in your components',
+      command: 'npm run dev',
+      description: 'Your app is ready with authentication!',
     },
   ];
 
@@ -45,7 +45,7 @@ export default function QuickStart() {
             <span className="text-gradient">Start</span>
           </h2>
           <p className="text-base text-dark-muted max-w-3xl mx-auto">
-            Get up and running in less than 5 minutes. No complex configuration required.
+            Get up and running in under 2 minutes with the new CLI tool. No complex configuration required.
           </p>
         </motion.div>
 

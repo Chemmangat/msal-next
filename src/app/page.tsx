@@ -44,7 +44,7 @@ export default function Home() {
                 className="inline-flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-elevated border border-dark-border rounded-full text-xs sm:text-sm text-dark-muted"
               >
                 <span className="w-2 h-2 bg-accent-success rounded-full animate-pulse flex-shrink-0" />
-                <span className="truncate">v2.0.0 - Production-grade with 7+ new components</span>
+                <span className="truncate">v3.0.0 - New CLI Tool & Enhanced Debugging</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -854,10 +854,10 @@ export default function Header() {
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">
             <span className="text-dark-text">New in </span>
-            <span className="text-gradient">v2.0</span>
+            <span className="text-gradient">v3.0</span>
           </h2>
           <p className="text-base sm:text-lg text-dark-muted max-w-2xl mx-auto px-4">
-            Production-ready components that developers actually want
+            CLI tool and enhanced debugging for better developer experience
           </p>
         </motion.div>
 

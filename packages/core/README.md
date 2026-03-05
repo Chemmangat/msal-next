@@ -5,9 +5,12 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> **v3.0.0 is here!** 🎉 New CLI tool, enhanced debugging, and better DX. [See what's new](#whats-new-in-v30)
+
 ## Features
 
-✨ **Minimal Setup** - Just provide your `clientId` to get started  
+✨ **CLI Setup** - Get started in under 2 minutes with `npx @chemmangat/msal-next init`  
+🔍 **Enhanced Debugging** - Performance tracking, network logs, and log export  
 🔐 **Production Ready** - Comprehensive error handling, retry logic, and SSR support  
 🎨 **Beautiful Components** - Pre-styled Microsoft-branded UI components  
 🪝 **Powerful Hooks** - Easy-to-use hooks for auth, Graph API, and user data  
@@ -15,10 +18,69 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 ⚡ **Edge Compatible** - Middleware support for protecting routes at the edge  
 📦 **Zero Config** - Sensible defaults with full customization options
 
+## What's New in v3.0
+
+### 🚀 CLI Tool (NEW)
+```bash
+# One command setup - that's it!
+npx @chemmangat/msal-next init
+```
+
+The new CLI tool automatically:
+- Detects your Next.js structure (App Router/Pages Router)
+- Installs dependencies
+- Creates configuration files
+- Generates example pages
+- Sets up middleware
+
+**Reduces setup time from 30+ minutes to under 2 minutes!**
+
+### 🔍 Enhanced Debug Logger (NEW)
+```tsx
+import { getDebugLogger } from '@chemmangat/msal-next';
+
+const logger = getDebugLogger({
+  enabled: true,
+  enablePerformance: true,    // Track operation timing
+  enableNetworkLogs: true,    // Log all requests/responses
+});
+
+// Performance tracking
+logger.startTiming('token-acquisition');
+await acquireToken(['User.Read']);
+logger.endTiming('token-acquisition'); // Logs: "⏱️ Completed: token-acquisition (45ms)"
+
+// Export logs for debugging
+logger.downloadLogs('debug-logs.json');
+```
+
+### 📚 New Examples
+- **Role-Based Routing** - Complete RBAC implementation
+- **Multi-Tenant SaaS** - Full multi-tenant architecture
+
+### 🔄 Breaking Changes
+- Requires Node.js 18+ (was 16+)
+- Requires Next.js 14.1+ (was 14.0+)
+- Requires @azure/msal-browser v4+ (was v3+)
+- Removed `ServerSession.accessToken` (use client-side `acquireToken()`)
+
+[See Migration Guide](./MIGRATION_GUIDE_v3.md) for details.
+
 ## Installation
 
+### Option 1: CLI Setup (Recommended)
 ```bash
-npm install @chemmangat/msal-next @azure/msal-browser @azure/msal-react
+# Create Next.js app
+npx create-next-app@latest my-app
+cd my-app
+
+# Initialize MSAL
+npx @chemmangat/msal-next init
+```
+
+### Option 2: Manual Installation
+```bash
+npm install @chemmangat/msal-next@3.0.0 @azure/msal-browser@^4.0.0 @azure/msal-react@^3.0.0
 ```
 
 ## Quick Start
@@ -331,7 +393,7 @@ const acquireTokenWithRetry = createRetryWrapper(acquireToken, {
 
 ### Debug Logger
 
-Comprehensive logging for troubleshooting.
+Comprehensive logging for troubleshooting with enhanced v3.0 features.
 
 ```tsx
 import { getDebugLogger } from '@chemmangat/msal-next';
@@ -339,11 +401,28 @@ import { getDebugLogger } from '@chemmangat/msal-next';
 const logger = getDebugLogger({
   enabled: true,
   level: 'debug',
-  showTimestamp: true
+  showTimestamp: true,
+  enablePerformance: true,    // NEW in v3.0
+  enableNetworkLogs: true,    // NEW in v3.0
+  maxHistorySize: 100,        // NEW in v3.0
 });
 
+// Basic logging
 logger.info('User logged in', { username: 'user@example.com' });
 logger.error('Authentication failed', { error });
+
+// NEW: Performance tracking
+logger.startTiming('token-acquisition');
+const token = await acquireToken(['User.Read']);
+logger.endTiming('token-acquisition'); // Logs duration
+
+// NEW: Network logging
+logger.logRequest('GET', '/me');
+logger.logResponse('GET', '/me', 200, userData);
+
+// NEW: Export logs
+const logs = logger.exportLogs();
+logger.downloadLogs('debug-logs.json'); // Download as file
 ```
 
 ## TypeScript Support
@@ -508,6 +587,33 @@ Enable debug logging to troubleshoot issues:
 
 ## Migration Guide
 
+### From v2.x to v3.0
+
+v3.0 includes breaking changes. See [MIGRATION_GUIDE_v3.md](./MIGRATION_GUIDE_v3.md) for complete details.
+
+**Quick migration:**
+
+```bash
+# 1. Update dependencies
+npm install @chemmangat/msal-next@3.0.0
+npm install @azure/msal-browser@^4.0.0
+npm install @azure/msal-react@^3.0.0
+npm install next@^14.1.0
+
+# 2. Update Node.js to 18+
+node --version  # Should be v18.0.0+
+
+# 3. Remove deprecated ServerSession.accessToken usage
+# Before:
+const session = await getServerSession();
+const token = session.accessToken; // ❌ Removed
+
+# After:
+'use client';
+const { acquireToken } = useMsalAuth();
+const token = await acquireToken(['User.Read']); // ✅
+```
+
 ### From v1.x to v2.x
 
 v2.0 is backward compatible with v1.x. New features are additive:
@@ -542,6 +648,19 @@ MIT © [Chemmangat](https://github.com/chemmangat)
 - 📖 [Documentation](https://github.com/chemmangat/msal-next#readme)
 - 🐛 [Issue Tracker](https://github.com/chemmangat/msal-next/issues)
 - 💬 [Discussions](https://github.com/chemmangat/msal-next/discussions)
+- 🚀 [CLI Tool](https://www.npmjs.com/package/@chemmangat/msal-next-cli)
+- 📋 [Migration Guide](./MIGRATION_GUIDE_v3.md)
+- 🧪 [Testing Guide](./TESTING_GUIDE.md)
+
+## What's Coming in v3.1
+
+- 🧪 80%+ test coverage
+- 📚 6+ additional examples
+- ⚡ Performance optimizations
+- 🔒 Security audit
+- 🆕 New hooks and components
+
+[See Roadmap](./V3_ROADMAP.md) for details.
 
 ## Acknowledgments
 
