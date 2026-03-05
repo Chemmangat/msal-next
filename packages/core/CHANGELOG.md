@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.5] - 2026-03-05
+
+### ✨ New Feature - Separate Popup Redirect URI
+
+**Added `popupRedirectUri` prop** - Now you can have different redirect URIs for popup vs redirect flows!
+
+**Changes:**
+- Added `popupRedirectUri` prop to MSALProvider (defaults to `/blank.html`)
+- `redirectUri` prop is now used only for redirect flow
+- Popup authentication automatically uses `popupRedirectUri`
+- Exported `getPopupRedirectUri()` utility function
+
+**Usage:**
+```tsx
+<MSALProvider
+  clientId="..."
+  redirectUri="/auth/callback"      // For redirect flow
+  popupRedirectUri="/blank.html"    // For popup flow (default)
+>
+```
+
+**Benefits:**
+- Use your custom redirect URI for redirect flow
+- Popup always uses blank.html (no full app loading in popup)
+- More flexible configuration
+
+## [3.1.4] - 2026-03-05
+
+### 🔧 Configuration Fix - Popup Redirect
+
+**BREAKING CHANGE:** You must now create a `public/blank.html` file and configure it as a redirect URI in Azure AD.
+
+**Why:** This prevents your full app from loading in the popup window after authentication.
+
+**Setup Required:**
+
+1. Create `public/blank.html`:
+```html
+<!DOCTYPE html>
+<html>
+<head><title>Auth</title></head>
+<body></body>
+</html>
+```
+
+2. Add to Azure AD redirect URIs:
+   - `http://localhost:3000/blank.html`
+   - `https://yourdomain.com/blank.html`
+
+3. Update your MSALProvider:
+```tsx
+<MSALProvider
+  clientId="..."
+  redirectUri={typeof window !== 'undefined' ? `${window.location.origin}/blank.html` : undefined}
+>
+```
+
+**Changes:**
+- Set `navigateToLoginRequestUrl` default to `false`
+- Updated README with blank.html setup instructions
+- Added PUBLIC_BLANK_HTML.md guide
+
+## [3.1.3] - 2026-03-05
+
+### 🐛 Critical Fix - Popup Redirect Issue
+
+**Fixed:** Popup window now stays as popup and doesn't navigate to redirect URI.
+
+**Changes:**
+- Added `windowHashTimeout`, `iframeHashTimeout`, and `loadFrameTimeout` to MSAL config
+- Set `redirectUri: undefined` in popup requests to prevent navigation
+- Popup now properly closes after authentication without showing redirect page
+
+**This fixes the issue where the redirect URI was opening inside the popup window instead of the popup closing.**
+
 ## [3.1.2] - 2026-03-05
 
 ### 📝 Documentation Update
