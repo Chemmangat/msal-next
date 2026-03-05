@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.7] - 2026-03-05
+
+### 🐛 Bug Fixes
+
+#### URL Cleanup & Button State
+- **Fixed URL hash pollution** - Auth code/state parameters are now automatically removed from URL after authentication
+- **Fixed button disabled state** - Sign-in button no longer stays greyed out after popup closes
+- **Added local loading state** - Button uses internal state with 500ms timeout to ensure proper reset
+- **Clean URL history** - Uses `window.history.replaceState()` to remove auth parameters without page reload
+
+### Technical Details
+1. After successful authentication, the URL hash containing `code=` and `state=` is automatically cleaned up
+2. The sign-in button now tracks its own loading state and resets after 500ms to prevent stuck disabled state
+3. URL cleanup happens both on success and error to ensure clean URLs in all scenarios
+
+## [3.0.6] - 2026-03-05
+
+### 🐛 Bug Fix
+
+#### Popup Redirect Issue Fixed
+- **Fixed redirect in popup window** - Authentication now completes in the popup and closes properly
+- **Added popup detection** - Provider now detects if running in a popup window (`window.opener`)
+- **Skip redirect handling in popups** - `handleRedirectPromise()` is only called in the main window, not in popups
+- **Proper popup flow** - After sign-in, the popup closes and the main window receives the authentication result
+
+### Technical Details
+The issue was that `handleRedirectPromise()` was being called in both the main window and the popup window, causing the redirect to happen inside the popup instead of closing it. Now we detect popup windows using `window.opener` and skip redirect handling in that context.
+
 ## [3.0.5] - 2026-03-05
 
 ### 🐛 Critical Bug Fix

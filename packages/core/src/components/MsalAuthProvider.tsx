@@ -42,41 +42,47 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
         // Check if we're in a popup window
         const isInPopup = window.opener && window.opener !== window;
         
-        // Only handle redirect promise if NOT in a popup window
-        if (!isInPopup) {
-          try {
-            const response = await instance.handleRedirectPromise();
-            if (response) {
-              if (config.enableLogging) {
-                console.log('[MSAL] Redirect authentication successful');
-              }
-              // Set the active account after successful redirect
-              if (response.account) {
-                instance.setActiveAccount(response.account);
-              }
+        // Always handle redirect promise, but handle differently for popup vs main window
+        try {
+          const response = await instance.handleRedirectPromise();
+          
+          if (response) {
+            if (config.enableLogging) {
+              console.log('[MSAL] Redirect authentication successful', isInPopup ? '(popup)' : '(main)');
             }
-          } catch (redirectError: any) {
-            // Handle specific MSAL errors gracefully
-            if (redirectError?.errorCode === 'no_token_request_cache_error') {
-              // This error occurs when there's no cached token request (e.g., page refresh during auth)
-              // It's safe to ignore as it just means there's no pending redirect
-              if (config.enableLogging) {
-                console.log('[MSAL] No pending redirect found (this is normal)');
-              }
-            } else if (redirectError?.errorCode === 'user_cancelled') {
-              // User cancelled the authentication flow
-              if (config.enableLogging) {
-                console.log('[MSAL] User cancelled authentication');
-              }
-            } else {
-              // Log other errors but don't throw - allow app to continue
-              console.error('[MSAL] Redirect handling error:', redirectError);
+            
+            // Set the active account after successful redirect
+            if (response.account) {
+              instance.setActiveAccount(response.account);
+            }
+            
+            // Only clean URL in main window, not in popup (popup will close automatically)
+            if (!isInPopup && window.location.hash) {
+              // Remove hash without triggering a page reload
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
             }
           }
-        } else {
-          // In popup window - just handle the redirect without processing
-          if (config.enableLogging) {
-            console.log('[MSAL] Running in popup window, skipping redirect handling');
+        } catch (redirectError: any) {
+          // Handle specific MSAL errors gracefully
+          if (redirectError?.errorCode === 'no_token_request_cache_error') {
+            // This error occurs when there's no cached token request (e.g., page refresh during auth)
+            // It's safe to ignore as it just means there's no pending redirect
+            if (config.enableLogging) {
+              console.log('[MSAL] No pending redirect found (this is normal)');
+            }
+          } else if (redirectError?.errorCode === 'user_cancelled') {
+            // User cancelled the authentication flow
+            if (config.enableLogging) {
+              console.log('[MSAL] User cancelled authentication');
+            }
+          } else {
+            // Log other errors but don't throw - allow app to continue
+            console.error('[MSAL] Redirect handling error:', redirectError);
+          }
+          
+          // Clean up URL even on error if there's a hash (only in main window)
+          if (!isInPopup && window.location.hash && (window.location.hash.includes('code=') || window.location.hash.includes('error='))) {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
           }
         }
 
