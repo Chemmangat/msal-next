@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMsalAuth } from './useMsalAuth';
 import { useGraphApi } from './useGraphApi';
+import { sanitizeError } from '../utils/validation';
 
 export interface UseRolesReturn {
   /**
@@ -51,9 +52,34 @@ export interface UseRolesReturn {
   refetch: () => Promise<void>;
 }
 
-// Simple in-memory cache
+// Simple in-memory cache with size limit
 const rolesCache = new Map<string, { roles: string[]; groups: string[]; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const MAX_CACHE_SIZE = 100; // Prevent memory leaks
+
+/**
+ * Clear cache for a specific user or all users
+ */
+function clearRolesCache(accountId?: string): void {
+  if (accountId) {
+    rolesCache.delete(accountId);
+  } else {
+    rolesCache.clear();
+  }
+}
+
+/**
+ * Enforce cache size limit using LRU strategy
+ */
+function enforceCacheLimit(): void {
+  if (rolesCache.size > MAX_CACHE_SIZE) {
+    // Remove oldest entries
+    const entries = Array.from(rolesCache.entries());
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    const toRemove = entries.slice(0, rolesCache.size - MAX_CACHE_SIZE);
+    toRemove.forEach(([key]) => rolesCache.delete(key));
+  }
+}
 
 /**
  * Hook for fetching user's Azure AD roles and groups
@@ -113,12 +139,17 @@ export function useRoles(): UseRolesReturn {
         timestamp: Date.now(),
       });
 
+      // Enforce cache size limit
+      enforceCacheLimit();
+
       setRoles(tokenRoles);
       setGroups(userGroups);
     } catch (err) {
       const error = err as Error;
-      setError(error);
-      console.error('[Roles] Failed to fetch roles/groups:', error);
+      const sanitizedMessage = sanitizeError(error);
+      const sanitizedError = new Error(sanitizedMessage);
+      setError(sanitizedError);
+      console.error('[Roles] Failed to fetch roles/groups:', sanitizedMessage);
       
       // Fallback to token claims only
       const idTokenClaims = account.idTokenClaims as any;
@@ -159,7 +190,14 @@ export function useRoles(): UseRolesReturn {
 
   useEffect(() => {
     fetchRolesAndGroups();
-  }, [fetchRolesAndGroups]);
+
+    // Cleanup cache on unmount
+    return () => {
+      if (account) {
+        clearRolesCache(account.homeAccountId);
+      }
+    };
+  }, [fetchRolesAndGroups, account]);
 
   return {
     roles,

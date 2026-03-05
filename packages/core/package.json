@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Production-grade MSAL authentication package for Next.js App Router with minimal boilerplate",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -19,7 +19,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "SECURITY.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -42,7 +43,7 @@
     "sso",
     "microsoft-graph"
   ],
-  "author": "Chemmangat",
+  "author": "Hari Manoj (chemmangat)",
   "license": "MIT",
   "repository": {
     "type": "git",

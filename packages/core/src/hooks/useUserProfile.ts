@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMsalAuth } from './useMsalAuth';
 import { useGraphApi } from './useGraphApi';
+import { sanitizeError } from '../utils/validation';
 
 export interface UserProfile {
   id: string;
@@ -45,9 +46,30 @@ export interface UseUserProfileReturn {
   clearCache: () => void;
 }
 
-// Simple in-memory cache
+// Simple in-memory cache with size limit
 const profileCache = new Map<string, { data: UserProfile; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const MAX_CACHE_SIZE = 100; // Prevent memory leaks
+
+/**
+ * Enforce cache size limit using LRU strategy
+ */
+function enforceCacheLimit(): void {
+  if (profileCache.size > MAX_CACHE_SIZE) {
+    // Remove oldest entries
+    const entries = Array.from(profileCache.entries());
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    const toRemove = entries.slice(0, profileCache.size - MAX_CACHE_SIZE);
+    toRemove.forEach(([key]) => {
+      const cached = profileCache.get(key);
+      // Revoke blob URL before removing from cache
+      if (cached?.data.photo) {
+        URL.revokeObjectURL(cached.data.photo);
+      }
+      profileCache.delete(key);
+    });
+  }
+}
 
 /**
  * Hook for fetching and caching user profile from MS Graph
@@ -126,11 +148,16 @@ export function useUserProfile(): UseUserProfileReturn {
         timestamp: Date.now(),
       });
 
+      // Enforce cache size limit
+      enforceCacheLimit();
+
       setProfile(profileData);
     } catch (err) {
       const error = err as Error;
-      setError(error);
-      console.error('[UserProfile] Failed to fetch profile:', error);
+      const sanitizedMessage = sanitizeError(error);
+      const sanitizedError = new Error(sanitizedMessage);
+      setError(sanitizedError);
+      console.error('[UserProfile] Failed to fetch profile:', sanitizedMessage);
     } finally {
       setLoading(false);
     }
@@ -138,14 +165,39 @@ export function useUserProfile(): UseUserProfileReturn {
 
   const clearCache = useCallback(() => {
     if (account) {
+      const cached = profileCache.get(account.homeAccountId);
+      // Revoke blob URL before clearing
+      if (cached?.data.photo) {
+        URL.revokeObjectURL(cached.data.photo);
+      }
       profileCache.delete(account.homeAccountId);
     }
+    // Revoke current profile photo URL
+    if (profile?.photo) {
+      URL.revokeObjectURL(profile.photo);
+    }
     setProfile(null);
-  }, [account]);
+  }, [account, profile]);
 
   useEffect(() => {
     fetchProfile();
+
+    // Cleanup: revoke blob URLs to prevent memory leaks
+    return () => {
+      if (profile?.photo) {
+        URL.revokeObjectURL(profile.photo);
+      }
+    };
   }, [fetchProfile]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (profile?.photo) {
+        URL.revokeObjectURL(profile.photo);
+      }
+    };
+  }, [profile?.photo]);
 
   return {
     profile,

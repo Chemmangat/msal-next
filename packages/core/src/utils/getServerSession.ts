@@ -1,4 +1,5 @@
 import { cookies, headers } from 'next/headers';
+import { safeJsonParse, isValidAccountData, ValidatedAccountData } from './validation';
 
 export interface ServerSession {
   /**
@@ -18,6 +19,7 @@ export interface ServerSession {
 
   /**
    * Access token (if available in cookie)
+   * @deprecated Storing tokens in cookies is not recommended for security reasons
    */
   accessToken?: string;
 }
@@ -56,25 +58,31 @@ export async function getServerSession(): Promise<ServerSession> {
     const msalToken = cookieStore.get('msal.token');
 
     if (msalAccount?.value) {
-      try {
-        const accountData = JSON.parse(msalAccount.value);
+      // Safely parse and validate account data
+      const accountData = safeJsonParse<ValidatedAccountData>(
+        msalAccount.value,
+        isValidAccountData
+      );
+
+      if (accountData) {
         return {
           isAuthenticated: true,
           accountId: accountData.homeAccountId,
           username: accountData.username,
           accessToken: msalToken?.value,
         };
-      } catch (error) {
-        console.error('[ServerSession] Failed to parse account data:', error);
+      } else {
+        console.warn('[ServerSession] Invalid account data in cookie');
       }
     }
 
     // Fallback: check for custom auth header
     const authHeader = headersList.get('x-msal-authenticated');
     if (authHeader === 'true') {
+      const username = headersList.get('x-msal-username');
       return {
         isAuthenticated: true,
-        username: headersList.get('x-msal-username') || undefined,
+        username: username || undefined,
       };
     }
 

@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2024-03-05
+
+### 🔒 Security Patch Release
+
+This is a critical security update that addresses multiple vulnerabilities discovered in v2.0.0. **All users should upgrade immediately.**
+
+### Security Fixes
+
+- **CRITICAL**: Fixed JSON parsing without validation in `getServerSession` and `createAuthMiddleware` that could lead to type confusion attacks
+- **HIGH**: Fixed memory leaks from unreleased blob URLs in `useUserProfile` hook
+- **MEDIUM**: Fixed unbounded cache growth in `useRoles` and `useUserProfile` hooks by implementing LRU eviction with 100-entry limit
+- **MEDIUM**: Fixed race conditions in token acquisition that could trigger multiple concurrent popup windows
+- **MEDIUM**: Added error message sanitization to prevent information disclosure of tokens and secrets
+- **MEDIUM**: Added redirect URI validation to prevent open redirect vulnerabilities
+
+### Added
+
+- **New Security Module** (`validation.ts`) with utilities:
+  - `safeJsonParse()` - Safe JSON parsing with schema validation
+  - `isValidAccountData()` - Account data structure validator
+  - `sanitizeError()` - Error message sanitization to remove tokens/secrets
+  - `isValidRedirectUri()` - Redirect URI validation against allowlist
+  - `isValidScope()` / `validateScopes()` - Scope string validation
+- **allowedRedirectUris** configuration option in `MsalAuthConfig` for redirect URI validation
+- **Request deduplication** in `useMsalAuth.acquireToken()` to prevent concurrent requests
+- **Proper cleanup handlers** in `useUserProfile` and `useRoles` hooks
+- **Cache size limits** (100 entries) with LRU eviction strategy
+- **SECURITY.md** file with security best practices and vulnerability reporting guidelines
+
+### Changed
+
+- `getServerSession()` now uses validated JSON parsing instead of raw `JSON.parse()`
+- `createAuthMiddleware()` now validates session cookie data before use
+- All error messages are sanitized before logging or throwing to prevent token leakage
+- `useUserProfile` now properly revokes blob URLs on cleanup to prevent memory leaks
+- `useRoles` and `useUserProfile` caches now have size limits and cleanup on unmount
+- `useMsalAuth.acquireTokenPopup()` now prevents multiple concurrent popup requests
+
+### Deprecated
+
+- `ServerSession.accessToken` - Storing tokens in cookies is not recommended for security reasons (see SECURITY.md)
+
+### Migration Guide
+
+No breaking changes. Simply update your package:
+
+```bash
+npm install @chemmangat/msal-next@2.0.1
+```
+
+**Optional but recommended**: Add redirect URI validation:
+
+```typescript
+<MsalAuthProvider
+  clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
+  allowedRedirectUris={[
+    'https://myapp.com',
+    'http://localhost:3000'
+  ]}
+>
+  {children}
+</MsalAuthProvider>
+```
+
+---
+
 ## [2.0.0] - 2024-02-24
 
 ### 🎉 Major Release - Production-Grade Features

@@ -28,6 +28,14 @@ export { createMsalConfig } from './utils/createMsalConfig';
 export { withAuth } from './utils/withAuth';
 export { retryWithBackoff, createRetryWrapper } from './utils/tokenRetry';
 export { getDebugLogger, createScopedLogger } from './utils/debugLogger';
+export { 
+  safeJsonParse, 
+  isValidAccountData, 
+  sanitizeError, 
+  isValidRedirectUri, 
+  isValidScope, 
+  validateScopes 
+} from './utils/validation';
 
 // ============================================================================
 // Middleware (Edge-compatible)
@@ -53,6 +61,7 @@ export type { ServerSession } from './utils/getServerSession';
 export type { RetryConfig } from './utils/tokenRetry';
 export type { DebugLoggerConfig } from './utils/debugLogger';
 export type { AuthMiddlewareConfig } from './middleware/createAuthMiddleware';
+export type { ValidatedAccountData } from './utils/validation';
 
 // ============================================================================
 // Re-export useful MSAL hooks and types

@@ -1,5 +1,17 @@
 // Example: app/api/auth/session/route.ts
 // This is an example API route for managing server-side sessions
+//
+// ⚠️ SECURITY WARNING ⚠️
+// This example demonstrates cookie-based session management but is NOT recommended
+// for production use. Storing tokens in cookies exposes them to CSRF attacks.
+//
+// For production, consider:
+// 1. Use MSAL's built-in sessionStorage/localStorage (client-side only)
+// 2. Implement proper server-side session management with encrypted session IDs
+// 3. Never store access tokens in cookies
+// 4. Implement CSRF protection for all state-changing operations
+//
+// See SECURITY.md for more information.
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
@@ -26,17 +38,19 @@ export async function POST(request: NextRequest) {
     cookieStore.set('msal.account', JSON.stringify(account), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'strict', // Changed from 'lax' to 'strict' for better security
       maxAge: 60 * 60 * 24, // 24 hours
       path: '/',
     });
 
     // Set token cookie (optional, be careful with token storage)
+    // ⚠️ WARNING: Storing tokens in cookies is NOT recommended for production
+    // This is for demonstration purposes only
     if (token) {
       cookieStore.set('msal.token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'strict', // Changed from 'lax' to 'strict' for better security
         maxAge: 60 * 60, // 1 hour
         path: '/',
       });

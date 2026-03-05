@@ -89,6 +89,13 @@ export interface MsalAuthConfig {
   loggerCallback?: (level: LogLevel, message: string, containsPii: boolean) => void;
 
   /**
+   * Allowed redirect URIs for validation (optional but recommended)
+   * Helps prevent open redirect vulnerabilities
+   * @example ['https://myapp.com', 'http://localhost:3000']
+   */
+  allowedRedirectUris?: string[];
+
+  /**
    * Loading component to show while MSAL initializes
    */
   loadingComponent?: ReactNode;

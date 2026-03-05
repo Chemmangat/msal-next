@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import { useMsalAuth } from './useMsalAuth';
+import { sanitizeError } from '../utils/validation';
 
 export interface GraphApiOptions extends RequestInit {
   /**
@@ -100,7 +101,8 @@ export function useGraphApi(): UseGraphApiReturn {
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`Graph API error (${response.status}): ${errorText}`);
+          const errorMessage = `Graph API error (${response.status}): ${errorText}`;
+          throw new Error(errorMessage);
         }
 
         // Handle empty responses
@@ -116,8 +118,9 @@ export function useGraphApi(): UseGraphApiReturn {
 
         return data as T;
       } catch (error) {
-        console.error('[GraphAPI] Request failed:', error);
-        throw error;
+        const sanitizedMessage = sanitizeError(error);
+        console.error('[GraphAPI] Request failed:', sanitizedMessage);
+        throw new Error(sanitizedMessage);
       }
     },
     [acquireToken]

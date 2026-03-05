@@ -1,5 +1,6 @@
 import { Configuration, LogLevel } from '@azure/msal-browser';
 import { MsalAuthConfig } from '../types';
+import { isValidRedirectUri } from './validation';
 
 export function createMsalConfig(config: MsalAuthConfig): Configuration {
   // If custom config provided, use it
@@ -18,6 +19,7 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
     navigateToLoginRequestUrl = true,
     enableLogging = false,
     loggerCallback,
+    allowedRedirectUris,
   } = config;
 
   if (!clientId) {
@@ -38,6 +40,22 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
   // Default redirect URI
   const defaultRedirectUri = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
   const finalRedirectUri = redirectUri || defaultRedirectUri;
+
+  // Validate redirect URIs if allowedRedirectUris is provided
+  if (allowedRedirectUris && allowedRedirectUris.length > 0) {
+    if (!isValidRedirectUri(finalRedirectUri, allowedRedirectUris)) {
+      throw new Error(
+        `@chemmangat/msal-next: redirectUri "${finalRedirectUri}" is not in the allowed list`
+      );
+    }
+
+    const finalPostLogoutUri = postLogoutRedirectUri || finalRedirectUri;
+    if (!isValidRedirectUri(finalPostLogoutUri, allowedRedirectUris)) {
+      throw new Error(
+        `@chemmangat/msal-next: postLogoutRedirectUri "${finalPostLogoutUri}" is not in the allowed list`
+      );
+    }
+  }
 
   const msalConfig: Configuration = {
     auth: {

@@ -2,7 +2,7 @@
 
 import { useMsal, useAccount } from '@azure/msal-react';
 import { AccountInfo, InteractionStatus, PopupRequest, RedirectRequest, SilentRequest } from '@azure/msal-browser';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 export interface UseMsalAuthReturn {
   /**
@@ -71,9 +71,13 @@ export interface UseMsalAuthReturn {
   clearSession: () => Promise<void>;
 }
 
+// Request deduplication map to prevent race conditions
+const pendingTokenRequests = new Map<string, Promise<string>>();
+
 export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAuthReturn {
   const { instance, accounts, inProgress } = useMsal();
   const account = useAccount(accounts[0] || null);
+  const popupInProgressRef = useRef(false);
 
   const isAuthenticated = useMemo(() => accounts.length > 0, [accounts]);
 
@@ -159,7 +163,13 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         throw new Error('[MSAL] No active account. Please login first.');
       }
 
+      // Prevent multiple concurrent popup requests
+      if (popupInProgressRef.current) {
+        throw new Error('[MSAL] Popup already in progress. Please wait.');
+      }
+
       try {
+        popupInProgressRef.current = true;
         const request: PopupRequest = {
           scopes,
           account,
@@ -169,6 +179,8 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
       } catch (error) {
         console.error('[MSAL] Token popup acquisition failed:', error);
         throw error;
+      } finally {
+        popupInProgressRef.current = false;
       }
     },
     [instance, account, defaultScopes]
@@ -196,14 +208,34 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
 
   const acquireToken = useCallback(
     async (scopes: string[] = defaultScopes): Promise<string> => {
-      try {
-        return await acquireTokenSilent(scopes);
-      } catch (error) {
-        console.warn('[MSAL] Silent token acquisition failed, falling back to popup');
-        return await acquireTokenPopup(scopes);
+      // Create a unique key for request deduplication
+      const requestKey = `${account?.homeAccountId || 'anonymous'}-${scopes.sort().join(',')}`;
+
+      // Check if there's already a pending request for these scopes
+      const pendingRequest = pendingTokenRequests.get(requestKey);
+      if (pendingRequest) {
+        return pendingRequest;
       }
+
+      // Create new request
+      const tokenRequest = (async () => {
+        try {
+          return await acquireTokenSilent(scopes);
+        } catch (error) {
+          console.warn('[MSAL] Silent token acquisition failed, falling back to popup');
+          return await acquireTokenPopup(scopes);
+        } finally {
+          // Clean up pending request
+          pendingTokenRequests.delete(requestKey);
+        }
+      })();
+
+      // Store pending request
+      pendingTokenRequests.set(requestKey, tokenRequest);
+
+      return tokenRequest;
     },
-    [acquireTokenSilent, acquireTokenPopup, defaultScopes]
+    [acquireTokenSilent, acquireTokenPopup, defaultScopes, account]
   );
 
   const clearSession = useCallback(async () => {

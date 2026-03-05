@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { safeJsonParse, isValidAccountData } from '../utils/validation';
 
 export interface AuthMiddlewareConfig {
   /**
@@ -135,17 +136,20 @@ export function createAuthMiddleware(config: AuthMiddlewareConfig = {}) {
     if (authenticated) {
       response.headers.set('x-msal-authenticated', 'true');
       
-      // Try to add username from cookie
+      // Try to add username from cookie with validation
       try {
         const sessionData = request.cookies.get(sessionCookie);
         if (sessionData?.value) {
-          const account = JSON.parse(sessionData.value);
-          if (account.username) {
+          const account = safeJsonParse(sessionData.value, isValidAccountData);
+          if (account?.username) {
             response.headers.set('x-msal-username', account.username);
           }
         }
       } catch (error) {
         // Ignore parsing errors
+        if (debug) {
+          console.warn('[AuthMiddleware] Failed to parse session data');
+        }
       }
     }
 
