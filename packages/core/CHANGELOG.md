@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.2] - 2026-03-05
+
+### 📝 Documentation Update
+
+- Updated README with current version number
+- No code changes from 3.1.1
+
+## [3.1.1] - 2026-03-05
+
+### 📝 Documentation & Build
+
+- Fixed landing page build issues
+- Cleaned up redundant documentation files
+- Updated package files list
+- No code changes from 3.0.8
+
 ## [3.0.8] - 2026-03-05
 
 ### 🚨 CRITICAL BUG FIX
