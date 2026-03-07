@@ -6,15 +6,23 @@ src/
 # Config files
 tsconfig.json
 tsup.config.ts
+vitest.config.ts
 
 # Development
 node_modules/
 .git/
+__tests__/
 
-# Documentation (use README.md only)
+# Examples (not needed in published package)
+src/examples/
+
+# Documentation (keep only essential docs)
 PUBLISHING.md
+PUBLIC_BLANK_HTML.md
 
 # Misc
 *.log
 *.tgz
 .DS_Store
+.turbo
+coverage/
