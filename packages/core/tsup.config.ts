@@ -10,6 +10,9 @@ export default defineConfig([
     dts: true,
     sourcemap: false,
     clean: true,
+    minify: true,
+    treeshake: true,
+    splitting: false,
     external: [
       'react',
       'react-dom',
@@ -34,6 +37,9 @@ export default defineConfig([
     dts: true,
     sourcemap: false,
     clean: false,
+    minify: true,
+    treeshake: true,
+    splitting: false,
     external: [
       'react',
       'react-dom',
