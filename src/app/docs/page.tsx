@@ -14,6 +14,7 @@ export default function DocsPage() {
       const sections = [
         'installation',
         'quickstart',
+        'protected-routes',
         'provider',
         'hook',
         'button',
@@ -50,6 +51,7 @@ export default function DocsPage() {
   const sections = [
     { id: 'installation', label: 'Installation' },
     { id: 'quickstart', label: 'Quick Start' },
+    { id: 'protected-routes', label: 'Protected Routes (v4.0)' },
     { id: 'provider', label: 'MsalAuthProvider' },
     { id: 'hook', label: 'useMsalAuth Hook' },
     { id: 'button', label: 'Sign In Button' },
@@ -80,7 +82,7 @@ export default function DocsPage() {
             <div className="sticky top-24 space-y-1">
               <div className="mb-6">
                 <h2 className="text-lg font-bold text-dark-text mb-2">Documentation</h2>
-                <p className="text-sm text-dark-muted">@chemmangat/msal-next v3.1.7</p>
+                <p className="text-sm text-dark-muted">@chemmangat/msal-next v4.0.1</p>
               </div>
               <nav className="space-y-1">
                 {sections.map((section) => (
@@ -205,6 +207,117 @@ export default function Home() {
                       onCopy={() => copyToClipboard(`'use client';\n\nimport { MicrosoftSignInButton, SignOutButton, useMsalAuth } from '@chemmangat/msal-next';\n\nexport default function Home() {\n  const { isAuthenticated, account } = useMsalAuth();\n\n  if (!isAuthenticated) {\n    return <MicrosoftSignInButton />;\n  }\n\n  return (\n    <div>\n      <h1>Hello, {account?.name}!</h1>\n      <SignOutButton />\n    </div>\n  );\n}`, 3)}
                       copied={copiedIndex === 3}
                     />
+                  </div>
+                </div>
+              </section>
+
+              {/* Protected Routes (v4.0) */}
+              <section id="protected-routes">
+                <h2 className="text-3xl font-bold text-dark-text mb-6">
+                  Zero-Config Protected Routes <span className="text-sm text-accent-primary">(v4.0)</span>
+                </h2>
+                <p className="text-dark-muted mb-6">
+                  Protect any route with one line of code. No middleware setup, no boilerplate.
+                </p>
+
+                <div className="bg-accent-primary/10 border border-accent-primary/30 rounded-xl p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-dark-text mb-3">✨ The Killer Feature</h3>
+                  <p className="text-dark-muted mb-4">
+                    Just export an <code className="text-accent-primary">auth</code> config from your page. That's it!
+                  </p>
+                  <CodeBlock
+                    title="app/dashboard/page.tsx"
+                    code={`// Just add this line - that's it!
+export const auth = { required: true };
+
+export default function Dashboard() {
+  return <div>Protected content</div>;
+}`}
+                    onCopy={() => copyToClipboard(`export const auth = { required: true };\n\nexport default function Dashboard() {\n  return <div>Protected content</div>;\n}`, 10)}
+                    copied={copiedIndex === 10}
+                  />
+                </div>
+
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-xl font-semibold text-dark-text mb-3">Role-Based Access</h3>
+                    <CodeBlock
+                      title="app/admin/page.tsx"
+                      code={`export const auth = {
+  required: true,
+  roles: ['admin', 'editor']
+};
+
+export default function AdminPage() {
+  return <div>Only admins and editors can see this</div>;
+}`}
+                      onCopy={() => copyToClipboard(`export const auth = {\n  required: true,\n  roles: ['admin', 'editor']\n};\n\nexport default function AdminPage() {\n  return <div>Only admins and editors can see this</div>;\n}`, 11)}
+                      copied={copiedIndex === 11}
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold text-dark-text mb-3">Custom Validation</h3>
+                    <CodeBlock
+                      title="app/internal/page.tsx"
+                      code={`export const auth = {
+  required: true,
+  validate: (account) => {
+    // Only allow company emails
+    return account.username.endsWith('@company.com');
+  },
+  unauthorized: <div>Only company emails allowed</div>
+};
+
+export default function InternalPage() {
+  return <div>Internal tools</div>;
+}`}
+                      onCopy={() => copyToClipboard(`export const auth = {\n  required: true,\n  validate: (account) => {\n    return account.username.endsWith('@company.com');\n  },\n  unauthorized: <div>Only company emails allowed</div>\n};\n\nexport default function InternalPage() {\n  return <div>Internal tools</div>;\n}`, 12)}
+                      copied={copiedIndex === 12}
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold text-dark-text mb-3">Custom UI</h3>
+                    <CodeBlock
+                      title="app/profile/page.tsx"
+                      code={`export const auth = {
+  required: true,
+  redirectTo: '/custom-login',
+  loading: <div className="spinner">Checking auth...</div>,
+  unauthorized: <div>Access denied</div>
+};
+
+export default function ProfilePage() {
+  return <div>Profile content</div>;
+}`}
+                      onCopy={() => copyToClipboard(`export const auth = {\n  required: true,\n  redirectTo: '/custom-login',\n  loading: <div className="spinner">Checking auth...</div>,\n  unauthorized: <div>Access denied</div>\n};\n\nexport default function ProfilePage() {\n  return <div>Profile content</div>;\n}`, 13)}
+                      copied={copiedIndex === 13}
+                    />
+                  </div>
+
+                  <div className="bg-dark-elevated border border-dark-border rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-dark-text mb-4">Available Options</h3>
+                    <div className="space-y-4">
+                      <PropDoc name="required" type="boolean" defaultValue="false">
+                        Whether authentication is required
+                      </PropDoc>
+                      <PropDoc name="roles" type="string[]">
+                        Required Azure AD roles (user must have at least one)
+                      </PropDoc>
+                      <PropDoc name="validate" type="(account) => boolean | Promise<boolean>">
+                        Custom validation function
+                      </PropDoc>
+                      <PropDoc name="redirectTo" type="string" defaultValue="'/login'">
+                        Custom redirect path when auth fails
+                      </PropDoc>
+                      <PropDoc name="loading" type="ReactNode">
+                        Custom loading component
+                      </PropDoc>
+                      <PropDoc name="unauthorized" type="ReactNode">
+                        Custom unauthorized component (shown instead of redirect)
+                      </PropDoc>
+                    </div>
                   </div>
                 </div>
               </section>
