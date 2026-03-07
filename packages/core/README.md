@@ -6,7 +6,7 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security](https://img.shields.io/badge/Security-A+-green.svg)](./SECURITY.md)
 
-> **📦 Current Version: 4.1.0** - Production-ready with automatic token refresh and enhanced security
+> **📦 Current Version: 4.1.1** - Production-ready with automatic token refresh and enhanced security
 
 ---
 
@@ -782,6 +782,7 @@ export default function ProfilePage() {
 
 ### Links
 - 📦 [npm Package](https://www.npmjs.com/package/@chemmangat/msal-next)
+- 🚀 [Live Demo](https://github.com/Chemmangat/msal-next-demo) - Sample implementation
 - 🐛 [Report Issues](https://github.com/chemmangat/msal-next/issues)
 - 💬 [Discussions](https://github.com/chemmangat/msal-next/discussions)
 - ⭐ [GitHub Repository](https://github.com/chemmangat/msal-next)
