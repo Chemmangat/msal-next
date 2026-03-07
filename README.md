@@ -235,6 +235,7 @@ MIT © Chemmangat
 
 - [npm Package](https://www.npmjs.com/package/@chemmangat/msal-next)
 - [GitHub Repository](https://github.com/chemmangat/msal-next)
+- [Live Demo](https://github.com/Chemmangat/msal-next-demo) - Sample implementation
 - [Example App](./example)
 - [MSAL.js Documentation](https://github.com/AzureAD/microsoft-authentication-library-for-js)
 - [Azure AD Documentation](https://docs.microsoft.com/en-us/azure/active-directory/)
