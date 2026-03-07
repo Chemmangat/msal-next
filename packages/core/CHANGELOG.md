@@ -121,7 +121,7 @@ await logoutRedirect();
 ### 🚨 CRITICAL BUG FIX
 
 #### Popup Authentication Fixed
-**This release fixes a critical bug introduced in v3.0.6 that broke popup authentication for 650+ users.**
+**This release fixes a critical bug introduced in v3.0.6 that broke popup authentication for 2,200+ users.**
 
 **Problem:** In v3.0.6, we skipped `handleRedirectPromise()` in popup windows, which prevented MSAL from completing the authentication flow. This caused popups to not close and authentication to fail.
 

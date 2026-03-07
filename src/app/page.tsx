@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, BookOpen, Github, Download, Users, Star, Code2 } from 'lucide-react';
 import Link from 'next/link';
+import { CountOnScroll } from '@chemmangat/easy-scroll';
 
 export default function Home() {
   return (
@@ -46,21 +47,21 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-primary/10 border border-accent-primary/20 rounded-full mb-8">
-              <span className="text-accent-primary text-sm font-semibold">v4.0.0</span>
-              <span className="text-dark-muted text-sm">Zero-Config Protected Routes</span>
+              <span className="text-accent-primary text-sm font-semibold">v4.0.1</span>
+              <span className="text-dark-muted text-sm">Latest Release</span>
             </div>
             
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-dark-text mb-6 leading-tight">
-              Protect Routes with
+              Microsoft Authentication
               <br />
               <span className="bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
-                One Line of Code
+                Made Simple
               </span>
             </h1>
             
             <p className="text-xl text-dark-muted mb-12 max-w-2xl mx-auto leading-relaxed">
-              The simplest way to add Microsoft authentication to Next.js.
-              No middleware, no boilerplate, just export auth = {'{ required: true }'}.
+              Production-grade MSAL authentication for Next.js App Router. 
+              Zero configuration, full TypeScript support, redirect-only flow.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -95,7 +96,7 @@ export default function Home() {
         >
           <StatCard
             icon={<Users className="w-6 h-6" />}
-            value="650+"
+            value={<CountOnScroll from={0} to={2200} duration={2} formatFn={(val) => `${val.toLocaleString()}+`} />}
             label="Active Installations"
           />
           <StatCard
@@ -126,12 +127,12 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FeatureCard
-                title="Zero-Config Protection"
-                description="Protect routes with one line: export const auth = { required: true }"
+                title="Zero Configuration"
+                description="Works out of the box with sensible defaults"
               />
               <FeatureCard
-                title="Role-Based Access"
-                description="Built-in role checking with Azure AD roles"
+                title="Protected Routes (NEW)"
+                description="One line to protect: export const auth = { required: true }"
               />
               <FeatureCard
                 title="TypeScript First"
@@ -167,18 +168,18 @@ export default function Home() {
             <div className="bg-dark-bg border border-dark-border rounded-xl p-6 overflow-x-auto">
               <pre className="text-sm leading-relaxed">
                 <code className="text-dark-text">
-{`// app/dashboard/page.tsx
-export const auth = { required: true };
+{`import { MSALProvider } from '@chemmangat/msal-next';
 
-export default function Dashboard() {
-  return <div>Protected content - that's it!</div>;
-}
-
-// With roles
-export const auth = { 
-  required: true,
-  roles: ['admin', 'editor']
-};`}
+export default function RootLayout({ children }) {
+  return (
+    <MSALProvider 
+      clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID}
+      tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID}
+    >
+      {children}
+    </MSALProvider>
+  );
+}`}
                 </code>
               </pre>
             </div>
@@ -195,10 +196,10 @@ export const auth = {
           className="bg-gradient-to-r from-accent-primary to-accent-secondary rounded-2xl p-12 text-center"
         >
           <h2 className="text-4xl font-bold text-white mb-4">
-            Protect Any Route in Seconds
+            Ready to get started?
           </h2>
           <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-            No middleware setup. No boilerplate. Just one line of code.
+            Join 2,200+ developers using @chemmangat/msal-next in production
           </p>
           <Link
             href="/docs"
@@ -248,7 +249,7 @@ export const auth = {
   );
 }
 
-function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string | React.ReactNode; label: string }) {
   return (
     <div className="bg-dark-elevated border border-dark-border rounded-xl p-6 text-center">
       <div className="inline-flex items-center justify-center w-12 h-12 bg-accent-primary/10 rounded-lg mb-4 text-accent-primary">
