@@ -4,50 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { useMsalAuth } from './useMsalAuth';
 import { useGraphApi } from './useGraphApi';
 import { sanitizeError } from '../utils/validation';
-
-export interface UserProfile {
-  id: string;
-  displayName: string;
-  givenName: string;
-  surname: string;
-  userPrincipalName: string;
-  mail: string;
-  jobTitle?: string;
-  officeLocation?: string;
-  mobilePhone?: string;
-  businessPhones?: string[];
-  photo?: string;
-}
-
-export interface UseUserProfileReturn {
-  /**
-   * User profile data
-   */
-  profile: UserProfile | null;
-
-  /**
-   * Whether profile is loading
-   */
-  loading: boolean;
-
-  /**
-   * Error if profile fetch failed
-   */
-  error: Error | null;
-
-  /**
-   * Refetch user profile
-   */
-  refetch: () => Promise<void>;
-
-  /**
-   * Clear cached profile
-   */
-  clearCache: () => void;
-}
+import { UserProfile, UseUserProfileReturn } from '../types/userProfile';
 
 // Simple in-memory cache with size limit
-const profileCache = new Map<string, { data: UserProfile; timestamp: number }>();
+const profileCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 const MAX_CACHE_SIZE = 100; // Prevent memory leaks
 
@@ -74,15 +34,26 @@ function enforceCacheLimit(): void {
 /**
  * Hook for fetching and caching user profile from MS Graph
  * 
+ * @remarks
+ * Supports generic type parameter for custom profile fields.
+ * 
  * @example
  * ```tsx
+ * // Basic usage
  * const { profile, loading } = useUserProfile();
+ * console.log(profile?.department); // Now available!
+ * 
+ * // With custom fields
+ * interface MyProfile extends UserProfile {
+ *   customField: string;
+ * }
+ * const { profile } = useUserProfile<MyProfile>();
  * ```
  */
-export function useUserProfile(): UseUserProfileReturn {
+export function useUserProfile<T extends UserProfile = UserProfile>(): UseUserProfileReturn<T> {
   const { isAuthenticated, account } = useMsalAuth();
   const graph = useGraphApi();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -97,7 +68,7 @@ export function useUserProfile(): UseUserProfileReturn {
     // Check cache
     const cached = profileCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      setProfile(cached.data);
+      setProfile(cached.data as T);
       return;
     }
 
@@ -128,7 +99,7 @@ export function useUserProfile(): UseUserProfileReturn {
         console.debug('[UserProfile] Photo not available');
       }
 
-      const profileData: UserProfile = {
+      const profileData: T = {
         id: userData.id,
         displayName: userData.displayName,
         givenName: userData.givenName,
@@ -136,11 +107,37 @@ export function useUserProfile(): UseUserProfileReturn {
         userPrincipalName: userData.userPrincipalName,
         mail: userData.mail,
         jobTitle: userData.jobTitle,
+        department: userData.department,
+        companyName: userData.companyName,
         officeLocation: userData.officeLocation,
         mobilePhone: userData.mobilePhone,
         businessPhones: userData.businessPhones,
+        preferredLanguage: userData.preferredLanguage,
+        employeeId: userData.employeeId,
+        employeeHireDate: userData.employeeHireDate,
+        employeeType: userData.employeeType,
+        country: userData.country,
+        city: userData.city,
+        state: userData.state,
+        streetAddress: userData.streetAddress,
+        postalCode: userData.postalCode,
+        usageLocation: userData.usageLocation,
+        manager: userData.manager,
+        aboutMe: userData.aboutMe,
+        birthday: userData.birthday,
+        interests: userData.interests,
+        skills: userData.skills,
+        schools: userData.schools,
+        pastProjects: userData.pastProjects,
+        responsibilities: userData.responsibilities,
+        mySite: userData.mySite,
+        faxNumber: userData.faxNumber,
+        accountEnabled: userData.accountEnabled,
+        ageGroup: userData.ageGroup,
+        userType: userData.userType,
         photo: photoUrl,
-      };
+        ...userData, // Include any additional fields from the API
+      } as T;
 
       // Cache the profile
       profileCache.set(cacheKey, {

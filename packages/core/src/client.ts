@@ -207,14 +207,32 @@ export { useGraphApi } from './hooks/useGraphApi';
 /**
  * Fetch and cache user profile from MS Graph
  * 
+ * @remarks
+ * Now supports complete Microsoft Graph user profile fields including department,
+ * preferredLanguage, employeeId, and more. Supports generic type parameter for
+ * custom profile extensions.
+ * 
  * @example
  * ```tsx
+ * // Basic usage with complete types
  * const { profile, loading, error, refetch } = useUserProfile();
  * 
  * if (loading) return <div>Loading...</div>;
  * if (error) return <div>Error: {error.message}</div>;
  * 
- * return <div>{profile.displayName}</div>;
+ * return (
+ *   <div>
+ *     <h1>{profile.displayName}</h1>
+ *     <p>{profile.department}</p>
+ *     <p>{profile.preferredLanguage}</p>
+ *   </div>
+ * );
+ * 
+ * // With custom fields
+ * interface MyProfile extends UserProfile {
+ *   customField: string;
+ * }
+ * const { profile } = useUserProfile<MyProfile>();
  * ```
  */
 export { useUserProfile } from './hooks/useUserProfile';
@@ -327,6 +345,57 @@ export {
   validateScopes 
 } from './utils/validation';
 
+/**
+ * Configuration validator for development mode
+ * 
+ * @remarks
+ * Automatically validates MSAL configuration in development mode and displays
+ * helpful warnings for common mistakes like placeholder values, invalid GUIDs,
+ * missing environment variables, and HTTP in production.
+ * 
+ * @example
+ * ```tsx
+ * import { validateConfig, displayValidationResults } from '@chemmangat/msal-next';
+ * 
+ * const result = validateConfig({
+ *   clientId: process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!,
+ *   tenantId: process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID,
+ * });
+ * 
+ * displayValidationResults(result);
+ * ```
+ */
+export { validateConfig, displayValidationResults } from './utils/configValidator';
+
+/**
+ * Enhanced MSAL error handling
+ * 
+ * @remarks
+ * Provides actionable error messages with fix instructions for common MSAL errors.
+ * Automatically detects error codes like AADSTS50011 (redirect URI mismatch) and
+ * provides step-by-step solutions.
+ * 
+ * @example
+ * ```tsx
+ * import { MsalError, wrapMsalError } from '@chemmangat/msal-next';
+ * 
+ * try {
+ *   await loginRedirect();
+ * } catch (error) {
+ *   const msalError = wrapMsalError(error);
+ *   
+ *   if (msalError.isUserCancellation()) {
+ *     // User cancelled, ignore
+ *     return;
+ *   }
+ *   
+ *   console.error(msalError.toConsoleString());
+ *   throw msalError;
+ * }
+ * ```
+ */
+export { MsalError, wrapMsalError, createMissingEnvVarError } from './errors/MsalError';
+
 // ============================================================================
 // Zero-Config Protected Routes (v4.0.0)
 // ============================================================================
@@ -390,6 +459,7 @@ export { createAuthMiddleware } from './middleware/createAuthMiddleware';
 // ============================================================================
 
 export type { MsalAuthConfig, MsalAuthProviderProps, CustomTokenClaims } from './types';
+export type { UserProfile, UseUserProfileReturn } from './types/userProfile';
 export type { MicrosoftSignInButtonProps } from './components/MicrosoftSignInButton';
 export type { SignOutButtonProps } from './components/SignOutButton';
 export type { UserAvatarProps } from './components/UserAvatar';
@@ -398,7 +468,6 @@ export type { AuthGuardProps } from './components/AuthGuard';
 export type { ErrorBoundaryProps } from './components/ErrorBoundary';
 export type { UseMsalAuthReturn } from './hooks/useMsalAuth';
 export type { UseGraphApiReturn, GraphApiOptions } from './hooks/useGraphApi';
-export type { UseUserProfileReturn, UserProfile } from './hooks/useUserProfile';
 export type { UseRolesReturn } from './hooks/useRoles';
 export type { WithAuthOptions } from './utils/withAuth';
 export type { ServerSession } from './utils/getServerSession';
@@ -406,6 +475,7 @@ export type { RetryConfig } from './utils/tokenRetry';
 export type { DebugLoggerConfig } from './utils/debugLogger';
 export type { AuthMiddlewareConfig } from './middleware/createAuthMiddleware';
 export type { ValidatedAccountData } from './utils/validation';
+export type { ValidationResult, ValidationWarning, ValidationError } from './utils/configValidator';
 
 // ============================================================================
 // Re-export MSAL Hooks & Types

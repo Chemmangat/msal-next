@@ -2,6 +2,158 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.2] - 2026-03-07
+
+### 🎉 Developer Experience Release - Better Types, Errors & Validation
+
+This release focuses on making the package easier to use and debug with complete TypeScript types, actionable error messages, and automatic configuration validation.
+
+### ✨ New Features
+
+#### Complete TypeScript Types
+- **Extended UserProfile interface** with ALL Microsoft Graph /me endpoint fields
+  - Added: `department`, `preferredLanguage`, `employeeId`, `companyName`, `country`, `city`, `state`, `streetAddress`, `postalCode`, `usageLocation`, `manager`, `aboutMe`, `birthday`, `interests`, `skills`, `schools`, `pastProjects`, `responsibilities`, `mySite`, `faxNumber`, `accountEnabled`, `ageGroup`, `userType`, `employeeHireDate`, `employeeType`
+  - Full JSDoc comments for each field
+  - Generic type support: `useUserProfile<T extends UserProfile>()`
+  - Extensible for custom organization fields
+
+#### Enhanced Error Handling
+- **New MsalError class** that wraps MSAL errors with actionable messages
+- **Automatic error detection** for common Azure AD errors:
+  - `AADSTS50011` (Redirect URI mismatch) → Step-by-step fix instructions
+  - `AADSTS65001` (Consent required) → How to grant admin consent
+  - `AADSTS700016` (Invalid client) → How to verify client ID
+  - `AADSTS90002` (Invalid tenant) → How to fix tenant configuration
+  - `user_cancelled` → Graceful handling (not a real error)
+  - `no_token_request_cache_error` → Explanation and fix
+  - `interaction_required` / `consent_required` → User-friendly messages
+- **Colored console output** in development mode with emojis
+- **Error helper methods**: `isUserCancellation()`, `requiresInteraction()`
+- **Documentation links** included in error messages
+
+#### Development Mode Configuration Validator
+- **Automatic validation** of MSAL configuration in development mode
+- **Detects common mistakes**:
+  - Placeholder values (e.g., "your-client-id-here")
+  - Missing environment variables
+  - Invalid GUID format for client/tenant IDs
+  - HTTP in production (should be HTTPS)
+  - Invalid scope formats
+- **Helpful warnings** with fix instructions and emojis (⚠️, ✓, ✗)
+- **Runs once on mount** and caches results for performance
+- **Zero performance impact** in production (only runs in development)
+
+### 📚 Documentation
+
+#### New TROUBLESHOOTING.md
+- **Common Mistakes** section with before/after examples
+- **Top 5 Errors** with detailed solutions:
+  1. AADSTS50011 - Redirect URI mismatch
+  2. AADSTS65001 - Admin consent required
+  3. Missing environment variables
+  4. AADSTS700016 - Invalid client
+  5. AADSTS90002 - Invalid tenant
+- **Configuration Issues** troubleshooting
+- **Authentication Flow Issues** solutions
+- **Development Tips** for debugging
+- **Quick Reference** for Azure Portal tasks
+
+#### Updated README.md
+- **All code examples** now show `'use client'` FIRST
+- **"What's New in v4.0.2"** section highlighting new features
+- **Common Mistakes** section added
+- **TypeScript examples** updated to show complete types
+- **Error handling examples** with new MsalError class
+- **Configuration validation** examples
+
+### 🔧 Improvements
+
+- **Better error messages** throughout the package
+- **Improved logging** in development mode
+- **Type safety** for all user profile fields
+- **Automatic validation** prevents common configuration mistakes
+- **Clearer documentation** with more examples
+
+### 🐛 Bug Fixes
+
+- Fixed missing TypeScript types for user profile fields
+- Improved error handling in all authentication flows
+- Better detection of user cancellation vs real errors
+
+### 📦 Exports
+
+New exports added:
+```typescript
+// Types
+export type { UserProfile, UseUserProfileReturn } from '@chemmangat/msal-next';
+export type { ValidationResult, ValidationWarning, ValidationError } from '@chemmangat/msal-next';
+
+// Error handling
+export { MsalError, wrapMsalError, createMissingEnvVarError } from '@chemmangat/msal-next';
+
+// Configuration validation
+export { validateConfig, displayValidationResults } from '@chemmangat/msal-next';
+```
+
+### 🔄 Breaking Changes
+
+**None!** This release is 100% backward compatible with v4.0.1.
+
+### 📝 Migration from v4.0.1
+
+No code changes required! Simply update:
+
+```bash
+npm install @chemmangat/msal-next@4.0.2
+```
+
+**Optional improvements you can make:**
+
+1. **Use complete types:**
+```typescript
+const { profile } = useUserProfile();
+// Now has access to: department, preferredLanguage, employeeId, etc.
+console.log(profile?.department);
+console.log(profile?.preferredLanguage);
+```
+
+2. **Better error handling:**
+```typescript
+import { wrapMsalError } from '@chemmangat/msal-next';
+
+try {
+  await loginRedirect();
+} catch (error) {
+  const msalError = wrapMsalError(error);
+  if (msalError.isUserCancellation()) {
+    return; // User cancelled, ignore
+  }
+  console.error(msalError.toConsoleString()); // Actionable error message
+}
+```
+
+3. **Manual validation (optional):**
+```typescript
+import { validateConfig, displayValidationResults } from '@chemmangat/msal-next';
+
+const result = validateConfig({
+  clientId: process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!,
+  tenantId: process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID,
+});
+
+displayValidationResults(result);
+```
+
+### 🎯 What's Next
+
+v4.1.0 will focus on:
+- Additional Graph API helpers
+- More authentication examples
+- Performance optimizations
+- Enhanced testing coverage
+
+---
+
 ## [3.1.7] - 2026-03-05
 
 ### 🔄 Breaking Change - Redirect-Only Flow

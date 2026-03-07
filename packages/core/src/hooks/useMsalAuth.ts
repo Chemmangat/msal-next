@@ -3,6 +3,7 @@
 import { useMsal, useAccount } from '@azure/msal-react';
 import { AccountInfo, InteractionStatus, RedirectRequest, SilentRequest } from '@azure/msal-browser';
 import { useCallback, useMemo } from 'react';
+import { wrapMsalError } from '../errors/MsalError';
 
 export interface UseMsalAuthReturn {
   /**
@@ -80,13 +81,22 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         };
         await instance.loginRedirect(request);
       } catch (error: any) {
-        // Handle user cancellation gracefully
-        if (error?.errorCode === 'user_cancelled') {
+        const msalError = wrapMsalError(error);
+        
+        // Handle user cancellation gracefully (not a real error)
+        if (msalError.isUserCancellation()) {
           console.log('[MSAL] User cancelled login');
           return;
         }
-        console.error('[MSAL] Login redirect failed:', error);
-        throw error;
+        
+        // Log enhanced error in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error(msalError.toConsoleString());
+        } else {
+          console.error('[MSAL] Login redirect failed:', msalError.message);
+        }
+        
+        throw msalError;
       }
     },
     [instance, defaultScopes, inProgress]
@@ -98,8 +108,15 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         account: account || undefined,
       });
     } catch (error) {
-      console.error('[MSAL] Logout redirect failed:', error);
-      throw error;
+      const msalError = wrapMsalError(error);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error(msalError.toConsoleString());
+      } else {
+        console.error('[MSAL] Logout redirect failed:', msalError.message);
+      }
+      
+      throw msalError;
     }
   }, [instance, account]);
 
@@ -118,8 +135,15 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         const response = await instance.acquireTokenSilent(request);
         return response.accessToken;
       } catch (error) {
-        console.error('[MSAL] Silent token acquisition failed:', error);
-        throw error;
+        const msalError = wrapMsalError(error);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.error(msalError.toConsoleString());
+        } else {
+          console.error('[MSAL] Silent token acquisition failed:', msalError.message);
+        }
+        
+        throw msalError;
       }
     },
     [instance, account, defaultScopes]
@@ -138,8 +162,15 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         };
         await instance.acquireTokenRedirect(request);
       } catch (error) {
-        console.error('[MSAL] Token redirect acquisition failed:', error);
-        throw error;
+        const msalError = wrapMsalError(error);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.error(msalError.toConsoleString());
+        } else {
+          console.error('[MSAL] Token redirect acquisition failed:', msalError.message);
+        }
+        
+        throw msalError;
       }
     },
     [instance, account, defaultScopes]
