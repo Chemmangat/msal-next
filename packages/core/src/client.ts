@@ -251,6 +251,31 @@ export { useUserProfile } from './hooks/useUserProfile';
  */
 export { useRoles } from './hooks/useRoles';
 
+/**
+ * Automatic token refresh hook
+ * 
+ * @remarks
+ * Automatically refreshes access tokens before they expire to prevent
+ * session interruptions. Can also be used to check token expiry status.
+ * 
+ * @example
+ * ```tsx
+ * // Automatic refresh (runs in background)
+ * useTokenRefresh({
+ *   refreshBeforeExpiry: 300, // 5 minutes
+ *   scopes: ['User.Read'],
+ * });
+ * 
+ * // With expiry warning
+ * const { expiresIn, isExpiringSoon } = useTokenRefresh();
+ * 
+ * if (isExpiringSoon) {
+ *   return <div>Your session will expire soon</div>;
+ * }
+ * ```
+ */
+export { useTokenRefresh } from './hooks/useTokenRefresh';
+
 // ============================================================================
 // Utilities
 // ============================================================================
@@ -469,6 +494,7 @@ export type { ErrorBoundaryProps } from './components/ErrorBoundary';
 export type { UseMsalAuthReturn } from './hooks/useMsalAuth';
 export type { UseGraphApiReturn, GraphApiOptions } from './hooks/useGraphApi';
 export type { UseRolesReturn } from './hooks/useRoles';
+export type { UseTokenRefreshOptions, UseTokenRefreshReturn } from './hooks/useTokenRefresh';
 export type { WithAuthOptions } from './utils/withAuth';
 export type { ServerSession } from './utils/getServerSession';
 export type { RetryConfig } from './utils/tokenRetry';

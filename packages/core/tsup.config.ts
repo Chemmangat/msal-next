@@ -10,9 +10,14 @@ export default defineConfig([
     dts: true,
     sourcemap: false,
     clean: true,
-    minify: true,
-    treeshake: true,
+    minify: false,
+    treeshake: false, // Disable treeshaking to preserve directives
     splitting: false,
+    esbuildOptions(options) {
+      options.banner = {
+        js: '"use client";',
+      };
+    },
     external: [
       'react',
       'react-dom',
@@ -22,11 +27,6 @@ export default defineConfig([
       '@azure/msal-browser',
       '@azure/msal-react',
     ],
-    esbuildOptions(options) {
-      options.banner = {
-        js: '"use client";',
-      };
-    },
   },
   // Server entry point (without 'use client')
   {
@@ -37,7 +37,7 @@ export default defineConfig([
     dts: true,
     sourcemap: false,
     clean: false,
-    minify: true,
+    minify: false,
     treeshake: true,
     splitting: false,
     external: [

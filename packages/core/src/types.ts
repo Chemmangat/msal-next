@@ -275,6 +275,43 @@ export interface MsalAuthConfig {
    * ```
    */
   onInitialized?: (instance: IPublicClientApplication) => void;
+
+  /**
+   * Enable automatic token refresh
+   * 
+   * @remarks
+   * Automatically refreshes access tokens before they expire to prevent
+   * session interruptions. Tokens are refreshed silently in the background.
+   * 
+   * @defaultValue false
+   * 
+   * @example
+   * ```tsx
+   * <MSALProvider
+   *   clientId="..."
+   *   autoRefreshToken={true}
+   *   refreshBeforeExpiry={300} // Refresh 5 min before expiry
+   * >
+   *   {children}
+   * </MSALProvider>
+   * ```
+   */
+  autoRefreshToken?: boolean;
+
+  /**
+   * Refresh token this many seconds before expiry
+   * 
+   * @remarks
+   * Only used when autoRefreshToken is enabled.
+   * 
+   * @defaultValue 300 (5 minutes)
+   * 
+   * @example
+   * ```tsx
+   * refreshBeforeExpiry={600} // Refresh 10 minutes before expiry
+   * ```
+   */
+  refreshBeforeExpiry?: number;
 }
 
 /**
