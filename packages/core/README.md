@@ -5,22 +5,74 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **📦 Current Version: 3.1.9** - Production-optimized with enhanced documentation and smaller bundle size. [See changelog](./CHANGELOG.md)
+> **📦 Current Version: 4.0.1** - Zero-Config Protected Routes! Protect any page with one line of code.
 
-> **⚠️ Important:** If you're on v3.0.6 or v3.0.7, please update immediately - those versions have a critical popup authentication bug.
+> **🚀 What's New:** Export `auth = { required: true }` from any page to protect it. No middleware, no boilerplate!
 
-> **💡 Having issues?** Check the [Troubleshooting Guide](./TROUBLESHOOTING.md) for common problems and solutions.
+## 🚀 What's New in v4.0.1
 
-## Features
+### Zero-Config Protected Routes - THE Killer Feature
 
-✨ **CLI Setup** - Get started in under 2 minutes with `npx @chemmangat/msal-next init`  
-🔍 **Enhanced Debugging** - Performance tracking, network logs, and log export  
-🔐 **Production Ready** - Comprehensive error handling, retry logic, and SSR support  
-🎨 **Beautiful Components** - Pre-styled Microsoft-branded UI components  
-🪝 **Powerful Hooks** - Easy-to-use hooks for auth, Graph API, and user data  
-🛡️ **Type Safe** - Full TypeScript support with generics for custom claims  
-⚡ **Edge Compatible** - Middleware support for protecting routes at the edge  
-📦 **Zero Config** - Sensible defaults with full customization options
+Protect any route with **one line of code**. No middleware setup, no boilerplate, just export an auth config:
+
+```tsx
+// app/dashboard/page.tsx
+export const auth = { required: true };
+
+export default function Dashboard() {
+  return <div>Protected content - that's it!</div>;
+}
+```
+
+**Why This Changes Everything:**
+
+| Before (v3.x) | After (v4.0) |
+|---------------|--------------|
+| 50+ lines of middleware | 1 line |
+| Manual redirect logic | Automatic |
+| Boilerplate in every page | Zero boilerplate |
+| 30 min setup | 30 sec setup |
+
+### More Examples
+
+**Role-Based Access:**
+```tsx
+export const auth = {
+  required: true,
+  roles: ['admin', 'editor']
+};
+```
+
+**Custom Validation:**
+```tsx
+export const auth = {
+  required: true,
+  validate: (account) => account.username.endsWith('@company.com')
+};
+```
+
+**Custom UI:**
+```tsx
+export const auth = {
+  required: true,
+  loading: <Spinner />,
+  unauthorized: <AccessDenied />
+};
+```
+
+---
+
+## Features (v4.0.1)
+
+✨ **Zero-Config Protection** - One line to protect any route  
+🎯 **Role-Based Access** - Built-in Azure AD role checking  
+🔐 **Custom Validation** - Add your own auth logic  
+⚡ **Automatic Redirects** - Smart return URL handling  
+🎨 **Custom UI** - Override loading/unauthorized states  
+📦 **TypeScript First** - Full type safety  
+🚀 **Next.js 14+** - Built for App Router
+
+---
 
 ## What's New in v3.0
 
@@ -625,6 +677,44 @@ Enable debug logging to troubleshoot issues:
   {children}
 </MsalAuthProvider>
 ```
+
+## Migration to v4.0.1
+
+### From v3.x to v4.0.1
+
+**Good news:** v4.0.0 is **100% backward compatible**! All v3.x code works without changes.
+
+**New feature:** Zero-Config Protected Routes (optional, but recommended)
+
+**Before (v3.x - still works):**
+```tsx
+// middleware.ts
+export async function middleware(request) {
+  const session = await getServerSession();
+  if (!session) return redirect('/login');
+}
+
+// app/dashboard/page.tsx
+export default async function Dashboard() {
+  const session = await getServerSession();
+  if (!session) redirect('/login');
+  return <div>Protected</div>;
+}
+```
+
+**After (v4.0 - recommended):**
+```tsx
+// app/dashboard/page.tsx
+export const auth = { required: true };
+
+export default function Dashboard() {
+  return <div>Protected</div>;
+}
+```
+
+**That's it!** No breaking changes, just a better way to protect routes.
+
+---
 
 ## Migration Guide
 
