@@ -1,7 +1,7 @@
 'use client';
 
 import { useMsalAuth } from '../hooks/useMsalAuth';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, useState, useEffect, useRef } from 'react';
 
 export interface MicrosoftSignInButtonProps {
   /**
@@ -58,20 +58,48 @@ export function MicrosoftSignInButton({
   onSuccess,
   onError,
 }: MicrosoftSignInButtonProps) {
-  const { loginRedirect, inProgress } = useMsalAuth();
+  const { loginRedirect, inProgress, isAuthenticated } = useMsalAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Reset loading state when user becomes authenticated
+  useEffect(() => {
+    if (isAuthenticated && isLoading) {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, isLoading]);
 
   const handleClick = async () => {
+    // Prevent multiple clicks and clicks when already authenticated
+    if (inProgress || isLoading || isAuthenticated) {
+      return;
+    }
+
     setIsLoading(true);
+    
     try {
       await loginRedirect(scopes);
       onSuccess?.();
     } catch (error) {
       onError?.(error as Error);
-    } finally {
-      // Reset loading state after a short delay to ensure MSAL state updates
-      setTimeout(() => setIsLoading(false), 500);
+      // Reset loading state on error
+      setIsLoading(false);
     }
+    
+    // Safety timeout: reset loading state if redirect doesn't happen
+    // This handles edge cases where redirect fails silently
+    timeoutRef.current = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   };
 
   const sizeStyles = {

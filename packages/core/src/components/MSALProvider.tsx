@@ -32,12 +32,15 @@ export function useProtectionConfig() {
 
 /**
  * Pre-configured MSALProvider component for Next.js App Router layouts.
- * This component is already marked as 'use client', so you can use it directly
- * in your server-side layout.tsx without needing to create a separate client component.
+ * 
+ * @remarks
+ * This component is already marked as 'use client' internally, so you can import
+ * and use it directly in your server-side layout.tsx without adding 'use client'
+ * to your layout file.
  * 
  * @example
  * ```tsx
- * // app/layout.tsx
+ * // app/layout.tsx (Server Component - no 'use client' needed!)
  * import { MSALProvider } from '@chemmangat/msal-next'
  * 
  * export default function RootLayout({ children }) {
@@ -55,6 +58,13 @@ export function useProtectionConfig() {
  *   )
  * }
  * ```
+ * 
+ * @security
+ * - All authentication happens client-side (browser)
+ * - Tokens are never sent to your Next.js server
+ * - Uses Microsoft's official MSAL library
+ * - Supports secure token storage (sessionStorage/localStorage)
+ * - No server-side token handling required
  */
 export function MSALProvider({ children, protection, ...props }: MSALProviderProps) {
   return (

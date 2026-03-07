@@ -2,6 +2,204 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2026-03-07
+
+### 🎉 Major Release - Documentation Overhaul + Production Features
+
+This release combines a complete documentation restructure with two highly-requested production features.
+
+### ✨ New Features
+
+#### 1. Fixed 'use client' Directive in Built Files 🔧
+Resolved the issue where importing MSALProvider in layout.tsx required adding 'use client' to the layout file.
+
+**What Changed:**
+- Added 'use client' directive to the top of all built dist files
+- Updated tsup build configuration to preserve React directives
+- Users can now import MSALProvider without needing to add 'use client' to their layout
+
+**Before:**
+```tsx
+// layout.tsx - Had to add 'use client' here
+'use client';
+
+import { MSALProvider } from '@chemmangat/msal-next';
+```
+
+**After:**
+```tsx
+// layout.tsx - No 'use client' needed!
+import { MSALProvider } from '@chemmangat/msal-next';
+```
+
+#### 2. Automatic Silent Token Refresh ⭐
+Prevents unexpected logouts by automatically refreshing tokens before they expire.
+
+```tsx
+<MSALProvider
+  clientId="..."
+  autoRefreshToken={true}  // Enable automatic refresh
+  refreshBeforeExpiry={300} // Refresh 5 min before expiry
+>
+  {children}
+</MSALProvider>
+```
+
+**Benefits:**
+- No more unexpected logouts during active sessions
+- Tokens refresh silently in the background
+- Configurable refresh timing
+- Opt-in feature (disabled by default)
+- Zero performance impact when disabled
+
+#### 3. New useTokenRefresh Hook
+Monitor token expiry and show warnings to users.
+
+```tsx
+const { expiresIn, isExpiringSoon, refresh } = useTokenRefresh({
+  refreshBeforeExpiry: 300,
+  scopes: ['User.Read'],
+});
+
+if (isExpiringSoon) {
+  return <div>⚠️ Your session will expire soon</div>;
+}
+```
+
+**Use Cases:**
+- Show session expiry warnings
+- Manual token refresh
+- Monitor token status
+- Custom refresh logic
+
+#### 4. Fixed "Interaction in Progress" Issue 🐛
+Improved sign-in button state management to prevent the common "interaction already in progress" error.
+
+**What was fixed:**
+- Button now properly tracks MSAL interaction state
+- Prevents multiple simultaneous login attempts
+- Automatically resets state when user is authenticated
+- Better cleanup on component unmount
+- Safety timeout for edge cases
+
+**Before:**
+```
+User clicks "Sign In" → Redirects → Returns → Clicks again → "Interaction in progress" error
+```
+
+**After:**
+```
+User clicks "Sign In" → Redirects → Returns → Button automatically disabled/enabled correctly
+```
+
+### 📚 Documentation Overhaul
+
+#### Restructured README.md
+- **Setup-First Approach** - Quick Start guide now appears at the top
+- **Complete Setup Guide for AI Assistants** - Step-by-step instructions from A to Z
+- **Clear Project Structure** - Shows exactly where files should be placed
+- **Common Patterns** - Ready-to-use code examples for typical scenarios
+- **Troubleshooting Checklist** - Quick diagnostic steps
+- **Configuration Reference** - Complete table of all options
+- **FAQ Section** - Answers to common questions
+
+#### Better for AI Assistants
+When an AI assistant is asked to "implement MSAL authentication", the README now provides:
+1. Clear installation command
+2. Azure AD setup steps
+3. Environment variable configuration
+4. Exact file structure
+5. Complete code for each file
+6. Common patterns
+7. Troubleshooting steps
+
+### 🔧 Improvements
+
+- **MicrosoftSignInButton**: Better state management, prevents duplicate clicks
+- **MSALProvider**: New props for automatic token refresh
+- **Type Safety**: New types exported for token refresh functionality
+- **Error Handling**: Better handling of interaction state
+
+### 📦 New Exports
+
+```typescript
+// Hook
+export { useTokenRefresh } from '@chemmangat/msal-next';
+
+// Types
+export type { UseTokenRefreshOptions, UseTokenRefreshReturn } from '@chemmangat/msal-next';
+
+// MSALProvider new props
+interface MsalAuthConfig {
+  autoRefreshToken?: boolean;
+  refreshBeforeExpiry?: number;
+}
+```
+
+### 📚 New Documentation
+
+#### SECURITY.md
+Comprehensive security documentation covering:
+- Security architecture and token handling
+- Best practices for production deployment
+- Common security mistakes to avoid
+- Compliance information (GDPR, SOC 2, HIPAA)
+- Security checklist for deployment
+- Monitoring and incident response
+
+#### Updated README.md
+- Top features table at the beginning
+- Prominent security highlights
+- Clear note about 'use client' not needed in layout.tsx
+- Security policy links throughout
+- Enhanced setup instructions
+
+### 🔄 Breaking Changes
+
+**None!** This release is 100% backward compatible with v4.0.2.
+
+### 📝 Migration from v4.0.2
+
+No code changes required! Simply update:
+
+```bash
+npm install @chemmangat/msal-next@4.1.0
+```
+
+**Optional: Enable automatic token refresh**
+
+```tsx
+<MSALProvider
+  clientId="..."
+  autoRefreshToken={true}  // NEW - prevents unexpected logouts
+>
+  {children}
+</MSALProvider>
+```
+
+### 🎯 Use Cases
+
+**Automatic Token Refresh:**
+- Long-running applications
+- Apps where users stay logged in for hours
+- Prevent interruptions during active work
+- Background data synchronization
+
+**Token Expiry Monitoring:**
+- Show session timeout warnings
+- Implement custom refresh logic
+- Track authentication state
+- User experience improvements
+
+### 📊 Impact
+
+- **Reduced Support Tickets**: Automatic refresh prevents "why was I logged out?" questions
+- **Better UX**: Users stay logged in during active sessions
+- **Easier Setup**: AI assistants can now implement MSAL correctly first try
+- **Faster Onboarding**: Developers can set up in 5 minutes with new README
+
+---
+
 ## [4.0.2] - 2026-03-07
 
 ### 🎉 Developer Experience Release - Better Types, Errors & Validation

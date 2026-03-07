@@ -7,6 +7,7 @@ import { MsalAuthProviderProps } from '../types';
 import { createMsalConfig } from '../utils/createMsalConfig';
 import { validateConfig, displayValidationResults } from '../utils/configValidator';
 import { wrapMsalError } from '../errors/MsalError';
+import { TokenRefreshManager } from './TokenRefreshManager';
 
 // Module-level variable to store the MSAL instance
 let globalMsalInstance: PublicClientApplication | null = null;
@@ -19,9 +20,19 @@ export function getMsalInstance(): PublicClientApplication | null {
   return globalMsalInstance;
 }
 
-export function MsalAuthProvider({ children, loadingComponent, onInitialized, ...config }: MsalAuthProviderProps) {
+export function MsalAuthProvider({ 
+  children, 
+  loadingComponent, 
+  onInitialized,
+  autoRefreshToken = false,
+  refreshBeforeExpiry = 300,
+  ...config 
+}: MsalAuthProviderProps) {
   const [msalInstance, setMsalInstance] = useState<PublicClientApplication | null>(null);
   const instanceRef = useRef<PublicClientApplication | null>(null);
+
+  // Extract these from config for use in TokenRefreshManager
+  const { scopes = ['User.Read'], enableLogging = false } = config;
 
   useEffect(() => {
     // SSR safety guard
@@ -104,7 +115,7 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
         }
 
         // Set up event callbacks
-        const enableLogging = config.enableLogging || false;
+        const loggingEnabled = config.enableLogging || false;
         instance.addEventCallback((event: EventMessage) => {
           if (event.eventType === EventType.LOGIN_SUCCESS) {
             const payload = event.payload as AuthenticationResult;
@@ -112,7 +123,7 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
             if (payload?.account) {
               instance.setActiveAccount(payload.account);
             }
-            if (enableLogging) {
+            if (loggingEnabled) {
               console.log('[MSAL] Login successful:', payload.account?.username);
             }
           }
@@ -125,7 +136,7 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
           if (event.eventType === EventType.LOGOUT_SUCCESS) {
             // Clear active account on logout
             instance.setActiveAccount(null);
-            if (enableLogging) {
+            if (loggingEnabled) {
               console.log('[MSAL] Logout successful');
             }
           }
@@ -139,7 +150,7 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
           }
 
           if (event.eventType === EventType.ACQUIRE_TOKEN_FAILURE) {
-            if (enableLogging) {
+            if (loggingEnabled) {
               console.error('[MSAL] Token acquisition failed:', event.error);
             }
           }
@@ -171,5 +182,17 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
     return <>{loadingComponent || <div>Loading authentication...</div>}</>;
   }
 
-  return <MsalProvider instance={msalInstance}>{children}</MsalProvider>;
+  return (
+    <MsalProvider instance={msalInstance}>
+      {autoRefreshToken && (
+        <TokenRefreshManager
+          enabled={autoRefreshToken}
+          refreshBeforeExpiry={refreshBeforeExpiry}
+          scopes={scopes}
+          enableLogging={enableLogging}
+        />
+      )}
+      {children}
+    </MsalProvider>
+  );
 }
