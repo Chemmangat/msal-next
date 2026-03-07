@@ -5,9 +5,166 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **📦 Current Version: 4.0.1** - Zero-Config Protected Routes! Protect any page with one line of code.
+> **📦 Current Version: 4.0.2** - Enhanced Developer Experience with Complete Types & Better Errors!
 
-> **🚀 What's New:** Export `auth = { required: true }` from any page to protect it. No middleware, no boilerplate!
+> **🚀 What's New in v4.0.2:** Complete TypeScript types for user profiles, actionable error messages with fix instructions, and automatic configuration validation in development mode!
+
+## 🎉 What's New in v4.0.2
+
+### Complete TypeScript Types
+```tsx
+const { profile } = useUserProfile();
+
+// Now available with full type safety!
+console.log(profile?.department);
+console.log(profile?.preferredLanguage);
+console.log(profile?.employeeId);
+console.log(profile?.companyName);
+console.log(profile?.country);
+// ... and 20+ more fields!
+```
+
+### Actionable Error Messages
+```tsx
+// Before: Cryptic error
+Error: AADSTS50011
+
+// After: Helpful guidance
+🚨 MSAL Authentication Error
+
+Error: Redirect URI mismatch
+
+💡 How to fix:
+Your redirect URI doesn't match what's configured in Azure AD.
+
+Fix:
+1. Go to Azure Portal → Azure Active Directory → App registrations
+2. Select your app → Authentication
+3. Under "Single-page application", add your redirect URI:
+   • http://localhost:3000 (for development)
+   • https://yourdomain.com (for production)
+4. Click "Save"
+
+📚 Documentation: https://learn.microsoft.com/...
+```
+
+### Automatic Configuration Validation
+```tsx
+// Development mode automatically checks for:
+⚠️  Warnings (should fix)
+
+clientId:
+  Client ID appears to be a placeholder
+
+  Fix:
+  Replace the placeholder with your actual Application (client) ID from Azure Portal.
+  
+  Current value: your-client-id-here
+  Expected format: 12345678-1234-1234-1234-123456789012 (GUID)
+```
+
+---
+
+## Common Mistakes (and How to Avoid Them)
+
+### ❌ Mistake #1: 'use client' in the wrong place
+
+```tsx
+// WRONG - 'use client' must be FIRST
+import { useMsalAuth } from '@chemmangat/msal-next';
+
+'use client';  // Too late!
+
+export default function MyComponent() {
+  const { isAuthenticated } = useMsalAuth();
+  // ...
+}
+```
+
+```tsx
+// CORRECT - 'use client' comes FIRST
+'use client';
+
+import { useMsalAuth } from '@chemmangat/msal-next';
+
+export default function MyComponent() {
+  const { isAuthenticated } = useMsalAuth();
+  // ...
+}
+```
+
+### ❌ Mistake #2: Using MsalAuthProvider in layout.tsx
+
+```tsx
+// WRONG - Will cause "createContext only works in Client Components" error
+import { MsalAuthProvider } from '@chemmangat/msal-next';
+
+export default function RootLayout({ children }) {
+  return <MsalAuthProvider>{children}</MsalAuthProvider>;
+}
+```
+
+```tsx
+// CORRECT - Use MSALProvider instead
+import { MSALProvider } from '@chemmangat/msal-next';
+
+export default function RootLayout({ children }) {
+  return <MSALProvider clientId="...">{children}</MSALProvider>;
+}
+```
+
+### ❌ Mistake #3: Placeholder values in production
+
+```tsx
+// WRONG - Placeholder values
+<MSALProvider
+  clientId="your-client-id-here"
+  tenantId="your-tenant-id-here"
+>
+```
+
+```tsx
+// CORRECT - Actual GUIDs from Azure Portal
+<MSALProvider
+  clientId="12345678-1234-1234-1234-123456789012"
+  tenantId="87654321-4321-4321-4321-210987654321"
+>
+```
+
+### ❌ Mistake #4: Missing environment variables
+
+```tsx
+// WRONG - Hardcoded values
+<MSALProvider clientId="12345678-1234-1234-1234-123456789012">
+```
+
+```tsx
+// CORRECT - Use environment variables
+<MSALProvider
+  clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+  tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+>
+```
+
+```bash
+# .env.local
+NEXT_PUBLIC_AZURE_AD_CLIENT_ID=12345678-1234-1234-1234-123456789012
+NEXT_PUBLIC_AZURE_AD_TENANT_ID=87654321-4321-4321-4321-210987654321
+```
+
+### ❌ Mistake #5: HTTP in production
+
+```tsx
+// WRONG - HTTP in production
+redirectUri: "http://myapp.com"
+
+// CORRECT - HTTPS in production, HTTP only for localhost
+redirectUri: process.env.NODE_ENV === 'production' 
+  ? "https://myapp.com" 
+  : "http://localhost:3000"
+```
+
+---
 
 ## 🚀 What's New in v4.0.1
 
@@ -368,7 +525,7 @@ const data = await graph.request('/me/drive', {
 
 ### useUserProfile
 
-Fetch and cache user profile from MS Graph.
+Fetch and cache user profile from MS Graph with complete TypeScript types.
 
 ```tsx
 const { profile, loading, error, refetch } = useUserProfile();
@@ -381,8 +538,29 @@ return (
     <h1>{profile.displayName}</h1>
     <p>{profile.mail}</p>
     <p>{profile.jobTitle}</p>
+    <p>{profile.department}</p>
+    <p>{profile.preferredLanguage}</p>
+    <p>{profile.employeeId}</p>
+    <p>{profile.companyName}</p>
+    <p>{profile.officeLocation}</p>
   </div>
 );
+```
+
+**New in v4.0.2:** Complete TypeScript types with 30+ fields from Microsoft Graph:
+- `department`, `preferredLanguage`, `employeeId`, `companyName`
+- `country`, `city`, `state`, `streetAddress`, `postalCode`
+- `manager`, `aboutMe`, `birthday`, `interests`, `skills`
+- And many more!
+
+**Generic type support:**
+```tsx
+interface MyProfile extends UserProfile {
+  customField: string;
+}
+
+const { profile } = useUserProfile<MyProfile>();
+console.log(profile?.customField); // Type-safe!
 ```
 
 ### useRoles
@@ -665,6 +843,17 @@ export default function AdminPage() {
 **Issue**: Middleware not protecting routes  
 **Solution**: Ensure session cookies are being set after login
 
+**Issue**: "createContext only works in Client Components"  
+**Solution**: Use `MSALProvider` (not `MsalAuthProvider`) in layout.tsx
+
+**Issue**: Redirect URI mismatch (AADSTS50011)  
+**Solution**: Add your redirect URI to Azure Portal → App registrations → Authentication
+
+**Issue**: Missing environment variables  
+**Solution**: Create `.env.local` with `NEXT_PUBLIC_AZURE_AD_CLIENT_ID` and `NEXT_PUBLIC_AZURE_AD_TENANT_ID`
+
+For more detailed troubleshooting, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+
 ### Debug Mode
 
 Enable debug logging to troubleshoot issues:
@@ -676,6 +865,33 @@ Enable debug logging to troubleshoot issues:
 >
   {children}
 </MsalAuthProvider>
+```
+
+### Enhanced Error Handling (v4.0.2)
+
+Use the new MsalError class for better error messages:
+
+```tsx
+import { wrapMsalError } from '@chemmangat/msal-next';
+
+try {
+  await loginRedirect();
+} catch (error) {
+  const msalError = wrapMsalError(error);
+  
+  // Check if user just cancelled (not a real error)
+  if (msalError.isUserCancellation()) {
+    return;
+  }
+  
+  // Get actionable error message with fix instructions
+  console.error(msalError.toConsoleString());
+  
+  // Access error details
+  console.log('Error code:', msalError.code);
+  console.log('Fix instructions:', msalError.fix);
+  console.log('Documentation:', msalError.docs);
+}
 ```
 
 ## Migration to v4.0.1

@@ -5,6 +5,8 @@ import { PublicClientApplication, EventType, EventMessage, AuthenticationResult 
 import { useEffect, useState, useRef } from 'react';
 import { MsalAuthProviderProps } from '../types';
 import { createMsalConfig } from '../utils/createMsalConfig';
+import { validateConfig, displayValidationResults } from '../utils/configValidator';
+import { wrapMsalError } from '../errors/MsalError';
 
 // Module-level variable to store the MSAL instance
 let globalMsalInstance: PublicClientApplication | null = null;
@@ -34,6 +36,12 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
 
     const initializeMsal = async () => {
       try {
+        // Validate configuration in development mode
+        if (process.env.NODE_ENV === 'development') {
+          const validationResult = validateConfig(config);
+          displayValidationResults(validationResult);
+        }
+
         const msalConfig = createMsalConfig(config);
         const instance = new PublicClientApplication(msalConfig);
         
@@ -60,21 +68,27 @@ export function MsalAuthProvider({ children, loadingComponent, onInitialized, ..
             }
           }
         } catch (redirectError: any) {
+          const msalError = wrapMsalError(redirectError);
+          
           // Handle specific MSAL errors gracefully
-          if (redirectError?.errorCode === 'no_token_request_cache_error') {
+          if (msalError.code === 'no_token_request_cache_error') {
             // This error occurs when there's no cached token request (e.g., page refresh during auth)
             // It's safe to ignore as it just means there's no pending redirect
             if (config.enableLogging) {
               console.log('[MSAL] No pending redirect found (this is normal)');
             }
-          } else if (redirectError?.errorCode === 'user_cancelled') {
+          } else if (msalError.isUserCancellation()) {
             // User cancelled the authentication flow
             if (config.enableLogging) {
               console.log('[MSAL] User cancelled authentication');
             }
           } else {
             // Log other errors but don't throw - allow app to continue
-            console.error('[MSAL] Redirect handling error:', redirectError);
+            if (process.env.NODE_ENV === 'development') {
+              console.error(msalError.toConsoleString());
+            } else {
+              console.error('[MSAL] Redirect handling error:', msalError.message);
+            }
           }
           
           // Clean up URL even on error if there's a hash
