@@ -1,7 +1,34 @@
 'use client'
 
+import { createContext, useContext } from 'react'
 import { MsalAuthProvider } from './MsalAuthProvider'
 import type { MsalAuthProviderProps } from '../types'
+import type { AuthProtectionConfig } from '../protection/types'
+
+interface MSALProviderProps extends MsalAuthProviderProps {
+  /**
+   * Zero-Config Protected Routes configuration (v4.0.0)
+   * @example
+   * ```tsx
+   * <MSALProvider
+   *   clientId="..."
+   *   protection={{
+   *     defaultRedirectTo: '/login',
+   *     defaultLoading: <Spinner />,
+   *     debug: true
+   *   }}
+   * >
+   * ```
+   */
+  protection?: AuthProtectionConfig;
+}
+
+// Context for protection config
+const ProtectionConfigContext = createContext<AuthProtectionConfig | undefined>(undefined);
+
+export function useProtectionConfig() {
+  return useContext(ProtectionConfigContext);
+}
 
 /**
  * Pre-configured MSALProvider component for Next.js App Router layouts.
@@ -29,6 +56,10 @@ import type { MsalAuthProviderProps } from '../types'
  * }
  * ```
  */
-export function MSALProvider({ children, ...props }: MsalAuthProviderProps) {
-  return <MsalAuthProvider {...props}>{children}</MsalAuthProvider>
+export function MSALProvider({ children, protection, ...props }: MSALProviderProps) {
+  return (
+    <ProtectionConfigContext.Provider value={protection}>
+      <MsalAuthProvider {...props}>{children}</MsalAuthProvider>
+    </ProtectionConfigContext.Provider>
+  )
 }

@@ -46,21 +46,21 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-primary/10 border border-accent-primary/20 rounded-full mb-8">
-              <span className="text-accent-primary text-sm font-semibold">v3.1.7</span>
-              <span className="text-dark-muted text-sm">Latest Release</span>
+              <span className="text-accent-primary text-sm font-semibold">v4.0.0</span>
+              <span className="text-dark-muted text-sm">Zero-Config Protected Routes</span>
             </div>
             
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-dark-text mb-6 leading-tight">
-              Microsoft Authentication
+              Protect Routes with
               <br />
               <span className="bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
-                Made Simple
+                One Line of Code
               </span>
             </h1>
             
             <p className="text-xl text-dark-muted mb-12 max-w-2xl mx-auto leading-relaxed">
-              Production-grade MSAL authentication for Next.js App Router. 
-              Zero configuration, full TypeScript support, redirect-only flow.
+              The simplest way to add Microsoft authentication to Next.js.
+              No middleware, no boilerplate, just export auth = {'{ required: true }'}.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -126,16 +126,16 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FeatureCard
-                title="Zero Configuration"
-                description="Works out of the box with sensible defaults"
+                title="Zero-Config Protection"
+                description="Protect routes with one line: export const auth = { required: true }"
+              />
+              <FeatureCard
+                title="Role-Based Access"
+                description="Built-in role checking with Azure AD roles"
               />
               <FeatureCard
                 title="TypeScript First"
                 description="Full type safety and IntelliSense support"
-              />
-              <FeatureCard
-                title="Redirect Flow"
-                description="Clean, reliable authentication flow"
               />
               <FeatureCard
                 title="Next.js 14+"
@@ -164,21 +164,21 @@ export default function Home() {
               <div className="w-3 h-3 rounded-full bg-green-500" />
               <span className="ml-2 text-sm text-dark-muted">app/layout.tsx</span>
             </div>
-            <div className="p-6 overflow-x-auto">
+            <div className="bg-dark-bg border border-dark-border rounded-xl p-6 overflow-x-auto">
               <pre className="text-sm leading-relaxed">
                 <code className="text-dark-text">
-{`import { MSALProvider } from '@chemmangat/msal-next';
+{`// app/dashboard/page.tsx
+export const auth = { required: true };
 
-export default function RootLayout({ children }) {
-  return (
-    <MSALProvider 
-      clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID}
-      tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID}
-    >
-      {children}
-    </MSALProvider>
-  );
-}`}
+export default function Dashboard() {
+  return <div>Protected content - that's it!</div>;
+}
+
+// With roles
+export const auth = { 
+  required: true,
+  roles: ['admin', 'editor']
+};`}
                 </code>
               </pre>
             </div>
@@ -195,10 +195,10 @@ export default function RootLayout({ children }) {
           className="bg-gradient-to-r from-accent-primary to-accent-secondary rounded-2xl p-12 text-center"
         >
           <h2 className="text-4xl font-bold text-white mb-4">
-            Ready to get started?
+            Protect Any Route in Seconds
           </h2>
           <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-            Join 650+ developers using @chemmangat/msal-next in production
+            No middleware setup. No boilerplate. Just one line of code.
           </p>
           <Link
             href="/docs"

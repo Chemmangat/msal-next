@@ -328,6 +328,38 @@ export {
 } from './utils/validation';
 
 // ============================================================================
+// Zero-Config Protected Routes (v4.0.0)
+// ============================================================================
+
+/**
+ * Zero-Config Protected Routes - Export from your page to enable protection
+ * 
+ * @example
+ * ```tsx
+ * // app/dashboard/page.tsx
+ * export const auth = { required: true };
+ * 
+ * export default function Dashboard() {
+ *   return <div>Protected content</div>;
+ * }
+ * 
+ * // With roles
+ * export const auth = { 
+ *   required: true,
+ *   roles: ['admin', 'editor']
+ * };
+ * 
+ * // With custom validation
+ * export const auth = {
+ *   required: true,
+ *   validate: (account) => account.username.endsWith('@company.com')
+ * };
+ * ```
+ */
+export { withPageAuth, ProtectedPage } from './protection';
+export type { PageAuthConfig, AuthProtectionConfig } from './protection/types';
+
+// ============================================================================
 // Middleware
 // ============================================================================
 
