@@ -2,6 +2,91 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.2.0] - 2026-03-08
+
+### 🎉 Major Feature Release - Multi-Account Management
+
+This release introduces the most requested feature: Multi-Account Management. Users can now sign in with multiple Microsoft accounts simultaneously and switch between them seamlessly.
+
+### ✨ New Features
+
+#### 1. Multi-Account Management 🔥
+Sign in with multiple Microsoft accounts and switch between them without signing out.
+
+**New Hook: `useMultiAccount`**
+```tsx
+const {
+  accounts,              // All signed-in accounts
+  activeAccount,         // Current active account
+  hasMultipleAccounts,   // Boolean: more than one account
+  switchAccount,         // Switch to different account
+  addAccount,            // Sign in with another account
+  removeAccount,         // Remove account from cache
+  signOutAccount,        // Sign out specific account
+  signOutAll,            // Sign out all accounts
+} = useMultiAccount();
+```
+
+**New Component: `AccountSwitcher`**
+Pre-built dropdown UI for switching accounts with three variants (default, compact, minimal).
+
+```tsx
+<AccountSwitcher
+  showAvatars={true}
+  maxAccounts={5}
+  variant="default"
+  onSwitch={(account) => console.log('Switched to', account.name)}
+/>
+```
+
+**New Component: `AccountList`**
+Display all accounts in a list format with vertical or horizontal layouts.
+
+```tsx
+<AccountList
+  showAvatars={true}
+  showDetails={true}
+  clickToSwitch={true}
+  orientation="vertical"
+/>
+```
+
+**Use Cases:**
+- Work + personal accounts
+- Multiple work accounts (IT admins, consultants)
+- Multi-tenant SaaS applications
+- Testing different roles/permissions
+
+**Complete Examples:**
+- 5 real-world examples in `examples/multi-account-example.tsx`
+- Header with account switcher
+- Account management page
+- Programmatic account switching
+
+### 🐛 Bug Fixes
+
+- Fixed type error in `clearCache` API call
+- Removed unused variable in `AccountList` component
+- Improved error handling for account operations
+
+### 📚 Documentation
+
+- Added multi-account section to README
+- Created comprehensive examples file with 5 scenarios
+- Updated API reference with new exports
+- Added TypeScript type exports for all new components
+
+### 🔄 Migration
+
+No breaking changes! Simply update to v4.2.0:
+```bash
+npm install @chemmangat/msal-next@4.2.0
+```
+
+All existing code continues to work. Multi-account features are opt-in.
+
+---
+
 ## [4.1.0] - 2026-03-07
 
 ### 🎉 Major Release - Documentation Overhaul + Production Features

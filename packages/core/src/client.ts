@@ -156,6 +156,69 @@ export { AuthGuard } from './components/AuthGuard';
  */
 export { ErrorBoundary } from './components/ErrorBoundary';
 
+/**
+ * Account switcher component for multi-account management (NEW in v4.2.0)
+ * 
+ * @remarks
+ * Pre-built dropdown UI for switching between multiple Microsoft accounts.
+ * Shows all signed-in accounts with avatars, allows switching with one click,
+ * and supports adding/removing accounts. Perfect for headers and navigation bars.
+ * 
+ * @example
+ * ```tsx
+ * 'use client';
+ * 
+ * import { AccountSwitcher } from '@chemmangat/msal-next';
+ * 
+ * export default function Header() {
+ *   return (
+ *     <header>
+ *       <h1>My App</h1>
+ *       <AccountSwitcher
+ *         showAvatars={true}
+ *         maxAccounts={5}
+ *         variant="default"
+ *         onSwitch={(account) => console.log('Switched to', account.name)}
+ *       />
+ *     </header>
+ *   );
+ * }
+ * ```
+ */
+export { AccountSwitcher } from './components/AccountSwitcher';
+
+/**
+ * Account list component for displaying all accounts (NEW in v4.2.0)
+ * 
+ * @remarks
+ * Display all signed-in Microsoft accounts in a list format with details.
+ * Useful for account management pages, settings screens, or profile pages.
+ * Supports vertical and horizontal layouts.
+ * 
+ * @example
+ * ```tsx
+ * 'use client';
+ * 
+ * import { AccountList } from '@chemmangat/msal-next';
+ * 
+ * export default function AccountsPage() {
+ *   return (
+ *     <div>
+ *       <h1>Your Accounts</h1>
+ *       <AccountList
+ *         showAvatars={true}
+ *         showDetails={true}
+ *         clickToSwitch={true}
+ *         orientation="vertical"
+ *         onAccountClick={(account) => console.log('Clicked', account.name)}
+ *       />
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
+export { AccountList } from './components/AccountList';
+
 // ============================================================================
 // Hooks
 // ============================================================================
@@ -275,6 +338,41 @@ export { useRoles } from './hooks/useRoles';
  * ```
  */
 export { useTokenRefresh } from './hooks/useTokenRefresh';
+
+/**
+ * Multi-account management hook (NEW in v4.2.0)
+ * 
+ * @remarks
+ * Manage multiple Microsoft accounts seamlessly. Users can sign in with multiple
+ * accounts (work + personal, or multiple work accounts) and switch between them
+ * without signing out. Perfect for users who need to access different tenants.
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   accounts,              // All signed-in accounts
+ *   activeAccount,         // Current active account
+ *   hasMultipleAccounts,   // Boolean: more than one account
+ *   switchAccount,         // Switch to different account
+ *   addAccount,            // Sign in with another account
+ *   removeAccount,         // Remove account from cache
+ *   signOutAccount,        // Sign out specific account
+ *   signOutAll,            // Sign out all accounts
+ * } = useMultiAccount();
+ * 
+ * // Switch accounts
+ * const handleSwitch = (account) => {
+ *   switchAccount(account);
+ * };
+ * 
+ * // Add another account
+ * await addAccount(['User.Read']);
+ * 
+ * // Remove account
+ * await removeAccount(account);
+ * ```
+ */
+export { useMultiAccount } from './hooks/useMultiAccount';
 
 // ============================================================================
 // Utilities
@@ -495,6 +593,9 @@ export type { UseMsalAuthReturn } from './hooks/useMsalAuth';
 export type { UseGraphApiReturn, GraphApiOptions } from './hooks/useGraphApi';
 export type { UseRolesReturn } from './hooks/useRoles';
 export type { UseTokenRefreshOptions, UseTokenRefreshReturn } from './hooks/useTokenRefresh';
+export type { UseMultiAccountReturn } from './hooks/useMultiAccount';
+export type { AccountSwitcherProps } from './components/AccountSwitcher';
+export type { AccountListProps } from './components/AccountList';
 export type { WithAuthOptions } from './utils/withAuth';
 export type { ServerSession } from './utils/getServerSession';
 export type { RetryConfig } from './utils/tokenRetry';
