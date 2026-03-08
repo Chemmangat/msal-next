@@ -85,39 +85,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: '@chemmangat/msal-next',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Any',
-    description: 'Production-ready Microsoft/Azure AD authentication for Next.js App Router. Zero-config setup, TypeScript-first, multi-account support.',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
-    author: {
-      '@type': 'Person',
-      name: 'Hari Manoj',
-      url: 'https://github.com/chemmangat',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '5',
-      ratingCount: '100',
-    },
-    softwareVersion: '4.2.0',
-    datePublished: '2024-01-01',
-    dateModified: new Date().toISOString(),
-    programmingLanguage: 'TypeScript',
-    url: 'https://msal-next.vercel.app',
-    downloadUrl: 'https://www.npmjs.com/package/@chemmangat/msal-next',
-    codeRepository: 'https://github.com/chemmangat/msal-next',
-    keywords: 'msal, nextjs, authentication, azure-ad, microsoft, typescript, multi-account',
-  };
-
-  // TODO: Replace with your custom domain in all URLs below
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://msal-next.vercel.app';
 
   return (
