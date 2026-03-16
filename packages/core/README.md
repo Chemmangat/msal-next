@@ -6,7 +6,7 @@ Production-grade MSAL authentication library for Next.js App Router with minimal
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security](https://img.shields.io/badge/Security-A+-green.svg)](./SECURITY.md)
 
-> **📦 Current Version: 4.1.1** - Production-ready with automatic token refresh and enhanced security
+> **📦 Current Version: 4.2.1** - Production-ready with automatic token refresh and enhanced security
 
 ---
 
@@ -466,6 +466,7 @@ Pre-styled sign-in button with Microsoft branding.
   variant="dark" // or "light"
   size="medium"  // "small", "medium", "large"
   onSuccess={() => console.log('Signed in!')}
+  onError={(error) => console.error(error)}
 />
 ```
 
@@ -477,6 +478,7 @@ Pre-styled sign-out button.
   variant="light"
   size="medium"
   onSuccess={() => console.log('Signed out!')}
+  onError={(error) => console.error(error)}
 />
 ```
 
@@ -510,13 +512,16 @@ Main authentication hook.
 
 ```tsx
 const {
-  account,           // Current user account
-  accounts,          // All cached accounts
-  isAuthenticated,   // Boolean: is user signed in?
-  inProgress,        // Boolean: is auth in progress?
-  loginRedirect,     // Function: sign in
-  logoutRedirect,    // Function: sign out
-  acquireToken,      // Function: get access token
+  account,                // Current user account
+  accounts,               // All cached accounts
+  isAuthenticated,        // Boolean: is user signed in?
+  inProgress,             // Boolean: is auth in progress?
+  loginRedirect,          // Function: sign in (redirect flow)
+  logoutRedirect,         // Function: sign out (redirect flow)
+  acquireToken,           // Function: get access token (silent with redirect fallback)
+  acquireTokenSilent,     // Function: get access token (silent only, no fallback)
+  acquireTokenRedirect,   // Function: get access token via redirect
+  clearSession,           // Function: clear MSAL session without Microsoft logout
 } = useMsalAuth();
 ```
 
@@ -553,18 +558,30 @@ const message = await graph.post('/me/messages', {
   subject: 'Hello',
   body: { content: 'World' }
 });
+
+// PUT, PATCH, DELETE
+await graph.put('/me/photo/$value', photoBlob);
+await graph.patch('/me', { displayName: 'New Name' });
+await graph.delete('/me/messages/{id}');
+
+// Custom request with options
+const data = await graph.request('/me', { version: 'beta', scopes: ['User.Read'] });
 ```
 
 #### useRoles()
-Access user's Azure AD roles.
+Access user's Azure AD roles and groups.
 
 ```tsx
 const {
   roles,        // Array of role names
   groups,       // Array of group IDs
+  loading,      // Boolean: is loading?
+  error,        // Error object if failed
   hasRole,      // Function: check single role
-  hasAnyRole,   // Function: check multiple roles
-  hasAllRoles,  // Function: check all roles
+  hasGroup,     // Function: check single group by ID
+  hasAnyRole,   // Function: check if user has any of the given roles
+  hasAllRoles,  // Function: check if user has all of the given roles
+  refetch,      // Function: refetch roles and groups
 } = useRoles();
 
 if (hasRole('Admin')) {
@@ -572,9 +589,109 @@ if (hasRole('Admin')) {
 }
 ```
 
+#### useTokenRefresh()
+Monitor and control token refresh state.
+
+```tsx
+const {
+  expiresIn,      // Seconds until token expires (null if unknown)
+  isExpiringSoon, // Boolean: token expiring within threshold
+  refresh,        // Function: manually trigger token refresh
+  lastRefresh,    // Date: when token was last refreshed
+} = useTokenRefresh({
+  refreshBeforeExpiry: 300, // seconds before expiry to refresh
+  scopes: ['User.Read'],
+  onRefresh: (expiresIn) => console.log(`Refreshed, expires in ${expiresIn}s`),
+  onError: (error) => console.error(error),
+});
+```
+
+#### useMultiAccount()
+Manage multiple signed-in Microsoft accounts.
+
+```tsx
+const {
+  accounts,             // All signed-in accounts
+  activeAccount,        // Currently active account
+  hasMultipleAccounts,  // Boolean: more than one account signed in
+  accountCount,         // Number of signed-in accounts
+  inProgress,           // Boolean: interaction in progress
+  switchAccount,        // Function: switch active account
+  addAccount,           // Function: sign in with another account
+  removeAccount,        // Function: remove account from cache
+  signOutAccount,       // Function: sign out a specific account
+  signOutAll,           // Function: sign out all accounts
+  getAccountByUsername, // Function: find account by username
+  getAccountById,       // Function: find account by homeAccountId
+  isActiveAccount,      // Function: check if account is active
+} = useMultiAccount();
+```
+
 ---
 
-## 🎓 Advanced Usage
+### Additional Components
+
+#### AccountSwitcher
+Pre-built UI for switching between multiple signed-in accounts.
+
+```tsx
+<AccountSwitcher
+  showAvatars={true}
+  maxAccounts={5}
+  variant="default" // "default", "compact", "minimal"
+  showAddButton={true}
+  showRemoveButton={true}
+  onSwitch={(account) => console.log('Switched to', account.name)}
+  onAdd={() => console.log('Adding account')}
+  onRemove={(account) => console.log('Removed', account.name)}
+/>
+```
+
+#### AccountList
+Display all signed-in accounts in a list.
+
+```tsx
+<AccountList
+  showAvatars={true}
+  showDetails={true}
+  showActiveIndicator={true}
+  clickToSwitch={true}
+  orientation="vertical" // or "horizontal"
+  onAccountClick={(account) => console.log('Clicked', account.name)}
+/>
+```
+
+---
+
+### Higher-Order Components
+
+#### withAuth
+Protect a component by wrapping it with `AuthGuard`.
+
+```tsx
+const ProtectedPage = withAuth(MyPage);
+
+// With options
+const ProtectedPage = withAuth(MyPage, {
+  loadingComponent: <Spinner />,
+  fallbackComponent: <div>Please sign in</div>,
+  scopes: ['User.Read'],
+});
+```
+
+#### withPageAuth
+Add page-level auth protection with role support.
+
+```tsx
+const ProtectedDashboard = withPageAuth(Dashboard, {
+  required: true,
+  roles: ['Admin', 'Editor'],
+  redirectTo: '/login',
+});
+export default ProtectedDashboard;
+```
+
+---
 
 ### Automatic Token Refresh (NEW in v4.1.0)
 
@@ -598,12 +715,13 @@ Prevent unexpected logouts by automatically refreshing tokens before they expire
 import { useTokenRefresh } from '@chemmangat/msal-next';
 
 export default function SessionWarning() {
-  const { expiresIn, isExpiringSoon } = useTokenRefresh();
+  const { expiresIn, isExpiringSoon, refresh, lastRefresh } = useTokenRefresh();
 
   if (isExpiringSoon) {
     return (
       <div className="warning">
-        ⚠️ Your session will expire in {Math.floor(expiresIn / 60)} minutes
+        ⚠️ Your session will expire in {Math.floor((expiresIn ?? 0) / 60)} minutes
+        <button onClick={refresh}>Refresh now</button>
       </div>
     );
   }
@@ -752,9 +870,14 @@ export default function ProfilePage() {
 | `tenantId` | `string` | No | - | Azure AD Directory (tenant) ID (for single-tenant) |
 | `authorityType` | `'common' \| 'organizations' \| 'consumers' \| 'tenant'` | No | `'common'` | Authority type |
 | `redirectUri` | `string` | No | `window.location.origin` | Redirect URI after authentication |
+| `postLogoutRedirectUri` | `string` | No | `redirectUri` | Redirect URI after logout |
 | `scopes` | `string[]` | No | `['User.Read']` | Default scopes |
 | `cacheLocation` | `'sessionStorage' \| 'localStorage' \| 'memoryStorage'` | No | `'sessionStorage'` | Token cache location |
 | `enableLogging` | `boolean` | No | `false` | Enable debug logging |
+| `autoRefreshToken` | `boolean` | No | `false` | Automatically refresh tokens before expiry |
+| `refreshBeforeExpiry` | `number` | No | `300` | Seconds before expiry to refresh token |
+| `allowedRedirectUris` | `string[]` | No | - | Whitelist of allowed redirect URIs |
+| `protection` | `AuthProtectionConfig` | No | - | Zero-config protected routes configuration |
 
 ### Authority Types
 
