@@ -6,7 +6,7 @@ Microsoft/Azure AD authentication for Next.js App Router. Minimal setup, full Ty
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security](https://img.shields.io/badge/Security-A+-green.svg)](./SECURITY.md)
 
-**Current version: 4.2.1**
+**Current version: 5.0.0**
 
 ---
 
@@ -14,6 +14,20 @@ Microsoft/Azure AD authentication for Next.js App Router. Minimal setup, full Ty
 
 ```bash
 npm install @chemmangat/msal-next @azure/msal-browser @azure/msal-react
+```
+
+Or scaffold everything automatically with the CLI (Node.js 18+ required):
+
+```bash
+npx @chemmangat/msal-next-cli init
+```
+
+The `init` command interactively asks for your client ID, tenant ID, authority type, and cache location, then creates `.env.local`, updates `app/layout.tsx` with `MSALProvider`, and generates a starter `app/auth/page.tsx`.
+
+To migrate an existing project from popup-based auth to redirect:
+
+```bash
+npx @chemmangat/msal-next-cli migrate
 ```
 
 ---
@@ -179,6 +193,12 @@ Protects content and redirects unauthenticated users to login.
   onSwitch={(account) => {}}
   onAdd={() => {}}
   onRemove={(account) => {}}
+  // v5.0.0 — custom account row rendering
+  renderAccount={(account, isActive) => (
+    <div style={{ fontWeight: isActive ? 'bold' : 'normal' }}>
+      {account.name} ({account.username})
+    </div>
+  )}
 />
 ```
 
@@ -192,6 +212,12 @@ Protects content and redirects unauthenticated users to login.
   clickToSwitch
   orientation="vertical"  // 'vertical' | 'horizontal'
   onAccountClick={(account) => {}}
+  // v5.0.0 — custom account row rendering
+  renderAccount={(account, isActive) => (
+    <div style={{ color: isActive ? 'blue' : 'black' }}>
+      {account.name} — {account.username}
+    </div>
+  )}
 />
 ```
 

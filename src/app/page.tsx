@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, BookOpen, Github, Check, Zap, Shield, Code2, Terminal, Users, RefreshCw, Lock, Sparkles, TrendingUp, Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, BookOpen, Github, Check, Zap, Shield, Code2, Terminal, Users, RefreshCw, Lock, Sparkles, TrendingUp, Award, ChevronLeft, ChevronRight, Wrench, GitMerge } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -19,7 +19,7 @@ export default function Home() {
               <span className="text-lg font-semibold text-gray-900">msal-next</span>
             </div>
             <div className="flex items-center gap-6">
-              <Link 
+              <Link
                 href="/docs"
                 className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium hidden sm:block"
               >
@@ -54,15 +54,15 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 text-sm font-medium">v4.2.0 - Multi-Account Management</span>
+              <span className="text-blue-600 text-sm font-medium">v5.0.0 — CLI, Codemods &amp; Custom Slots</span>
             </div>
-            
+
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               Microsoft Auth for
               <br />
               <span className="text-blue-600">Next.js App Router</span>
             </h1>
-            
+
             <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed">
               Production-ready MSAL authentication with zero configuration.
               <br className="hidden sm:block" />
@@ -77,7 +77,7 @@ export default function Home() {
                 Get Started
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              
+
               <a
                 href="https://github.com/chemmangat/msal-next"
                 target="_blank"
@@ -91,9 +91,56 @@ export default function Home() {
             {/* Install Command */}
             <div className="inline-flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
               <Terminal className="w-4 h-4 text-gray-400" />
-              <code className="text-sm text-gray-900">npm install @chemmangat/msal-next</code>
+              <code className="text-sm text-gray-900">npx @chemmangat/msal-next-cli init</code>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* v5.0.0 What's New Banner */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-widest text-blue-200">What&apos;s new</div>
+              <div className="text-xl font-bold">Version 5.0.0</div>
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: <Terminal className="w-5 h-5" />,
+                title: 'CLI Init',
+                desc: 'npx init scaffolds .env.local, layout.tsx and a starter auth page interactively',
+              },
+              {
+                icon: <GitMerge className="w-5 h-5" />,
+                title: 'Codemod Migrate',
+                desc: 'npx migrate rewrites popup → redirect calls across your entire codebase automatically',
+              },
+              {
+                icon: <Wrench className="w-5 h-5" />,
+                title: 'renderAccount Slot',
+                desc: 'AccountSwitcher and AccountList now accept a renderAccount prop for full UI customisation',
+              },
+              {
+                icon: <Shield className="w-5 h-5" />,
+                title: '115 Unit Tests',
+                desc: 'Full Vitest coverage across all hooks and components — 80 %+ lines, branches, statements',
+              },
+            ].map((item) => (
+              <div key={item.title} className="bg-white/10 rounded-xl p-4">
+                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mb-3">
+                  {item.icon}
+                </div>
+                <div className="font-semibold text-sm mb-1">{item.title}</div>
+                <div className="text-blue-100 text-xs leading-relaxed">{item.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -107,7 +154,7 @@ export default function Home() {
             Production-ready features that developers love
           </p>
         </div>
-        
+
         <FeatureCarousel />
       </section>
 
@@ -133,9 +180,9 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Simple to Use</h2>
-          <p className="text-lg text-gray-600">Add Microsoft authentication in minutes</p>
+          <p className="text-lg text-gray-600">Scaffold a full auth setup in one command</p>
         </div>
-        
+
         <div className="max-w-3xl mx-auto">
           <div className="bg-gray-900 rounded-xl overflow-hidden shadow-xl">
             <div className="bg-gray-800 px-4 py-3 flex items-center gap-2 border-b border-gray-700">
@@ -144,55 +191,40 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
                 <div className="w-3 h-3 rounded-full bg-green-500" />
               </div>
-              <span className="ml-2 text-sm text-gray-400">app/layout.tsx</span>
+              <span className="ml-2 text-sm text-gray-400">terminal</span>
             </div>
             <div className="p-6 overflow-x-auto">
               <pre className="text-sm leading-relaxed">
                 <code className="text-gray-100">
-{`import { MSALProvider } from '@chemmangat/msal-next';
+{`# Scaffold everything interactively
+npx @chemmangat/msal-next-cli init
 
-export default function RootLayout({ children }) {
-  return (
-    <MSALProvider 
-      clientId={process.env.NEXT_PUBLIC_CLIENT_ID}
-    >
-      {children}
-    </MSALProvider>
-  );
-}`}
+# Migrate popup → redirect calls
+npx @chemmangat/msal-next-cli migrate
+
+# Or install the package directly
+npm install @chemmangat/msal-next`}
                 </code>
               </pre>
             </div>
           </div>
 
           <div className="mt-8 grid sm:grid-cols-3 gap-4">
-            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-blue-600 text-sm font-bold">1</span>
+            {[
+              { step: '1', title: 'Run init', desc: 'CLI asks for client ID, tenant, cache location' },
+              { step: '2', title: 'Auto-wired', desc: '.env.local, layout.tsx and auth page created' },
+              { step: '3', title: 'Done', desc: 'Sign in with Microsoft works immediately' },
+            ].map((s) => (
+              <div key={s.step} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-blue-600 text-sm font-bold">{s.step}</span>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-900 text-sm">{s.title}</div>
+                  <div className="text-gray-600 text-xs mt-1">{s.desc}</div>
+                </div>
               </div>
-              <div>
-                <div className="font-medium text-gray-900 text-sm">Install</div>
-                <div className="text-gray-600 text-xs mt-1">Add the package</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-blue-600 text-sm font-bold">2</span>
-              </div>
-              <div>
-                <div className="font-medium text-gray-900 text-sm">Configure</div>
-                <div className="text-gray-600 text-xs mt-1">Wrap your app</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-blue-600 text-sm font-bold">3</span>
-              </div>
-              <div>
-                <div className="font-medium text-gray-900 text-sm">Done</div>
-                <div className="text-gray-600 text-xs mt-1">Start building</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -221,7 +253,7 @@ export default function RootLayout({ children }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-600 text-sm">
-              © 2024 @chemmangat/msal-next. MIT License.
+              © 2025 @chemmangat/msal-next · v5.0.0 · MIT License
             </p>
             <div className="flex items-center gap-6">
               <a
@@ -260,98 +292,104 @@ function FeatureCarousel() {
 
   const features = [
     {
-      icon: <Users className="w-8 h-8" />,
-      title: "Multi-Account Management",
-      description: "Switch between 5 Microsoft accounts instantly. Perfect for work + personal or multiple tenants.",
-      badge: "NEW in v4.2.0",
-      color: "blue",
-      code: `<AccountSwitcher 
-  showAvatars={true}
-  maxAccounts={5}
+      icon: <Terminal className="w-8 h-8" />,
+      title: 'CLI Init Command',
+      description: 'Run npx init and answer a few prompts. The CLI writes .env.local, wires MSALProvider into layout.tsx, and creates a starter auth page — no boilerplate to copy.',
+      badge: 'NEW in v5.0.0',
+      color: 'blue',
+      code: `npx @chemmangat/msal-next-cli init
+# ✔ Client ID?  97f1e8c5-...
+# ✔ Tenant ID?  common
+# ✔ Cache?      sessionStorage
+# ✅ .env.local created
+# ✅ layout.tsx updated
+# ✅ app/auth/page.tsx created`,
+    },
+    {
+      icon: <GitMerge className="w-8 h-8" />,
+      title: 'Codemod Migrate',
+      description: 'Upgrading from popup-based auth? One command scans every .ts/.tsx file and rewrites loginPopup, logoutPopup, acquireTokenPopup and useRedirect={false} to their redirect equivalents.',
+      badge: 'NEW in v5.0.0',
+      color: 'indigo',
+      code: `npx @chemmangat/msal-next-cli migrate
+# Scanning 42 files...
+# ✔ loginPopup → loginRedirect (3)
+# ✔ logoutPopup → logoutRedirect (1)
+# ✔ acquireTokenPopup → redirect (2)
+# ✅ 6 changes across 4 files`,
+    },
+    {
+      icon: <Wrench className="w-8 h-8" />,
+      title: 'renderAccount Slot',
+      description: 'AccountSwitcher and AccountList now accept a renderAccount prop. Pass a render function to fully control how each account row looks — avatars, badges, custom layouts, anything.',
+      badge: 'NEW in v5.0.0',
+      color: 'purple',
+      code: `<AccountSwitcher
+  renderAccount={(account, isActive) => (
+    <div className={isActive ? 'font-bold' : ''}>
+      <img src={account.photo} />
+      {account.name}
+    </div>
+  )}
 />`,
     },
     {
-      icon: <RefreshCw className="w-8 h-8" />,
-      title: "Auto Token Refresh",
-      description: "Silent token refresh prevents unexpected logouts. Your users stay authenticated seamlessly.",
-      badge: "Production Ready",
-      color: "green",
-      code: `<MSALProvider
-  autoRefreshToken={true}
-  refreshBeforeExpiry={300}
->`,
+      icon: <Users className="w-8 h-8" />,
+      title: 'Multi-Account Management',
+      description: 'Switch between 5 Microsoft accounts instantly. Perfect for work + personal or multiple tenants.',
+      badge: 'Since v4.2.0',
+      color: 'green',
+      code: `<AccountSwitcher
+  showAvatars={true}
+  maxAccounts={5}
+  onSwitch={(account) => console.log(account.name)}
+/>`,
     },
     {
       icon: <Lock className="w-8 h-8" />,
-      title: "Protected Routes",
-      description: "One-line route protection with role-based access control. Secure your pages effortlessly.",
-      badge: "Zero Config",
-      color: "purple",
+      title: 'Protected Routes',
+      description: 'One-line route protection with role-based access control. Secure your pages effortlessly.',
+      badge: 'Zero Config',
+      color: 'red',
       code: `<AuthGuard>
   <ProtectedContent />
-</AuthGuard>`,
-    },
-    {
-      icon: <Code2 className="w-8 h-8" />,
-      title: "TypeScript First",
-      description: "Complete type safety with 30+ user profile fields. IntelliSense shows you everything.",
-      badge: "100% Typed",
-      color: "indigo",
-      code: `const { profile } = useUserProfile();
-// profile.displayName
-// profile.department
-// profile.jobTitle`,
+</AuthGuard>
+
+// or with roles
+export default withPageAuth(Dashboard, {
+  required: true,
+  roles: ['Admin'],
+})`,
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Zero Configuration",
-      description: "Works out of the box with sensible defaults. No complex setup or boilerplate required.",
-      badge: "5 Min Setup",
-      color: "yellow",
-      code: `<MSALProvider clientId="...">
+      title: 'Zero Configuration',
+      description: 'Works out of the box with sensible defaults. No complex setup or boilerplate required.',
+      badge: '5 Min Setup',
+      color: 'yellow',
+      code: `<MSALProvider
+  clientId={process.env.NEXT_PUBLIC_CLIENT_ID}
+  autoRefreshToken={true}
+>
   <MicrosoftSignInButton />
 </MSALProvider>`,
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Enterprise Security",
-      description: "Built on Microsoft's official MSAL library. Tokens never touch your server.",
-      badge: "Secure by Default",
-      color: "red",
-      code: `// Client-side only
-// No server-side tokens
-// HTTPS enforced
-// Automatic sanitization`,
     },
   ];
 
   useEffect(() => {
     if (!isAutoPlaying) return;
-    
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % features.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [isAutoPlaying, features.length]);
 
-  const goToNext = () => {
-    setIsAutoPlaying(false);
-    setCurrentIndex((prev) => (prev + 1) % features.length);
-  };
-
-  const goToPrev = () => {
-    setIsAutoPlaying(false);
-    setCurrentIndex((prev) => (prev - 1 + features.length) % features.length);
-  };
-
-  const goToSlide = (index: number) => {
-    setIsAutoPlaying(false);
-    setCurrentIndex(index);
-  };
+  const goToNext = () => { setIsAutoPlaying(false); setCurrentIndex((prev) => (prev + 1) % features.length); };
+  const goToPrev = () => { setIsAutoPlaying(false); setCurrentIndex((prev) => (prev - 1 + features.length) % features.length); };
+  const goToSlide = (index: number) => { setIsAutoPlaying(false); setCurrentIndex(index); };
 
   const currentFeature = features[currentIndex];
-  const colorClasses = {
+  const colorClasses: Record<string, string> = {
     blue: 'bg-blue-50 text-blue-600 border-blue-200',
     green: 'bg-green-50 text-green-600 border-green-200',
     purple: 'bg-purple-50 text-purple-600 border-purple-200',
@@ -362,14 +400,9 @@ function FeatureCarousel() {
 
   return (
     <div className="relative">
-      {/* Main Carousel Card */}
       <div className="relative bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-8 sm:p-12 overflow-hidden">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)',
-            backgroundSize: '40px 40px'
-          }} />
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
         </div>
 
         <AnimatePresence mode="wait">
@@ -382,34 +415,21 @@ function FeatureCarousel() {
             className="relative z-10"
           >
             <div className="grid lg:grid-cols-2 gap-8 items-center">
-              {/* Left: Feature Info */}
               <div>
-                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4 border ${colorClasses[currentFeature.color as keyof typeof colorClasses]}`}>
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4 border ${colorClasses[currentFeature.color]}`}>
                   {currentFeature.badge}
                 </div>
-
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${colorClasses[currentFeature.color as keyof typeof colorClasses]}`}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${colorClasses[currentFeature.color]}`}>
                   {currentFeature.icon}
                 </div>
-
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">
-                  {currentFeature.title}
-                </h3>
-
-                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  {currentFeature.description}
-                </p>
-
-                <Link
-                  href="/docs"
-                  className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium group"
-                >
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">{currentFeature.title}</h3>
+                <p className="text-lg text-gray-600 mb-6 leading-relaxed">{currentFeature.description}</p>
+                <Link href="/docs" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium group">
                   Learn more
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
 
-              {/* Right: Code Example */}
               <div className="bg-gray-900 rounded-xl overflow-hidden shadow-xl">
                 <div className="bg-gray-800 px-4 py-2 flex items-center gap-2 border-b border-gray-700">
                   <div className="flex gap-1.5">
@@ -419,72 +439,44 @@ function FeatureCarousel() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <pre className="text-sm leading-relaxed">
-                    <code className="text-gray-100">{currentFeature.code}</code>
-                  </pre>
+                  <pre className="text-sm leading-relaxed"><code className="text-gray-100">{currentFeature.code}</code></pre>
                 </div>
               </div>
             </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation Arrows */}
-        <button
-          onClick={goToPrev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm z-20"
-          aria-label="Previous feature"
-        >
+        <button onClick={goToPrev} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm z-20" aria-label="Previous feature">
           <ChevronLeft className="w-5 h-5 text-gray-600" />
         </button>
-
-        <button
-          onClick={goToNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm z-20"
-          aria-label="Next feature"
-        >
+        <button onClick={goToNext} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm z-20" aria-label="Next feature">
           <ChevronRight className="w-5 h-5 text-gray-600" />
         </button>
       </div>
 
-      {/* Dots Navigation */}
       <div className="flex items-center justify-center gap-2 mt-6">
         {features.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`transition-all ${
-              index === currentIndex
-                ? 'w-8 h-2 bg-blue-600'
-                : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
-            } rounded-full`}
+            className={`transition-all ${index === currentIndex ? 'w-8 h-2 bg-blue-600' : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'} rounded-full`}
             aria-label={`Go to feature ${index + 1}`}
           />
         ))}
       </div>
 
-      {/* Feature Grid Below Carousel */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
         {features.map((feature, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`p-4 text-left rounded-xl border-2 transition-all ${
-              index === currentIndex
-                ? 'border-blue-600 bg-blue-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-            }`}
+            className={`p-4 text-left rounded-xl border-2 transition-all ${index === currentIndex ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
           >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
-              index === currentIndex ? colorClasses[feature.color as keyof typeof colorClasses] : 'bg-gray-100 text-gray-600'
-            }`}>
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${index === currentIndex ? colorClasses[feature.color] : 'bg-gray-100 text-gray-600'}`}>
               {feature.icon}
             </div>
-            <h4 className="font-semibold text-gray-900 text-sm mb-1">
-              {feature.title}
-            </h4>
-            <p className="text-gray-600 text-xs line-clamp-2">
-              {feature.description}
-            </p>
+            <h4 className="font-semibold text-gray-900 text-sm mb-1">{feature.title}</h4>
+            <p className="text-gray-600 text-xs line-clamp-2">{feature.description}</p>
           </button>
         ))}
       </div>
