@@ -1,4 +1,6 @@
 import { vi } from 'vitest';
+import '@testing-library/jest-dom';
+import '@testing-library/react';
 
 // Mock window.location
 Object.defineProperty(window, 'location', {
