@@ -2,6 +2,91 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.0] - 2026-03-16
+
+### ⚠️ Breaking Changes
+
+- **Node.js 18+ required** — The CLI and codemod tools require Node.js 18 or higher.
+- **CLI package renamed** — `@chemmangat/msal-next-cli` is now the canonical CLI package, invokable via `npx @chemmangat/msal-next init`.
+- **Codemod is a breaking addition** — Running `npx @chemmangat/msal-next migrate` will rewrite popup API calls in your project. Review changes with `git diff` before committing.
+
+### ✨ New Features
+
+#### 1. Interactive CLI — `npx @chemmangat/msal-next init`
+The `init` command now interactively collects all required configuration:
+- Azure AD **Client ID** and **Tenant ID**
+- **Authority type** (`common`, `organizations`, `consumers`, `tenant`)
+- **Cache location** (`sessionStorage`, `localStorage`, `memoryStorage`)
+
+After collecting answers it automatically:
+- Creates `.env.local` with all environment variables
+- Updates (or creates) `app/layout.tsx` with `MSALProvider` wired up
+- Creates a starter `app/auth/page.tsx` using `useMsalAuth` and `MicrosoftSignInButton`
+
+```bash
+npx @chemmangat/msal-next init
+```
+
+#### 2. UI Component Slots — `renderAccount` prop
+Both `AccountSwitcher` and `AccountList` now accept a `renderAccount` render prop that lets consumers fully customize how each account row is displayed.
+
+```tsx
+<AccountSwitcher
+  renderAccount={(account, isActive) => (
+    <div style={{ fontWeight: isActive ? 'bold' : 'normal' }}>
+      {account.name} — {account.username}
+    </div>
+  )}
+/>
+
+<AccountList
+  renderAccount={(account, isActive) => (
+    <span>{account.name} {isActive ? '✓' : ''}</span>
+  )}
+/>
+```
+
+#### 3. Comprehensive Test Coverage (80%+)
+Full Vitest + `@testing-library/react` test suite covering:
+- All hooks: `useMsalAuth`, `useUserProfile`, `useRoles`, `useTokenRefresh`, `useMultiAccount`, `useGraphApi`
+- All components: `MicrosoftSignInButton`, `SignOutButton`, `UserAvatar`, `AuthStatus`, `AuthGuard`, `AccountSwitcher`, `AccountList`
+
+Run tests:
+```bash
+npm test                    # single run
+npm run test:coverage       # with coverage report
+```
+
+#### 4. Codemod — `npx @chemmangat/msal-next migrate`
+Scans your project and replaces deprecated popup API calls with their redirect equivalents:
+
+| Before | After |
+|--------|-------|
+| `loginPopup()` | `loginRedirect()` |
+| `logoutPopup()` | `logoutRedirect()` |
+| `acquireTokenPopup()` | `acquireTokenRedirect()` |
+| `useRedirect={false}` | *(removed)* |
+
+Prints a summary of all files modified and occurrences replaced.
+
+```bash
+npx @chemmangat/msal-next migrate
+```
+
+### 🔄 Migration from v4.x
+
+```bash
+npm install @chemmangat/msal-next@5.0.0
+```
+
+If you have any popup API usage, run the codemod:
+```bash
+npx @chemmangat/msal-next migrate
+git diff  # review changes
+```
+
+---
+
 ## [4.2.0] - 2026-03-08
 
 ### 🎉 Major Feature Release - Multi-Account Management

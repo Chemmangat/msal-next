@@ -2,7 +2,7 @@
 
 import { useMultiAccount } from '../hooks/useMultiAccount';
 import { AccountInfo } from '@azure/msal-browser';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, ReactNode, useState } from 'react';
 
 export interface AccountSwitcherProps {
   /**
@@ -59,6 +59,27 @@ export interface AccountSwitcherProps {
    * @defaultValue true
    */
   showRemoveButton?: boolean;
+
+  /**
+   * Custom render function for each account item in the dropdown.
+   * When provided, replaces the default account row rendering.
+   *
+   * @param account - The AccountInfo for this row
+   * @param isActive - Whether this account is the currently active account
+   * @returns ReactNode to render in place of the default row
+   *
+   * @example
+   * ```tsx
+   * <AccountSwitcher
+   *   renderAccount={(account, isActive) => (
+   *     <div style={{ fontWeight: isActive ? 'bold' : 'normal' }}>
+   *       {account.name} ({account.username})
+   *     </div>
+   *   )}
+   * />
+   * ```
+   */
+  renderAccount?: (account: AccountInfo, isActive: boolean) => ReactNode;
 }
 
 /**
@@ -99,6 +120,7 @@ export function AccountSwitcher({
   variant = 'default',
   showAddButton = true,
   showRemoveButton = true,
+  renderAccount,
 }: AccountSwitcherProps) {
   const {
     accounts,
@@ -298,40 +320,46 @@ export function AccountSwitcher({
                   }
                 }}
               >
-                {showAvatars && (
-                  <div style={avatarStyle}>
-                    {getInitials(account.name)}
-                  </div>
-                )}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: '500', fontSize: '14px' }}>
-                    {account.name || account.username}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#6b7280',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {account.username}
-                  </div>
-                </div>
-                {isActiveAccount(account) && (
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    style={{ flexShrink: 0 }}
-                  >
-                    <path
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      fill="#3b82f6"
-                    />
-                  </svg>
+                {renderAccount ? (
+                  renderAccount(account, isActiveAccount(account))
+                ) : (
+                  <>
+                    {showAvatars && (
+                      <div style={avatarStyle}>
+                        {getInitials(account.name)}
+                      </div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: '500', fontSize: '14px' }}>
+                        {account.name || account.username}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: '#6b7280',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {account.username}
+                      </div>
+                    </div>
+                    {isActiveAccount(account) && (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        style={{ flexShrink: 0 }}
+                      >
+                        <path
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          fill="#3b82f6"
+                        />
+                      </svg>
+                    )}
+                  </>
                 )}
                 {showRemoveButton && accounts.length > 1 && (
                   <button

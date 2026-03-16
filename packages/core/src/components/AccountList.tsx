@@ -2,7 +2,7 @@
 
 import { useMultiAccount } from '../hooks/useMultiAccount';
 import { AccountInfo } from '@azure/msal-browser';
-import { CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 export interface AccountListProps {
   /**
@@ -49,6 +49,27 @@ export interface AccountListProps {
    * @defaultValue 'vertical'
    */
   orientation?: 'vertical' | 'horizontal';
+
+  /**
+   * Custom render function for each account item.
+   * When provided, replaces the default account row rendering.
+   *
+   * @param account - The AccountInfo for this row
+   * @param isActive - Whether this account is the currently active account
+   * @returns ReactNode to render in place of the default row content
+   *
+   * @example
+   * ```tsx
+   * <AccountList
+   *   renderAccount={(account, isActive) => (
+   *     <div style={{ color: isActive ? 'blue' : 'black' }}>
+   *       {account.name} — {account.username}
+   *     </div>
+   *   )}
+   * />
+   * ```
+   */
+  renderAccount?: (account: AccountInfo, isActive: boolean) => ReactNode;
 }
 
 /**
@@ -88,6 +109,7 @@ export function AccountList({
   className = '',
   style,
   orientation = 'vertical',
+  renderAccount,
 }: AccountListProps) {
   const { accounts, switchAccount, isActiveAccount } = useMultiAccount();
 
@@ -189,77 +211,83 @@ export function AccountList({
               }
             }}
           >
-            {showAvatars && (
-              <div style={avatarStyle}>{getInitials(account.name)}</div>
-            )}
+            {renderAccount ? (
+              renderAccount(account, isActive)
+            ) : (
+              <>
+                {showAvatars && (
+                  <div style={avatarStyle}>{getInitials(account.name)}</div>
+                )}
 
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#111827',
-                  marginBottom: showDetails ? '4px' : 0,
-                }}
-              >
-                {account.name || account.username}
-              </div>
-
-              {showDetails && (
-                <>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
-                      fontSize: '14px',
-                      color: '#6b7280',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: '#111827',
+                      marginBottom: showDetails ? '4px' : 0,
                     }}
                   >
-                    {account.username}
+                    {account.name || account.username}
                   </div>
 
-                  {account.tenantId && (
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        color: '#9ca3af',
-                        marginTop: '2px',
-                      }}
-                    >
-                      Tenant: {account.tenantId.substring(0, 8)}...
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+                  {showDetails && (
+                    <>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: '#6b7280',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {account.username}
+                      </div>
 
-            {showActiveIndicator && isActive && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '4px 12px',
-                  backgroundColor: '#3b82f6',
-                  color: '#fff',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  flexShrink: 0,
-                }}
-              >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path
-                    d="M10 3L4.5 8.5L2 6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Active
-              </div>
+                      {account.tenantId && (
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: '#9ca3af',
+                            marginTop: '2px',
+                          }}
+                        >
+                          Tenant: {account.tenantId.substring(0, 8)}...
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {showActiveIndicator && isActive && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 12px',
+                      backgroundColor: '#3b82f6',
+                      color: '#fff',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="M10 3L4.5 8.5L2 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Active
+                  </div>
+                )}
+              </>
             )}
           </div>
         );

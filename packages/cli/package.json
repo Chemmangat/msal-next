@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next-cli",
-  "version": "3.0.0",
+  "version": "5.0.0",
   "description": "CLI tool for setting up @chemmangat/msal-next in Next.js projects",
   "main": "./dist/index.js",
   "bin": {
@@ -38,7 +38,8 @@
     "inquirer": "^9.2.12",
     "chalk": "^5.3.0",
     "ora": "^8.0.1",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
