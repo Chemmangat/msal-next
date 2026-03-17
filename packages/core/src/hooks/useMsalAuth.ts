@@ -55,6 +55,12 @@ export interface UseMsalAuthReturn {
    * Clear MSAL session without triggering Microsoft logout
    */
   clearSession: () => Promise<void>;
+
+  /**
+   * Acquire an access token for a specific tenant (cross-tenant, v5.1.0).
+   * Uses acquireTokenSilent with an explicit authority for the target tenant.
+   */
+  acquireTokenForTenant: (tenantId: string, scopes: string[]) => Promise<string>;
 }
 
 // Request deduplication map to prevent race conditions
@@ -214,6 +220,32 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
     await instance.clearCache();
   }, [instance]);
 
+  const acquireTokenForTenant = useCallback(
+    async (tenantId: string, scopes: string[]): Promise<string> => {
+      if (!account) {
+        throw new Error('[MSAL] No active account. Please login first.');
+      }
+      try {
+        const response = await instance.acquireTokenSilent({
+          scopes,
+          account,
+          authority: `https://login.microsoftonline.com/${tenantId}`,
+          forceRefresh: false,
+        });
+        return response.accessToken;
+      } catch (error) {
+        const msalError = wrapMsalError(error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error(msalError.toConsoleString());
+        } else {
+          console.error('[MSAL] Cross-tenant token acquisition failed:', msalError.message);
+        }
+        throw msalError;
+      }
+    },
+    [instance, account]
+  );
+
   return {
     account,
     accounts,
@@ -225,5 +257,6 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
     acquireTokenSilent,
     acquireTokenRedirect,
     clearSession,
+    acquireTokenForTenant,
   };
 }

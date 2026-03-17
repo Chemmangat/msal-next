@@ -2,47 +2,54 @@
 
 import { createContext, useContext } from 'react'
 import { MsalAuthProvider } from './MsalAuthProvider'
-import type { MsalAuthProviderProps } from '../types'
+import type { MsalAuthProviderProps, MultiTenantConfig } from '../types'
 import type { AuthProtectionConfig } from '../protection/types'
 
 interface MSALProviderProps extends MsalAuthProviderProps {
   /**
    * Zero-Config Protected Routes configuration (v4.0.0)
-   * @example
-   * ```tsx
-   * <MSALProvider
-   *   clientId="..."
-   *   protection={{
-   *     defaultRedirectTo: '/login',
-   *     defaultLoading: <Spinner />,
-   *     debug: true
-   *   }}
-   * >
-   * ```
    */
   protection?: AuthProtectionConfig;
+  /**
+   * Called when a user's tenant is denied access (v5.1.0)
+   */
+  onTenantDenied?: (reason: string) => void;
 }
 
 // Context for protection config
 const ProtectionConfigContext = createContext<AuthProtectionConfig | undefined>(undefined);
+
+// Context for multi-tenant config (v5.1.0)
+const TenantConfigContext = createContext<MultiTenantConfig | undefined>(undefined);
 
 export function useProtectionConfig() {
   return useContext(ProtectionConfigContext);
 }
 
 /**
- * Pre-configured MSALProvider component for Next.js App Router layouts.
- * 
- * @remarks
- * This component is already marked as 'use client' internally, so you can import
- * and use it directly in your server-side layout.tsx without adding 'use client'
- * to your layout file.
- * 
+ * Access the multi-tenant configuration from anywhere in the tree (v5.1.0).
+ *
  * @example
  * ```tsx
- * // app/layout.tsx (Server Component - no 'use client' needed!)
+ * const tenantConfig = useTenantConfig();
+ * console.log(tenantConfig?.allowList);
+ * ```
+ */
+export function useTenantConfig(): MultiTenantConfig | undefined {
+  return useContext(TenantConfigContext);
+}
+
+/**
+ * Pre-configured MSALProvider component for Next.js App Router layouts.
+ *
+ * @remarks
+ * Already marked as 'use client' internally — safe to import in server layouts.
+ *
+ * @example
+ * ```tsx
+ * // app/layout.tsx (Server Component)
  * import { MSALProvider } from '@chemmangat/msal-next'
- * 
+ *
  * export default function RootLayout({ children }) {
  *   return (
  *     <html lang="en">
@@ -50,6 +57,7 @@ export function useProtectionConfig() {
  *         <MSALProvider
  *           clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
  *           tenantId={process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID!}
+ *           multiTenant={{ type: 'multi', allowList: ['contoso.com'] }}
  *         >
  *           {children}
  *         </MSALProvider>
@@ -58,18 +66,13 @@ export function useProtectionConfig() {
  *   )
  * }
  * ```
- * 
- * @security
- * - All authentication happens client-side (browser)
- * - Tokens are never sent to your Next.js server
- * - Uses Microsoft's official MSAL library
- * - Supports secure token storage (sessionStorage/localStorage)
- * - No server-side token handling required
  */
-export function MSALProvider({ children, protection, ...props }: MSALProviderProps) {
+export function MSALProvider({ children, protection, onTenantDenied, ...props }: MSALProviderProps) {
   return (
     <ProtectionConfigContext.Provider value={protection}>
-      <MsalAuthProvider {...props}>{children}</MsalAuthProvider>
+      <TenantConfigContext.Provider value={props.multiTenant}>
+        <MsalAuthProvider {...props} onTenantDenied={onTenantDenied}>{children}</MsalAuthProvider>
+      </TenantConfigContext.Provider>
     </ProtectionConfigContext.Provider>
   )
 }

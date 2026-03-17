@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { safeJsonParse, isValidAccountData } from '../utils/validation';
+import { validateTenantAccess } from '../utils/tenantValidator';
+import type { MultiTenantConfig } from '../types';
 
 export interface AuthMiddlewareConfig {
   /**
@@ -38,6 +40,18 @@ export interface AuthMiddlewareConfig {
   isAuthenticated?: (request: NextRequest) => boolean | Promise<boolean>;
 
   /**
+   * Tenant access configuration (v5.1.0).
+   * Validated against the account stored in the session cookie.
+   */
+  tenantConfig?: MultiTenantConfig;
+
+  /**
+   * Path to redirect to when tenant access is denied (v5.1.0).
+   * @default '/unauthorized'
+   */
+  tenantDeniedPath?: string;
+
+  /**
    * Enable debug logging
    * @default false
    */
@@ -71,6 +85,8 @@ export function createAuthMiddleware(config: AuthMiddlewareConfig = {}) {
     redirectAfterLogin = '/',
     sessionCookie = 'msal.account',
     isAuthenticated: customAuthCheck,
+    tenantConfig,
+    tenantDeniedPath = '/unauthorized',
     debug = false,
   } = config;
 
@@ -116,6 +132,32 @@ export function createAuthMiddleware(config: AuthMiddlewareConfig = {}) {
       url.pathname = loginPath;
       url.searchParams.set('returnUrl', pathname);
       return NextResponse.redirect(url);
+    }
+
+    // Tenant validation for authenticated users on protected routes (v5.1.0)
+    if (isProtectedRoute && authenticated && tenantConfig) {
+      try {
+        const sessionData = request.cookies.get(sessionCookie);
+        if (sessionData?.value) {
+          const account = safeJsonParse(sessionData.value, isValidAccountData);
+          if (account) {
+            const tenantResult = validateTenantAccess(account as any, tenantConfig);
+            if (!tenantResult.allowed) {
+              if (debug) {
+                console.log('[AuthMiddleware] Tenant access denied:', tenantResult.reason);
+              }
+              const url = request.nextUrl.clone();
+              url.pathname = tenantDeniedPath;
+              url.searchParams.set('reason', tenantResult.reason || 'access_denied');
+              return NextResponse.redirect(url);
+            }
+          }
+        }
+      } catch (error) {
+        if (debug) {
+          console.warn('[AuthMiddleware] Tenant validation error:', error);
+        }
+      }
     }
 
     // Redirect authenticated users from public-only routes

@@ -8,6 +8,8 @@
 import { useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMsalAuth } from '../hooks/useMsalAuth';
+import { useTenant } from '../hooks/useTenant';
+import { validateTenantAccess } from '../utils/tenantValidator';
 import { PageAuthConfig } from './types';
 
 interface ProtectedPageProps {
@@ -33,6 +35,7 @@ export function ProtectedPage({
 }: ProtectedPageProps) {
   const router = useRouter();
   const { isAuthenticated, account, inProgress } = useMsalAuth();
+  const tenantInfo = useTenant();
   const [isValidating, setIsValidating] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -88,9 +91,21 @@ export function ProtectedPage({
         }
       }
 
+      // Tenant validation (v5.1.0)
+      if (config.tenant && account) {
+        const tenantResult = validateTenantAccess(account, config.tenant);
+        if (!tenantResult.allowed) {
+          if (debug) {
+            console.log('[ProtectedPage] Tenant validation failed:', tenantResult.reason);
+          }
+          setIsAuthorized(false);
+          setIsValidating(false);
+          return;
+        }
+      }
+
       // Custom validation
-      if (config.validate) {
-        try {
+      if (config.validate) {        try {
           const isValid = await config.validate(account);
           if (!isValid) {
             if (debug) {
@@ -117,7 +132,7 @@ export function ProtectedPage({
     }
 
     checkAuth();
-  }, [isAuthenticated, account, inProgress, config, router, defaultRedirectTo, debug]);
+  }, [isAuthenticated, account, inProgress, config, router, defaultRedirectTo, debug, tenantInfo]);
 
   // Show loading state
   if (isValidating || inProgress) {

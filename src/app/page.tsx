@@ -54,7 +54,7 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 text-sm font-medium">v5.0.0 — CLI, Codemods &amp; Custom Slots</span>
+              <span className="text-blue-600 text-sm font-medium">v5.1.0 — Multi-Tenant Support</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -97,7 +97,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* v5.0.0 What's New Banner */}
+      {/* v5.1.0 What's New Banner */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
           <div className="flex items-center gap-3 mb-6">
@@ -106,30 +106,30 @@ export default function Home() {
             </div>
             <div>
               <div className="text-xs font-semibold uppercase tracking-widest text-blue-200">What&apos;s new</div>
-              <div className="text-xl font-bold">Version 5.0.0</div>
+              <div className="text-xl font-bold">Version 5.1.0</div>
             </div>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                icon: <Terminal className="w-5 h-5" />,
-                title: 'CLI Init',
-                desc: 'npx init scaffolds .env.local, layout.tsx and a starter auth page interactively',
-              },
-              {
-                icon: <GitMerge className="w-5 h-5" />,
-                title: 'Codemod Migrate',
-                desc: 'npx migrate rewrites popup → redirect calls across your entire codebase automatically',
-              },
-              {
-                icon: <Wrench className="w-5 h-5" />,
-                title: 'renderAccount Slot',
-                desc: 'AccountSwitcher and AccountList now accept a renderAccount prop for full UI customisation',
+                icon: <Users className="w-5 h-5" />,
+                title: 'Multi-Tenant',
+                desc: 'allowList, blockList, requireType and requireMFA — control exactly which tenants can sign in',
               },
               {
                 icon: <Shield className="w-5 h-5" />,
-                title: '115 Unit Tests',
-                desc: 'Full Vitest coverage across all hooks and components — 80 %+ lines, branches, statements',
+                title: 'useTenant() Hook',
+                desc: 'tenantId, tenantDomain, isGuestUser, homeTenantId — full B2B guest detection built-in',
+              },
+              {
+                icon: <Lock className="w-5 h-5" />,
+                title: 'Per-Page Tenant Rules',
+                desc: 'export const auth = { tenant: { allowList, requireMFA } } — zero-config page protection',
+              },
+              {
+                icon: <Zap className="w-5 h-5" />,
+                title: 'Cross-Tenant Tokens',
+                desc: 'acquireTokenForTenant(tenantId, scopes) — silent token acquisition for any tenant',
               },
             ].map((item) => (
               <div key={item.title} className="bg-white/10 rounded-xl p-4">
@@ -253,7 +253,7 @@ npm install @chemmangat/msal-next`}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-600 text-sm">
-              © 2025 @chemmangat/msal-next · v5.0.0 · MIT License
+              © 2025 @chemmangat/msal-next · v5.1.0 · MIT License
             </p>
             <div className="flex items-center gap-6">
               <a
@@ -346,6 +346,24 @@ function FeatureCarousel() {
 />`,
     },
     {
+      icon: <Shield className="w-8 h-8" />,
+      title: 'Multi-Tenant Support',
+      description: 'Control exactly which tenants can access your app. Allow/block by domain or tenant ID, require MFA, detect B2B guests, and acquire cross-tenant tokens silently.',
+      badge: 'NEW in v5.1.0',
+      color: 'indigo',
+      code: `<MSALProvider
+  clientId="..."
+  multiTenant={{
+    type: 'multi',
+    allowList: ['contoso.com'],
+    requireMFA: true,
+  }}
+  onTenantDenied={(reason) => router.push('/denied')}
+>
+
+// In any component:
+const { tenantDomain, isGuestUser } = useTenant();`,
+    },    {
       icon: <Lock className="w-8 h-8" />,
       title: 'Protected Routes',
       description: 'One-line route protection with role-based access control. Secure your pages effortlessly.',

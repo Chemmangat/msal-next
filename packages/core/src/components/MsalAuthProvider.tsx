@@ -8,6 +8,7 @@ import { createMsalConfig } from '../utils/createMsalConfig';
 import { validateConfig, displayValidationResults } from '../utils/configValidator';
 import { wrapMsalError } from '../errors/MsalError';
 import { TokenRefreshManager } from './TokenRefreshManager';
+import { validateTenantAccess } from '../utils/tenantValidator';
 
 // Module-level variable to store the MSAL instance
 let globalMsalInstance: PublicClientApplication | null = null;
@@ -26,8 +27,9 @@ export function MsalAuthProvider({
   onInitialized,
   autoRefreshToken = false,
   refreshBeforeExpiry = 300,
+  onTenantDenied,
   ...config 
-}: MsalAuthProviderProps) {
+}: MsalAuthProviderProps & { onTenantDenied?: (reason: string) => void }) {
   const [msalInstance, setMsalInstance] = useState<PublicClientApplication | null>(null);
   const instanceRef = useRef<PublicClientApplication | null>(null);
 
@@ -70,6 +72,22 @@ export function MsalAuthProvider({
             // Set the active account after successful redirect
             if (response.account) {
               instance.setActiveAccount(response.account);
+
+              // Tenant validation (v5.1.0)
+              if (config.multiTenant) {
+                const validation = validateTenantAccess(response.account, config.multiTenant);
+                if (!validation.allowed) {
+                  // Sign the user out silently so they don't stay in a broken state
+                  try { await instance.logoutRedirect({ account: response.account }); } catch {}
+                  const reason = validation.reason || 'Tenant access denied.';
+                  if (onTenantDenied) {
+                    onTenantDenied(reason);
+                  } else {
+                    console.error('[MSAL] Tenant access denied:', reason);
+                  }
+                  return;
+                }
+              }
             }
             
             // Clean URL hash

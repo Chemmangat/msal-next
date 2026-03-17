@@ -5,7 +5,7 @@ Microsoft/Azure AD authentication for Next.js App Router. Minimal setup, full Ty
 [![npm version](https://badge.fury.io/js/@chemmangat%2Fmsal-next.svg)](https://www.npmjs.com/package/@chemmangat/msal-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Current version: 5.0.0**
+**Current version: 5.1.0**
 
 ---
 
@@ -213,6 +213,73 @@ Protects content and redirects unauthenticated users to login.
 
 ---
 
+## Multi-Tenant Support (v5.1.0)
+
+### Provider Configuration
+
+```tsx
+<MSALProvider
+  clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+  multiTenant={{
+    type: 'multi',                          // 'single' | 'multi' | 'organizations' | 'consumers' | 'common'
+    allowList: ['contoso.com', 'fabrikam.com'],  // tenant IDs or domains
+    blockList: ['competitor.com'],
+    requireType: 'Member',                  // block B2B guests
+    requireMFA: true,                       // require MFA claim
+  }}
+  onTenantDenied={(reason) => router.push(`/denied?reason=${encodeURIComponent(reason)}`)}
+>
+```
+
+### `useTenant()` Hook
+
+```tsx
+import { useTenant } from '@chemmangat/msal-next';
+
+const {
+  tenantId,         // resource tenant ID
+  tenantDomain,     // e.g. 'contoso.com'
+  isGuestUser,      // true for B2B guests
+  homeTenantId,     // user's home tenant
+  resourceTenantId, // tenant the token was issued for
+  claims,           // raw idTokenClaims
+  isAuthenticated,
+} = useTenant();
+```
+
+### Per-Page Tenant Restrictions
+
+```tsx
+// app/admin/page.tsx
+export const auth = {
+  required: true,
+  tenant: {
+    allowList: ['contoso.com'],
+    requireMFA: true,
+  },
+};
+```
+
+### Middleware Tenant Validation
+
+```ts
+// middleware.ts
+export const middleware = createAuthMiddleware({
+  protectedRoutes: ['/dashboard'],
+  tenantConfig: { allowList: ['contoso.com'], requireMFA: true },
+  tenantDeniedPath: '/unauthorized',
+});
+```
+
+### Cross-Tenant Token Acquisition
+
+```tsx
+const { acquireTokenForTenant } = useMsalAuth();
+const token = await acquireTokenForTenant('target-tenant-id', ['User.Read']);
+```
+
+---
+
 ## Hooks
 
 ### useMsalAuth()
@@ -229,6 +296,7 @@ const {
   acquireTokenSilent,   // (scopes: string[]) => Promise<string>  — silent only
   acquireTokenRedirect, // (scopes: string[]) => Promise<void>
   clearSession,         // () => Promise<void>  — clears cache without Microsoft logout
+  acquireTokenForTenant,// (tenantId: string, scopes: string[]) => Promise<string>  — cross-tenant (v5.1.0)
 } = useMsalAuth();
 ```
 

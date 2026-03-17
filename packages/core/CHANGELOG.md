@@ -2,6 +2,92 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.1.0] - 2026-03-17
+
+### ✨ New Features
+
+#### 1. Multi-Tenant Support — `multiTenant` config
+
+Pass a `multiTenant` object to `MSALProvider` to control which tenants can access your app:
+
+```tsx
+<MSALProvider
+  clientId="..."
+  multiTenant={{
+    type: 'multi',           // 'single' | 'multi' | 'organizations' | 'consumers' | 'common'
+    allowList: ['contoso.com', 'fabrikam.com'],
+    blockList: ['competitor.com'],
+    requireType: 'Member',   // block B2B guests
+    requireMFA: true,
+  }}
+  onTenantDenied={(reason) => router.push(`/denied?reason=${reason}`)}
+>
+```
+
+- `type` maps to the MSAL authority (`single` → tenant, `multi`/`common` → common, etc.)
+- `allowList` / `blockList` accept tenant IDs or domain names
+- `requireType: 'Member'` blocks B2B guests; `'Guest'` allows only guests
+- `requireMFA` checks the `amr` claim for MFA evidence
+- Tenant validation runs automatically after redirect authentication
+
+#### 2. `useTenant()` Hook
+
+```tsx
+import { useTenant } from '@chemmangat/msal-next';
+
+const { tenantId, tenantDomain, isGuestUser, homeTenantId, resourceTenantId, claims } = useTenant();
+```
+
+Returns tenant context for the current user including B2B guest detection.
+
+#### 3. Per-Page Tenant Restrictions
+
+```tsx
+// app/admin/page.tsx
+export const auth = {
+  required: true,
+  tenant: {
+    allowList: ['contoso.com'],
+    requireMFA: true,
+  },
+};
+```
+
+#### 4. Middleware Tenant Validation
+
+```ts
+// middleware.ts
+export const middleware = createAuthMiddleware({
+  protectedRoutes: ['/dashboard'],
+  tenantConfig: { allowList: ['contoso.com'] },
+  tenantDeniedPath: '/unauthorized',
+});
+```
+
+#### 5. Cross-Tenant Token Acquisition
+
+```tsx
+const { acquireTokenForTenant } = useMsalAuth();
+const token = await acquireTokenForTenant('target-tenant-id', ['User.Read']);
+```
+
+#### 6. `useTenantConfig()` Hook
+
+Access the `multiTenant` config from anywhere in the component tree:
+
+```tsx
+import { useTenantConfig } from '@chemmangat/msal-next';
+const config = useTenantConfig();
+```
+
+### 🔧 Internal
+
+- `createMsalConfig` now maps `multiTenant.type` to the correct MSAL authority (takes precedence over legacy `authorityType`)
+- `validateTenantAccess` utility exported for advanced use cases
+- `TenantAuthConfig` type exported for per-page tenant config
+
+---
+
 ## [5.0.0] - 2026-03-16
 
 ### ⚠️ Breaking Changes

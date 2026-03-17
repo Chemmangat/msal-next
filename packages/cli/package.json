@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next-cli",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "CLI tool for setting up @chemmangat/msal-next in Next.js projects",
   "main": "./dist/index.js",
   "bin": {

@@ -6,7 +6,7 @@ Microsoft/Azure AD authentication for Next.js App Router. Minimal setup, full Ty
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security](https://img.shields.io/badge/Security-A+-green.svg)](./SECURITY.md)
 
-**Current version: 5.0.0**
+**Current version: 5.1.0**
 
 ---
 
@@ -223,6 +223,60 @@ Protects content and redirects unauthenticated users to login.
 
 ---
 
+## Multi-Tenant Support (v5.1.0)
+
+### Provider Configuration
+
+```tsx
+<MSALProvider
+  clientId={process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!}
+  multiTenant={{
+    type: 'multi',
+    allowList: ['contoso.com', 'fabrikam.com'],
+    blockList: ['competitor.com'],
+    requireType: 'Member',
+    requireMFA: true,
+  }}
+  onTenantDenied={(reason) => router.push(`/denied?reason=${encodeURIComponent(reason)}`)}
+>
+```
+
+### `useTenant()` Hook
+
+```tsx
+import { useTenant } from '@chemmangat/msal-next';
+
+const { tenantId, tenantDomain, isGuestUser, homeTenantId, resourceTenantId, claims } = useTenant();
+```
+
+### Per-Page Tenant Restrictions
+
+```tsx
+export const auth = {
+  required: true,
+  tenant: { allowList: ['contoso.com'], requireMFA: true },
+};
+```
+
+### Middleware Tenant Validation
+
+```ts
+export const middleware = createAuthMiddleware({
+  protectedRoutes: ['/dashboard'],
+  tenantConfig: { allowList: ['contoso.com'] },
+  tenantDeniedPath: '/unauthorized',
+});
+```
+
+### Cross-Tenant Token Acquisition
+
+```tsx
+const { acquireTokenForTenant } = useMsalAuth();
+const token = await acquireTokenForTenant('target-tenant-id', ['User.Read']);
+```
+
+---
+
 ### Hooks
 
 #### useMsalAuth()
@@ -239,6 +293,7 @@ const {
   acquireTokenSilent,   // (scopes: string[]) => Promise<string>  — silent only
   acquireTokenRedirect, // (scopes: string[]) => Promise<void>
   clearSession,         // () => Promise<void>  — clears cache without Microsoft logout
+  acquireTokenForTenant,// (tenantId: string, scopes: string[]) => Promise<string>  — cross-tenant (v5.1.0)
 } = useMsalAuth();
 ```
 

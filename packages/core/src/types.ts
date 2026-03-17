@@ -300,18 +300,77 @@ export interface MsalAuthConfig {
 
   /**
    * Refresh token this many seconds before expiry
-   * 
+   *
    * @remarks
    * Only used when autoRefreshToken is enabled.
-   * 
+   *
    * @defaultValue 300 (5 minutes)
-   * 
-   * @example
-   * ```tsx
-   * refreshBeforeExpiry={600} // Refresh 10 minutes before expiry
-   * ```
    */
   refreshBeforeExpiry?: number;
+
+  /**
+   * Multi-tenant configuration (v5.1.0)
+   *
+   * @remarks
+   * Controls which tenants are allowed to access the application and how
+   * cross-tenant token acquisition is handled.
+   *
+   * @example
+   * ```tsx
+   * <MSALProvider
+   *   clientId="..."
+   *   multiTenant={{
+   *     type: 'multi',
+   *     allowList: ['contoso.com', 'fabrikam.com'],
+   *     requireMFA: true,
+   *   }}
+   * >
+   * ```
+   */
+  multiTenant?: MultiTenantConfig;
+}
+
+/**
+ * Multi-tenant configuration for v5.1.0
+ */
+export interface MultiTenantConfig {
+  /**
+   * Tenant mode
+   * - 'single'        — only your own tenant (maps to authorityType 'tenant')
+   * - 'multi'         — any Azure AD tenant (maps to authorityType 'common')
+   * - 'organizations' — any organisational tenant, no personal accounts
+   * - 'consumers'     — Microsoft personal accounts only
+   * - 'common'        — alias for 'multi'
+   *
+   * @defaultValue 'common'
+   */
+  type?: 'single' | 'multi' | 'organizations' | 'consumers' | 'common';
+
+  /**
+   * Tenant allow-list — only users from these tenant IDs or domains are permitted.
+   * Checked after authentication; users from other tenants are shown an error.
+   *
+   * @example ['contoso.com', '72f988bf-86f1-41af-91ab-2d7cd011db47']
+   */
+  allowList?: string[];
+
+  /**
+   * Tenant block-list — users from these tenant IDs or domains are denied.
+   * Takes precedence over allowList.
+   */
+  blockList?: string[];
+
+  /**
+   * Require a specific tenant type ('Member' | 'Guest').
+   * Useful to block B2B guests or to allow only guests.
+   */
+  requireType?: 'Member' | 'Guest';
+
+  /**
+   * Require MFA claim in the token (amr claim must contain 'mfa').
+   * @defaultValue false
+   */
+  requireMFA?: boolean;
 }
 
 /**

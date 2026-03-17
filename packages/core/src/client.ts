@@ -249,6 +249,21 @@ export { AccountList } from './components/AccountList';
 export { useMsalAuth } from './hooks/useMsalAuth';
 
 /**
+ * Tenant context hook — returns tenantId, tenantDomain, isGuestUser, etc. (v5.1.0)
+ *
+ * @example
+ * ```tsx
+ * const { tenantDomain, isGuestUser } = useTenant();
+ * ```
+ */
+export { useTenant } from './hooks/useTenant';
+export type { TenantInfo, UseTenantReturn } from './hooks/useTenant';
+
+/**
+ * Access the multi-tenant config passed to MSALProvider (v5.1.0)
+ */
+export { useTenantConfig } from './components/MSALProvider';
+/**
  * Pre-configured fetch wrapper for MS Graph API
  * 
  * @example
@@ -581,7 +596,8 @@ export { createAuthMiddleware } from './middleware/createAuthMiddleware';
 // Type Exports
 // ============================================================================
 
-export type { MsalAuthConfig, MsalAuthProviderProps, CustomTokenClaims } from './types';
+export type { MsalAuthConfig, MsalAuthProviderProps, CustomTokenClaims, MultiTenantConfig } from './types';
+export type { TenantAuthConfig } from './protection/types';
 export type { UserProfile, UseUserProfileReturn } from './types/userProfile';
 export type { MicrosoftSignInButtonProps } from './components/MicrosoftSignInButton';
 export type { SignOutButtonProps } from './components/SignOutButton';

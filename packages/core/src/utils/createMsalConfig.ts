@@ -20,21 +20,51 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
     enableLogging = false,
     loggerCallback,
     allowedRedirectUris,
+    multiTenant,
   } = config;
 
   if (!clientId) {
     throw new Error('@chemmangat/msal-next: clientId is required');
   }
 
-  // Build authority URL
-  const getAuthority = (): string => {
+  // Resolve effective authority type:
+  // multiTenant.type takes precedence over legacy authorityType prop
+  const resolveAuthorityType = (): string => {
+    if (multiTenant?.type) {
+      switch (multiTenant.type) {
+        case 'single':
+          // single-tenant — requires tenantId
+          if (!tenantId) {
+            throw new Error(
+              '@chemmangat/msal-next: tenantId is required when multiTenant.type is "single"'
+            );
+          }
+          return tenantId;
+        case 'multi':
+        case 'common':
+          return 'common';
+        case 'organizations':
+          return 'organizations';
+        case 'consumers':
+          return 'consumers';
+      }
+    }
+    // Legacy authorityType
     if (authorityType === 'tenant') {
       if (!tenantId) {
-        throw new Error('@chemmangat/msal-next: tenantId is required when authorityType is "tenant"');
+        throw new Error(
+          '@chemmangat/msal-next: tenantId is required when authorityType is "tenant"'
+        );
       }
-      return `https://login.microsoftonline.com/${tenantId}`;
+      return tenantId;
     }
-    return `https://login.microsoftonline.com/${authorityType}`;
+    return authorityType;
+  };
+
+  // Build authority URL
+  const getAuthority = (): string => {
+    const resolved = resolveAuthorityType();
+    return `https://login.microsoftonline.com/${resolved}`;
   };
 
   // Default redirect URI
