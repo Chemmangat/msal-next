@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Production-ready Microsoft/Azure AD authentication for Next.js App Router. Zero-config setup, TypeScript-first, multi-account support, auto token refresh. The easiest way to add Microsoft login to your Next.js app.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -81,15 +81,15 @@
     "url": "https://github.com/chemmangat/msal-next/issues"
   },
   "peerDependencies": {
-    "@azure/msal-browser": "^3.11.0 || ^4.0.0",
-    "@azure/msal-react": "^2.0.0 || ^3.0.0",
+    "@azure/msal-browser": "^3.11.0 || ^4.0.0 || ^5.0.0",
+    "@azure/msal-react": "^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0",
     "next": ">=14.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
-    "@azure/msal-browser": "^3.11.1",
-    "@azure/msal-react": "^2.0.15",
+    "@azure/msal-browser": "^5.6.3",
+    "@azure/msal-react": "^5.2.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^14.0.0",
     "@testing-library/react-hooks": "^8.0.1",

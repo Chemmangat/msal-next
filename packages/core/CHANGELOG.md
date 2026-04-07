@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.2.0] - 2026-04-07
+
+### 🔧 Compatibility
+
+#### Support for `@azure/msal-browser` v5.x and `@azure/msal-react` v4.x / v5.x
+
+Peer dependency ranges updated to include the latest MSAL major versions:
+
+```json
+"@azure/msal-browser": "^3.11.0 || ^4.0.0 || ^5.0.0",
+"@azure/msal-react": "^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0"
+```
+
+Breaking changes in `msal-browser` v5 are handled transparently at runtime — no changes required in your app code.
+
+**What changed internally:**
+
+- `handleRedirectPromise()` now receives an options object on v5 (`navigateToLoginRequestUrl` moved here from config)
+- `storeAuthStateInCookie` and `navigateToLoginRequestUrl` are conditionally omitted from the MSAL config object when running on v5 (both were removed from `BrowserAuthOptions`/`CacheOptions`)
+- `EventType.LOGIN_SUCCESS` payload is now `AccountInfo` on v5 (was `AuthenticationResult` on v3/v4) — handled with a runtime type guard
+- `EventType.LOGIN_FAILURE` was removed in v5; login failures now surface as `ACQUIRE_TOKEN_FAILURE` — both are handled
+
 ## [5.1.0] - 2026-03-17
 
 ### ✨ New Features

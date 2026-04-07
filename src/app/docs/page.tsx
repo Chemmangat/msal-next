@@ -19,6 +19,7 @@ export default function DocsPage() {
         'hook',
         'protected-routes',
         'token-refresh',
+        'msal-v5',
       ];
 
       const scrollPosition = window.scrollY + 150;
@@ -51,6 +52,7 @@ export default function DocsPage() {
     { id: 'hook', label: 'useMsalAuth' },
     { id: 'protected-routes', label: 'Protected Routes' },
     { id: 'token-refresh', label: 'Token Refresh' },
+    { id: 'msal-v5', label: 'MSAL v5 Compatibility' },
   ];
 
   const scrollToSection = (id: string) => {
@@ -102,7 +104,7 @@ export default function DocsPage() {
             <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
               <div className="mb-6">
                 <h2 className="text-sm font-semibold text-gray-900 mb-1">Documentation</h2>
-                <p className="text-xs text-gray-500">v4.1.0</p>
+                <p className="text-xs text-gray-500">v5.2.0</p>
               </div>
               <nav className="space-y-1">
                 {sections.map((section) => (
@@ -324,6 +326,82 @@ export default function Dashboard() {
                   onCopy={() => copyToClipboard(`<MSALProvider\n  clientId="..."\n  autoRefreshToken={true}\n  refreshBeforeExpiry={300}\n>\n  {children}\n</MSALProvider>`, 11)}
                   copied={copiedIndex === 11}
                 />
+              </section>
+
+              {/* MSAL v5 Compatibility */}
+              <section id="msal-v5" className="mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  MSAL v5 Compatibility{' '}
+                  <span className="text-sm text-green-600 font-normal">(v5.2.0)</span>
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  As of v5.2.0, msal-next supports <code className="text-blue-600 text-sm">@azure/msal-browser</code> v3, v4, and v5, and <code className="text-blue-600 text-sm">@azure/msal-react</code> v2 through v5. No changes are required in your application code — all API differences are handled transparently at runtime.
+                </p>
+
+                <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-6 flex gap-3">
+                  <div className="text-green-600 mt-0.5">✓</div>
+                  <p className="text-sm text-green-800">
+                    You can upgrade <code>@azure/msal-browser</code> and <code>@azure/msal-react</code> to their latest versions without touching any msal-next configuration.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Supported peer dependency ranges</h3>
+                  <CodeBlock
+                    code={`"@azure/msal-browser": "^3.11.0 || ^4.0.0 || ^5.0.0",\n"@azure/msal-react":   "^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0"`}
+                    onCopy={() => copyToClipboard('"@azure/msal-browser": "^3.11.0 || ^4.0.0 || ^5.0.0",\n"@azure/msal-react":   "^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0"', 12)}
+                    copied={copiedIndex === 12}
+                  />
+                </div>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">What changed in MSAL Browser v5</h3>
+                <p className="text-gray-600 mb-4">
+                  The following breaking changes in <code className="text-blue-600 text-sm">msal-browser</code> v5 are all handled internally by msal-next:
+                </p>
+
+                <div className="space-y-4 mb-8">
+                  {[
+                    {
+                      title: 'handleRedirectPromise() signature',
+                      desc: 'v5 accepts a HandleRedirectPromiseOptions object instead of an optional hash string. navigateToLoginRequestUrl is now passed here rather than in the MSAL config.',
+                    },
+                    {
+                      title: 'storeAuthStateInCookie removed',
+                      desc: 'Removed from CacheOptions in v5. msal-next detects the version at runtime and omits this option automatically when running on v5.',
+                    },
+                    {
+                      title: 'navigateToLoginRequestUrl removed from config',
+                      desc: 'Removed from BrowserAuthOptions in v5. msal-next passes it to handleRedirectPromise() on v5 and to the config object on v3/v4.',
+                    },
+                    {
+                      title: 'LOGIN_SUCCESS payload type changed',
+                      desc: 'In v5 the LOGIN_SUCCESS event payload is AccountInfo directly. In v3/v4 it was AuthenticationResult with an .account property. msal-next handles both shapes.',
+                    },
+                    {
+                      title: 'LOGIN_FAILURE event removed',
+                      desc: 'Removed in v5 — login failures now surface as ACQUIRE_TOKEN_FAILURE. msal-next listens to both so errors are never silently dropped.',
+                    },
+                  ].map((item) => (
+                    <div key={item.title} className="flex gap-4 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                      <div>
+                        <div className="font-medium text-gray-900 text-sm mb-1">{item.title}</div>
+                        <div className="text-gray-600 text-sm">{item.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Upgrading</h3>
+                <p className="text-gray-600 mb-4">To use the latest MSAL packages, just update your dependencies:</p>
+                <CodeBlock
+                  code={`npm install @azure/msal-browser@latest @azure/msal-react@latest`}
+                  onCopy={() => copyToClipboard('npm install @azure/msal-browser@latest @azure/msal-react@latest', 13)}
+                  copied={copiedIndex === 13}
+                />
+                <p className="text-sm text-gray-500 mt-3">
+                  No other changes required. msal-next v5.2.0 handles the rest.
+                </p>
               </section>
             </motion.div>
           </main>
