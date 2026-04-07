@@ -2,8 +2,8 @@
  * Tenant validation utility for multi-tenant support (v5.1.0)
  */
 
-import { AccountInfo } from '@azure/msal-browser';
-import { MultiTenantConfig } from '../types';
+import type { AccountInfo } from '@azure/msal-browser';
+import type { MultiTenantConfig } from '../types';
 
 export interface TenantValidationResult {
   allowed: boolean;

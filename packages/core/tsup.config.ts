@@ -50,4 +50,21 @@ export default defineConfig([
       '@azure/msal-react',
     ],
   },
+  // Middleware entry point (edge-compatible, no 'use client', no React)
+  {
+    entry: {
+      middleware: 'src/middleware.ts',
+    },
+    format: ['cjs', 'esm'],
+    dts: true,
+    sourcemap: false,
+    clean: false,
+    minify: false,
+    treeshake: true,
+    splitting: false,
+    external: [
+      'next',
+      'next/server',
+    ],
+  },
 ]);
