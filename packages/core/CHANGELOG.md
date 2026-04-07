@@ -2,7 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
-## [5.2.1] - 2026-04-07
+## [5.3.0] - 2026-04-07
+
+### 🐛 Bug Fixes
+
+#### Fix 1 — Auto-sync `msal.account` session cookie (no manual cookie code needed)
+
+`MsalAuthProvider` now automatically writes and clears the `msal.account` cookie on every auth event. The middleware works out of the box with zero manual setup.
+
+- `LOGIN_SUCCESS` → writes `msal.account` cookie (`{ homeAccountId, username, name }`, URL-encoded, `path=/; SameSite=Lax`)
+- `LOGOUT_SUCCESS` / `LOGOUT_END` → clears the cookie
+- Redirect flow (`handleRedirectPromise`) → writes cookie immediately after redirect completes
+- Existing cached account on init → restores cookie (handles browser restart with `localStorage` cache)
+
+#### Fix 2 — `setServerSessionCookie` no longer calls a non-existent API route
+
+The old implementation called `fetch('/api/auth/session')` which required an undocumented route that didn't exist. It now writes `document.cookie` directly — same format as Fix 1. The function signature changed from `async (account, accessToken?) => Promise<void>` to `(account) => void`.
+
+A new `clearServerSessionCookie()` helper is also exported from `@chemmangat/msal-next/server`.
+
+> As of v5.3.0 you rarely need to call either function manually — `MsalAuthProvider` handles the cookie automatically.
+
+#### Fix 3 — `useTokenRefresh` now reads real token expiry
+
+The hook previously hardcoded `expiresIn = 3600`. It now calls `instance.acquireTokenSilent` directly and reads `response.expiresOn` to calculate the actual remaining seconds. Falls back to `3600` if `expiresOn` is `null`.
+
+#### Fix 4 — `navigateToLoginRequestUrl` JSDoc default corrected
+
+The `@defaultValue` in `MsalAuthConfig` was documented as `true` but the actual default in `createMsalConfig` was `false`. Corrected to `@defaultValue false`.
+
+#### Fix 5 — No `/api/auth/session` route required
+
+All references to the non-existent `/api/auth/session` route have been removed. Cookie management is now entirely client-side via `document.cookie`.
+
+---
+
+
 
 ### 🐛 Bug Fix
 

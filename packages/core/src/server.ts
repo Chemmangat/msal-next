@@ -61,7 +61,7 @@
  * }
  * ```
  */
-export { getServerSession, setServerSessionCookie } from './utils/getServerSession';
+export { getServerSession, setServerSessionCookie, clearServerSessionCookie } from './utils/getServerSession';
 
 // ============================================================================
 // Type Exports

@@ -98,34 +98,52 @@ export async function getServerSession(): Promise<ServerSession> {
 }
 
 /**
- * Helper to set server session in cookies (call from client-side after auth)
- * 
+ * Writes the `msal.account` session cookie directly via `document.cookie`.
+ *
+ * @remarks
+ * **Must be called from a Client Component** (browser context only).
+ *
+ * As of v5.3.0 this is no longer necessary for most apps — `MsalAuthProvider`
+ * automatically writes and clears the cookie on every login/logout event.
+ * Only call this manually if you need to set the cookie outside of the normal
+ * MSAL auth flow (e.g. after a silent SSO check in a custom component).
+ *
  * @example
  * ```tsx
- * // After successful login
- * await setServerSessionCookie(account, accessToken);
+ * 'use client';
+ * import { setServerSessionCookie } from '@chemmangat/msal-next/server';
+ *
+ * // After a custom auth event:
+ * setServerSessionCookie(account);
  * ```
  */
-export async function setServerSessionCookie(account: any, accessToken?: string): Promise<void> {
+export function setServerSessionCookie(account: any): void {
+  if (typeof document === 'undefined') {
+    console.warn('[ServerSession] setServerSessionCookie must be called in a browser (Client Component) context.');
+    return;
+  }
   try {
-    const accountData = {
+    const data = encodeURIComponent(JSON.stringify({
       homeAccountId: account.homeAccountId,
       username: account.username,
-      name: account.name,
-    };
-
-    // Set cookies via API route
-    await fetch('/api/auth/session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        account: accountData,
-        token: accessToken,
-      }),
-    });
+      name: account.name ?? '',
+    }));
+    document.cookie = `msal.account=${data}; path=/; SameSite=Lax`;
   } catch (error) {
     console.error('[ServerSession] Failed to set session cookie:', error);
   }
+}
+
+/**
+ * Clears the `msal.account` session cookie.
+ *
+ * @remarks
+ * **Must be called from a Client Component** (browser context only).
+ * As of v5.3.0 this is handled automatically by `MsalAuthProvider` on logout.
+ */
+export function clearServerSessionCookie(): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  document.cookie = 'msal.account=; path=/; SameSite=Lax; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 }

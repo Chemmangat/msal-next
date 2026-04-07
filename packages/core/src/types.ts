@@ -172,7 +172,7 @@ export interface MsalAuthConfig {
    * @remarks
    * If true, redirects to the page that initiated login after successful auth.
    * 
-   * @defaultValue true
+   * @defaultValue false
    */
   navigateToLoginRequestUrl?: boolean;
 

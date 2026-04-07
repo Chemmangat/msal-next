@@ -13,6 +13,33 @@ import { validateTenantAccess } from '../utils/tenantValidator';
 // Module-level variable to store the MSAL instance
 let globalMsalInstance: PublicClientApplication | null = null;
 
+// ---------------------------------------------------------------------------
+// Session cookie helpers — keep middleware in sync automatically
+// ---------------------------------------------------------------------------
+
+/** Writes the msal.account cookie so Next.js middleware can read it server-side. */
+function writeMsalSessionCookie(account: AccountInfo): void {
+  try {
+    const data = encodeURIComponent(JSON.stringify({
+      homeAccountId: account.homeAccountId,
+      username: account.username,
+      name: account.name ?? '',
+    }));
+    document.cookie = `msal.account=${data}; path=/; SameSite=Lax`;
+  } catch {
+    // Non-fatal — middleware will fall back to unauthenticated state
+  }
+}
+
+/** Clears the msal.account cookie on logout. */
+function clearMsalSessionCookie(): void {
+  try {
+    document.cookie = 'msal.account=; path=/; SameSite=Lax; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  } catch {
+    // Non-fatal
+  }
+}
+
 /**
  * Get the current MSAL instance
  * @returns The MSAL instance or null if not initialized
@@ -85,6 +112,8 @@ export function MsalAuthProvider({
             // Set the active account after successful redirect
             if (response.account) {
               instance.setActiveAccount(response.account);
+              // Auto-sync session cookie
+              writeMsalSessionCookie(response.account);
 
               // Tenant validation (v5.1.0)
               if (config.multiTenant) {
@@ -143,6 +172,8 @@ export function MsalAuthProvider({
         const accounts = instance.getAllAccounts();
         if (accounts.length > 0 && !instance.getActiveAccount()) {
           instance.setActiveAccount(accounts[0]);
+          // Restore session cookie in case it was cleared (e.g. browser restart with localStorage cache)
+          writeMsalSessionCookie(accounts[0]);
         }
 
         // Set up event callbacks
@@ -155,6 +186,8 @@ export function MsalAuthProvider({
             const account = 'account' in payload ? (payload as AuthenticationResult).account : payload as AccountInfo;
             if (account) {
               instance.setActiveAccount(account);
+              // Auto-sync session cookie so middleware works out of the box
+              writeMsalSessionCookie(account);
             }
             if (loggingEnabled) {
               console.log('[MSAL] Login successful:', account?.username);
@@ -176,9 +209,17 @@ export function MsalAuthProvider({
           if (event.eventType === EventType.LOGOUT_SUCCESS) {
             // Clear active account on logout
             instance.setActiveAccount(null);
+            // Clear session cookie
+            clearMsalSessionCookie();
             if (loggingEnabled) {
               console.log('[MSAL] Logout successful');
             }
+          }
+
+          // LOGOUT_END covers cases where logout completes without a server round-trip
+          if ((EventType as any).LOGOUT_END !== undefined &&
+              event.eventType === (EventType as any).LOGOUT_END) {
+            clearMsalSessionCookie();
           }
 
           if (event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
