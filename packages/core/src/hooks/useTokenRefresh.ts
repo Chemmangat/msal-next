@@ -6,6 +6,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
+import { useMsal } from '@azure/msal-react';
 import { useMsalAuth } from './useMsalAuth';
 
 export interface UseTokenRefreshOptions {
@@ -94,7 +95,8 @@ export function useTokenRefresh(options: UseTokenRefreshOptions = {}): UseTokenR
     onError,
   } = options;
 
-  const { isAuthenticated, account, acquireTokenSilent } = useMsalAuth();
+  const { isAuthenticated, account } = useMsalAuth();
+  const { instance } = useMsal();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastRefreshRef = useRef<Date | null>(null);
   const expiresInRef = useRef<number | null>(null);
@@ -105,52 +107,55 @@ export function useTokenRefresh(options: UseTokenRefreshOptions = {}): UseTokenR
     }
 
     try {
-      // Acquire token silently (this refreshes if needed)
-      await acquireTokenSilent(scopes);
-      
+      // Call instance.acquireTokenSilent directly to get the full AuthenticationResult
+      // including expiresOn, which useMsalAuth.acquireTokenSilent discards.
+      const response = await instance.acquireTokenSilent({
+        scopes,
+        account,
+        forceRefresh: false,
+      });
+
       lastRefreshRef.current = new Date();
-      
-      // Calculate expiry time (MSAL tokens typically expire in 1 hour)
-      const expiresIn = 3600; // 1 hour in seconds
+
+      // Calculate real seconds until expiry from the token's expiresOn field
+      const expiresIn = response.expiresOn
+        ? Math.max(0, response.expiresOn.getTime() / 1000 - Date.now() / 1000)
+        : 3600; // fallback: 1 hour
+
       expiresInRef.current = expiresIn;
-      
       onRefresh?.(expiresIn);
     } catch (error) {
       console.error('[TokenRefresh] Failed to refresh token:', error);
       onError?.(error as Error);
     }
-  }, [isAuthenticated, account, acquireTokenSilent, scopes, onRefresh, onError]);
+  }, [isAuthenticated, account, instance, scopes, onRefresh, onError]);
 
   useEffect(() => {
     if (!enabled || !isAuthenticated) {
       return;
     }
 
-    // Initial refresh to get token expiry
+    // Initial refresh to get real token expiry
     refresh();
 
-    // Set up interval to check and refresh token
-    // Check every minute
+    // Check every minute whether the token needs refreshing
     intervalRef.current = setInterval(() => {
-      if (!expiresInRef.current) {
+      if (expiresInRef.current === null) {
         return;
       }
 
-      // Calculate time since last refresh
+      // Recalculate remaining time based on wall clock since last refresh
       const timeSinceRefresh = lastRefreshRef.current
         ? (Date.now() - lastRefreshRef.current.getTime()) / 1000
         : 0;
 
       const remainingTime = expiresInRef.current - timeSinceRefresh;
-
-      // Update expires in
       expiresInRef.current = Math.max(0, remainingTime);
 
-      // Refresh if token is expiring soon
       if (remainingTime <= refreshBeforeExpiry && remainingTime > 0) {
         refresh();
       }
-    }, 60000); // Check every minute
+    }, 60_000);
 
     return () => {
       if (intervalRef.current) {

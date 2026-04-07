@@ -54,7 +54,7 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 text-sm font-medium">v5.2.0 — MSAL Browser v5 Support</span>
+              <span className="text-blue-600 text-sm font-medium">v5.3.0 — Auto Cookie Sync & Bug Fixes</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -97,7 +97,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* v5.2.0 What's New Banner */}
+      {/* v5.3.0 What's New Banner */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
           <div className="flex items-center gap-3 mb-6">
@@ -106,30 +106,30 @@ export default function Home() {
             </div>
             <div>
               <div className="text-xs font-semibold uppercase tracking-widest text-blue-200">What&apos;s new</div>
-              <div className="text-xl font-bold">Version 5.2.0</div>
+              <div className="text-xl font-bold">Version 5.3.0</div>
             </div>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                icon: <Zap className="w-5 h-5" />,
-                title: 'MSAL Browser v5',
-                desc: 'Full support for @azure/msal-browser v5.x and @azure/msal-react v4/v5 — no changes needed in your app code',
+                icon: <Shield className="w-5 h-5" />,
+                title: 'Auto Cookie Sync',
+                desc: 'MsalAuthProvider now writes and clears the msal.account cookie automatically on every login/logout — middleware works out of the box with zero manual setup',
               },
               {
-                icon: <Shield className="w-5 h-5" />,
-                title: 'Backward Compatible',
-                desc: 'Still works with msal-browser v3 and v4 — runtime version detection handles all differences transparently',
+                icon: <Wrench className="w-5 h-5" />,
+                title: 'Middleware Import Fixed',
+                desc: 'createAuthMiddleware must now be imported from @chemmangat/msal-next/middleware — it\'s no longer in the "use client" bundle, so Next.js edge runtime errors are gone',
               },
               {
                 icon: <RefreshCw className="w-5 h-5" />,
-                title: 'Event API Fixed',
-                desc: 'LOGIN_FAILURE removed in v5 — auth errors now correctly surface via ACQUIRE_TOKEN_FAILURE across all versions',
+                title: 'Real Token Expiry',
+                desc: 'useTokenRefresh now reads the actual expiresOn from the token response instead of hardcoding 3600 seconds — refresh timing is now accurate',
               },
               {
-                icon: <Lock className="w-5 h-5" />,
-                title: 'Config API Fixed',
-                desc: 'storeAuthStateInCookie and navigateToLoginRequestUrl moved in v5 — handled automatically at runtime',
+                icon: <Zap className="w-5 h-5" />,
+                title: 'setServerSessionCookie Fixed',
+                desc: 'No longer calls a non-existent /api/auth/session route — writes document.cookie directly. Rarely needed now that MsalAuthProvider handles it automatically',
               },
             ].map((item) => (
               <div key={item.title} className="bg-white/10 rounded-xl p-4">
