@@ -1,6 +1,17 @@
-import { Configuration, LogLevel } from '@azure/msal-browser';
+import { Configuration, LogLevel, CacheOptions } from '@azure/msal-browser';
 import { MsalAuthConfig } from '../types';
 import { isValidRedirectUri } from './validation';
+
+// Detect msal-browser major version at runtime to handle v5 breaking changes
+function getMsalBrowserMajorVersion(): number {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const pkg = require('@azure/msal-browser/package.json');
+    return parseInt(pkg.version.split('.')[0], 10);
+  } catch {
+    return 3; // safe fallback
+  }
+}
 
 export function createMsalConfig(config: MsalAuthConfig): Configuration {
   // If custom config provided, use it
@@ -93,12 +104,15 @@ export function createMsalConfig(config: MsalAuthConfig): Configuration {
       authority: getAuthority(),
       redirectUri: finalRedirectUri,
       postLogoutRedirectUri: postLogoutRedirectUri || finalRedirectUri,
-      navigateToLoginRequestUrl,
+      // navigateToLoginRequestUrl was removed from BrowserAuthOptions in msal-browser v5;
+      // it is now passed as an option to handleRedirectPromise(). We only set it here for v3/v4.
+      ...(getMsalBrowserMajorVersion() < 5 ? { navigateToLoginRequestUrl } : {}),
     },
     cache: {
       cacheLocation,
-      storeAuthStateInCookie,
-    },
+      // storeAuthStateInCookie was removed in msal-browser v5
+      ...(getMsalBrowserMajorVersion() < 5 ? { storeAuthStateInCookie } : {}),
+    } as CacheOptions,
     system: {
       loggerOptions: {
         loggerCallback: loggerCallback || ((level: LogLevel, message: string, containsPii: boolean) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { MsalProvider } from '@azure/msal-react';
-import { PublicClientApplication, EventType, EventMessage, AuthenticationResult } from '@azure/msal-browser';
+import { PublicClientApplication, EventType, EventMessage, AuthenticationResult, AccountInfo } from '@azure/msal-browser';
 import { useEffect, useState, useRef } from 'react';
 import { MsalAuthProviderProps } from '../types';
 import { createMsalConfig } from '../utils/createMsalConfig';
@@ -61,8 +61,21 @@ export function MsalAuthProvider({
         await instance.initialize();
 
         // Handle redirect promise
+        // msal-browser v5 changed handleRedirectPromise to accept an options object
         try {
-          const response = await instance.handleRedirectPromise();
+          const isMsalV5 = (() => {
+            try {
+              // eslint-disable-next-line @typescript-eslint/no-var-requires
+              const pkg = require('@azure/msal-browser/package.json');
+              return parseInt(pkg.version.split('.')[0], 10) >= 5;
+            } catch { return false; }
+          })();
+
+          const response = await (isMsalV5
+            ? (instance.handleRedirectPromise as Function)({
+                navigateToLoginRequestUrl: config.navigateToLoginRequestUrl ?? false,
+              })
+            : instance.handleRedirectPromise());
           
           if (response) {
             if (config.enableLogging) {
@@ -136,19 +149,28 @@ export function MsalAuthProvider({
         const loggingEnabled = config.enableLogging || false;
         instance.addEventCallback((event: EventMessage) => {
           if (event.eventType === EventType.LOGIN_SUCCESS) {
-            const payload = event.payload as AuthenticationResult;
-            // Set active account on successful login
-            if (payload?.account) {
-              instance.setActiveAccount(payload.account);
+            // msal-browser v5: LOGIN_SUCCESS payload is AccountInfo, not AuthenticationResult
+            // msal-browser v3/v4: payload is AuthenticationResult with an .account property
+            const payload = event.payload as AccountInfo | AuthenticationResult;
+            const account = 'account' in payload ? (payload as AuthenticationResult).account : payload as AccountInfo;
+            if (account) {
+              instance.setActiveAccount(account);
             }
             if (loggingEnabled) {
-              console.log('[MSAL] Login successful:', payload.account?.username);
+              console.log('[MSAL] Login successful:', account?.username);
             }
           }
           
-          if (event.eventType === EventType.LOGIN_FAILURE) {
-            // Always log errors regardless of enableLogging
-            console.error('[MSAL] Login failed:', event.error);
+          // EventType.LOGIN_FAILURE was removed in msal-browser v5; login failures now
+          // surface as ACQUIRE_TOKEN_FAILURE. Support both for v3/v4 backward compat.
+          if (
+            event.eventType === EventType.ACQUIRE_TOKEN_FAILURE ||
+            // LOGIN_FAILURE may be undefined in v5 — guard with optional chaining
+            (EventType as any).LOGIN_FAILURE !== undefined &&
+            event.eventType === (EventType as any).LOGIN_FAILURE
+          ) {
+            // Always log auth errors regardless of enableLogging
+            console.error('[MSAL] Authentication failed:', event.error);
           }
 
           if (event.eventType === EventType.LOGOUT_SUCCESS) {

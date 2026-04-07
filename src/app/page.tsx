@@ -54,7 +54,7 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 text-sm font-medium">v5.1.0 — Multi-Tenant Support</span>
+              <span className="text-blue-600 text-sm font-medium">v5.2.0 — MSAL Browser v5 Support</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -97,7 +97,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* v5.1.0 What's New Banner */}
+      {/* v5.2.0 What's New Banner */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
           <div className="flex items-center gap-3 mb-6">
@@ -106,30 +106,30 @@ export default function Home() {
             </div>
             <div>
               <div className="text-xs font-semibold uppercase tracking-widest text-blue-200">What&apos;s new</div>
-              <div className="text-xl font-bold">Version 5.1.0</div>
+              <div className="text-xl font-bold">Version 5.2.0</div>
             </div>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                icon: <Users className="w-5 h-5" />,
-                title: 'Multi-Tenant',
-                desc: 'allowList, blockList, requireType and requireMFA — control exactly which tenants can sign in',
+                icon: <Zap className="w-5 h-5" />,
+                title: 'MSAL Browser v5',
+                desc: 'Full support for @azure/msal-browser v5.x and @azure/msal-react v4/v5 — no changes needed in your app code',
               },
               {
                 icon: <Shield className="w-5 h-5" />,
-                title: 'useTenant() Hook',
-                desc: 'tenantId, tenantDomain, isGuestUser, homeTenantId — full B2B guest detection built-in',
+                title: 'Backward Compatible',
+                desc: 'Still works with msal-browser v3 and v4 — runtime version detection handles all differences transparently',
+              },
+              {
+                icon: <RefreshCw className="w-5 h-5" />,
+                title: 'Event API Fixed',
+                desc: 'LOGIN_FAILURE removed in v5 — auth errors now correctly surface via ACQUIRE_TOKEN_FAILURE across all versions',
               },
               {
                 icon: <Lock className="w-5 h-5" />,
-                title: 'Per-Page Tenant Rules',
-                desc: 'export const auth = { tenant: { allowList, requireMFA } } — zero-config page protection',
-              },
-              {
-                icon: <Zap className="w-5 h-5" />,
-                title: 'Cross-Tenant Tokens',
-                desc: 'acquireTokenForTenant(tenantId, scopes) — silent token acquisition for any tenant',
+                title: 'Config API Fixed',
+                desc: 'storeAuthStateInCookie and navigateToLoginRequestUrl moved in v5 — handled automatically at runtime',
               },
             ].map((item) => (
               <div key={item.title} className="bg-white/10 rounded-xl p-4">
@@ -253,7 +253,7 @@ npm install @chemmangat/msal-next`}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-600 text-sm">
-              © 2025 @chemmangat/msal-next · v5.1.0 · MIT License
+              © 2025 @chemmangat/msal-next · v5.2.0 · MIT License
             </p>
             <div className="flex items-center gap-6">
               <a
@@ -363,6 +363,21 @@ function FeatureCarousel() {
 
 // In any component:
 const { tenantDomain, isGuestUser } = useTenant();`,
+    },
+    {
+      icon: <Zap className="w-8 h-8" />,
+      title: 'MSAL Browser v5 Support',
+      description: 'Works seamlessly with @azure/msal-browser v3, v4, and v5 — and @azure/msal-react v2 through v5. Runtime version detection handles all API differences transparently.',
+      badge: 'NEW in v5.2.0',
+      color: 'green',
+      code: `// package.json peer deps — all supported:
+"@azure/msal-browser": "^3 || ^4 || ^5",
+"@azure/msal-react":   "^2 || ^3 || ^4 || ^5"
+
+// No changes needed in your app code.
+// handleRedirectPromise, event payloads,
+// and config options are all handled
+// automatically at runtime.`,
     },    {
       icon: <Lock className="w-8 h-8" />,
       title: 'Protected Routes',
