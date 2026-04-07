@@ -2,7 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [5.2.0] - 2026-04-07
+## [5.2.1] - 2026-04-07
+
+### 🐛 Bug Fix
+
+#### `createAuthMiddleware` now importable from `@chemmangat/msal-next/middleware`
+
+`createAuthMiddleware` was previously bundled inside `dist/index.mjs` which carries a `"use client"` directive. Importing it in `middleware.ts` caused Next.js to throw:
+
+> "Attempted to call createAuthMiddleware() from the server but createAuthMiddleware is on the client."
+
+It now has its own edge-compatible entry point with no React, no `@azure/msal-browser`, and no `"use client"` — only `next/server`.
+
+**Migration** (update your import):
+```ts
+// Before
+import { createAuthMiddleware } from '@chemmangat/msal-next';
+
+// After
+import { createAuthMiddleware } from '@chemmangat/msal-next/middleware';
+```
+
+Also fixed `tenantValidator.ts` to use `import type` for its `@azure/msal-browser` and `types.ts` imports, ensuring those never get bundled into the middleware output.
+
+---
+
+
 
 ### 🔧 Compatibility
 

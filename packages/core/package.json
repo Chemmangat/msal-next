@@ -1,6 +1,6 @@
 {
   "name": "@chemmangat/msal-next",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": "Production-ready Microsoft/Azure AD authentication for Next.js App Router. Zero-config setup, TypeScript-first, multi-account support, auto token refresh. The easiest way to add Microsoft login to your Next.js app.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -15,6 +15,11 @@
       "types": "./dist/server.d.ts",
       "import": "./dist/server.mjs",
       "require": "./dist/server.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware.d.ts",
+      "import": "./dist/middleware.mjs",
+      "require": "./dist/middleware.js"
     }
   },
   "files": [

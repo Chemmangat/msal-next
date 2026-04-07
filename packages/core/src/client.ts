@@ -567,32 +567,6 @@ export { withPageAuth, ProtectedPage } from './protection';
 export type { PageAuthConfig, AuthProtectionConfig } from './protection/types';
 
 // ============================================================================
-// Middleware
-// ============================================================================
-
-/**
- * Create authentication middleware for protecting routes at the edge
- * 
- * @example
- * ```tsx
- * // middleware.ts
- * import { createAuthMiddleware } from '@chemmangat/msal-next';
- * 
- * export const middleware = createAuthMiddleware({
- *   protectedRoutes: ['/dashboard', '/profile'],
- *   publicOnlyRoutes: ['/login'],
- *   loginPath: '/login',
- *   debug: true,
- * });
- * 
- * export const config = {
- *   matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
- * };
- * ```
- */
-export { createAuthMiddleware } from './middleware/createAuthMiddleware';
-
-// ============================================================================
 // Type Exports
 // ============================================================================
 
