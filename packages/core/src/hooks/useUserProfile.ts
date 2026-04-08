@@ -98,6 +98,7 @@ export function useUserProfile<T extends UserProfile = UserProfile>(): UseUserPr
       }
 
       const profileData: T = {
+        ...userData, // spread first so explicit fields below always take precedence
         id: userData.id,
         displayName: userData.displayName,
         givenName: userData.givenName,
@@ -133,8 +134,7 @@ export function useUserProfile<T extends UserProfile = UserProfile>(): UseUserPr
         accountEnabled: userData.accountEnabled,
         ageGroup: userData.ageGroup,
         userType: userData.userType,
-        photo: photoUrl,
-        ...userData, // Include any additional fields from the API
+        photo: photoUrl, // always last — blob URL must never be overwritten by raw API data
       } as T;
 
       // Cache the profile
