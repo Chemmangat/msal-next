@@ -86,13 +86,11 @@ export function useUserProfile<T extends UserProfile = UserProfile>(): UseUserPr
       try {
         const photoBlob = await graph.get<Blob>('/me/photo/$value', {
           scopes: ['User.Read'],
-          headers: {
-            'Content-Type': 'image/jpeg',
-          },
+          responseType: 'blob',
         });
 
-        if (photoBlob) {
-          photoUrl = URL.createObjectURL(photoBlob as any);
+        if (photoBlob instanceof Blob && photoBlob.size > 0) {
+          photoUrl = URL.createObjectURL(photoBlob);
         }
       } catch (photoError) {
         // Photo might not exist, that's okay

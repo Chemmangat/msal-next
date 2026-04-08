@@ -22,6 +22,12 @@ export interface GraphApiOptions extends RequestInit {
    * @default false
    */
   debug?: boolean;
+
+  /**
+   * Expected response type. Use 'blob' for binary data like images.
+   * @default 'json'
+   */
+  responseType?: 'json' | 'blob' | 'text';
 }
 
 export interface UseGraphApiReturn {
@@ -74,6 +80,7 @@ export function useGraphApi(): UseGraphApiReturn {
         scopes = ['User.Read'],
         version = 'v1.0',
         debug = false,
+        responseType = 'json',
         ...fetchOptions
       } = options;
 
@@ -110,10 +117,17 @@ export function useGraphApi(): UseGraphApiReturn {
           return null as T;
         }
 
-        const data = await response.json();
+        let data: any;
+        if (responseType === 'blob') {
+          data = await response.blob();
+        } else if (responseType === 'text') {
+          data = await response.text();
+        } else {
+          data = await response.json();
+        }
 
         if (debug) {
-          console.log('[GraphAPI] Response:', data);
+          console.log('[GraphAPI] Response:', responseType === 'blob' ? '[Blob]' : data);
         }
 
         return data as T;
