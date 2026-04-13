@@ -25,7 +25,8 @@ function writeMsalSessionCookie(account: AccountInfo): void {
       username: account.username,
       name: account.name ?? '',
     }));
-    document.cookie = `msal.account=${data}; path=/; SameSite=Lax`;
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `msal.account=${data}; path=/; SameSite=Lax${secure}`;
   } catch {
     // Non-fatal — middleware will fall back to unauthenticated state
   }
@@ -34,7 +35,8 @@ function writeMsalSessionCookie(account: AccountInfo): void {
 /** Clears the msal.account cookie on logout. */
 function clearMsalSessionCookie(): void {
   try {
-    document.cookie = 'msal.account=; path=/; SameSite=Lax; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `msal.account=; path=/; SameSite=Lax; expires=Thu, 01 Jan 1970 00:00:00 GMT${secure}`;
   } catch {
     // Non-fatal
   }
