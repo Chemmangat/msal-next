@@ -6,16 +6,23 @@ import type { MultiTenantConfig } from '../types';
 /**
  * Validates that a returnUrl is a safe relative path to prevent open redirect attacks.
  * Accepts only paths that start with '/' but not '//' (protocol-relative URLs),
- * and do not contain absolute URL schemes.
+ * and do not contain absolute URL schemes, including URL-encoded variants.
  */
 function isSafeReturnUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
+  // Decode percent-encoded characters before validation to catch encoded injection attempts
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(url);
+  } catch {
+    return false;
+  }
   // Must be a relative path starting with /
-  if (!url.startsWith('/')) return false;
+  if (!decoded.startsWith('/')) return false;
   // Reject protocol-relative URLs (e.g. //evil.com)
-  if (url.startsWith('//')) return false;
+  if (decoded.startsWith('//')) return false;
   // Reject embedded absolute URLs (e.g. /path?next=https://evil.com)
-  if (url.includes('://')) return false;
+  if (decoded.includes('://')) return false;
   return true;
 }
 

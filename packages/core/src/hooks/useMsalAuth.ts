@@ -226,9 +226,9 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
         throw new Error('[MSAL] No active account. Please login first.');
       }
       // Validate tenantId to prevent authority URL injection.
-      // Accept GUID format or a simple domain (e.g. contoso.com).
+      // Accept GUID format or a valid domain name (each label starts/ends with alphanumeric).
       const isValidGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenantId);
-      const isValidDomain = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/.test(tenantId);
+      const isValidDomain = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/.test(tenantId);
       if (!isValidGuid && !isValidDomain) {
         throw new Error('[MSAL] Invalid tenantId: must be a GUID or a valid domain name.');
       }
