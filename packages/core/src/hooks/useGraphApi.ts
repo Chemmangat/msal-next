@@ -90,7 +90,16 @@ export function useGraphApi(): UseGraphApiReturn {
 
         // Build URL
         const baseUrl = `https://graph.microsoft.com/${version}`;
-        const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+        let url: string;
+        if (endpoint.startsWith('http')) {
+          // Only allow HTTPS to prevent token exfiltration over unencrypted connections
+          if (!endpoint.startsWith('https://')) {
+            throw new Error('[GraphAPI] Only HTTPS endpoints are allowed');
+          }
+          url = endpoint;
+        } else {
+          url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+        }
 
         if (debug) {
           console.log('[GraphAPI] Request:', { url, method: fetchOptions.method || 'GET' });

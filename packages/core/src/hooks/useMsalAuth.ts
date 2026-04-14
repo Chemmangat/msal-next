@@ -225,6 +225,14 @@ export function useMsalAuth(defaultScopes: string[] = ['User.Read']): UseMsalAut
       if (!account) {
         throw new Error('[MSAL] No active account. Please login first.');
       }
+      // Validate tenantId to prevent authority URL injection.
+      // Accept GUID format, a valid domain name, or MSAL's well-known single-label tenant identifiers.
+      const msalSpecialTenants = new Set(['common', 'organizations', 'consumers']);
+      const isValidGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenantId);
+      const isValidDomain = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/.test(tenantId);
+      if (!isValidGuid && !isValidDomain && !msalSpecialTenants.has(tenantId)) {
+        throw new Error('[MSAL] Invalid tenantId: must be a GUID, a valid domain name, or one of: common, organizations, consumers.');
+      }
       try {
         const response = await instance.acquireTokenSilent({
           scopes,

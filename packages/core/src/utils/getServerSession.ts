@@ -128,7 +128,7 @@ export function setServerSessionCookie(account: any): void {
       username: account.username,
       name: account.name ?? '',
     }));
-    document.cookie = `msal.account=${data}; path=/; SameSite=Lax`;
+    document.cookie = `msal.account=${data}; path=/; SameSite=Lax; Secure`;
   } catch (error) {
     console.error('[ServerSession] Failed to set session cookie:', error);
   }
@@ -145,5 +145,5 @@ export function clearServerSessionCookie(): void {
   if (typeof document === 'undefined') {
     return;
   }
-  document.cookie = 'msal.account=; path=/; SameSite=Lax; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  document.cookie = 'msal.account=; path=/; SameSite=Lax; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 }

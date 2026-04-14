@@ -3,6 +3,29 @@ import { safeJsonParse, isValidAccountData } from '../utils/validation';
 import { validateTenantAccess } from '../utils/tenantValidator';
 import type { MultiTenantConfig } from '../types';
 
+/**
+ * Validates that a returnUrl is a safe relative path to prevent open redirect attacks.
+ * Accepts only paths that start with '/' but not '//' (protocol-relative URLs),
+ * and do not contain absolute URL schemes, including URL-encoded variants.
+ */
+function isSafeReturnUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+  // Decode percent-encoded characters before validation to catch encoded injection attempts
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(url);
+  } catch {
+    return false;
+  }
+  // Must be a relative path starting with /
+  if (!decoded.startsWith('/')) return false;
+  // Reject protocol-relative URLs (e.g. //evil.com)
+  if (decoded.startsWith('//')) return false;
+  // Reject embedded absolute URLs (e.g. /path?next=https://evil.com)
+  if (decoded.includes('://')) return false;
+  return true;
+}
+
 export interface AuthMiddlewareConfig {
   /**
    * Routes that require authentication
@@ -166,7 +189,8 @@ export function createAuthMiddleware(config: AuthMiddlewareConfig = {}) {
         console.log('[AuthMiddleware] Redirecting to home');
       }
 
-      const returnUrl = request.nextUrl.searchParams.get('returnUrl');
+      const rawReturnUrl = request.nextUrl.searchParams.get('returnUrl');
+      const returnUrl = rawReturnUrl && isSafeReturnUrl(rawReturnUrl) ? rawReturnUrl : null;
       const url = request.nextUrl.clone();
       url.pathname = returnUrl || redirectAfterLogin;
       url.searchParams.delete('returnUrl');
