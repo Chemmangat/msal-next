@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.4] - 2026-05-06
+
+### 🐛 Bug Fix
+
+#### `useTokenRefresh` — `expiresIn` and `isExpiringSoon` are now reactive
+
+`expiresIn` and `isExpiringSoon` were previously derived from `useRef` values, which never trigger a re-render. Any component calling `useTokenRefresh()` to display a session-expiry warning would always see the initial `null` / `false` values and never update.
+
+Both values are now backed by `useState`, so components re-render correctly when the token expiry changes.
+
+```tsx
+// This now works as expected — the warning will actually appear
+const { isExpiringSoon, expiresIn } = useTokenRefresh({ refreshBeforeExpiry: 300 });
+
+if (isExpiringSoon) {
+  return <div>⚠️ Your session expires in {Math.round(expiresIn!)} seconds</div>;
+}
+```
+
+`lastRefresh` is also now a state value, so it updates in the UI after each refresh.
+
+---
+
 ## [5.3.0] - 2026-04-07
 
 ### 🐛 Bug Fixes

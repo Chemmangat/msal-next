@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useMsalAuth } from './useMsalAuth';
 
@@ -100,6 +100,9 @@ export function useTokenRefresh(options: UseTokenRefreshOptions = {}): UseTokenR
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastRefreshRef = useRef<Date | null>(null);
   const expiresInRef = useRef<number | null>(null);
+  // Reactive state so consumers re-render when expiry changes
+  const [expiresIn, setExpiresIn] = useState<number | null>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   const refresh = useCallback(async () => {
     if (!isAuthenticated || !account) {
@@ -118,12 +121,15 @@ export function useTokenRefresh(options: UseTokenRefreshOptions = {}): UseTokenR
       lastRefreshRef.current = new Date();
 
       // Calculate real seconds until expiry from the token's expiresOn field
-      const expiresIn = response.expiresOn
+      const newExpiresIn = response.expiresOn
         ? Math.max(0, response.expiresOn.getTime() / 1000 - Date.now() / 1000)
         : 3600; // fallback: 1 hour
 
-      expiresInRef.current = expiresIn;
-      onRefresh?.(expiresIn);
+      expiresInRef.current = newExpiresIn;
+      // Update reactive state so consumers re-render
+      setExpiresIn(newExpiresIn);
+      setLastRefresh(lastRefreshRef.current);
+      onRefresh?.(newExpiresIn);
     } catch (error) {
       console.error('[TokenRefresh] Failed to refresh token:', error);
       onError?.(error as Error);
@@ -151,6 +157,8 @@ export function useTokenRefresh(options: UseTokenRefreshOptions = {}): UseTokenR
 
       const remainingTime = expiresInRef.current - timeSinceRefresh;
       expiresInRef.current = Math.max(0, remainingTime);
+      // Keep reactive state in sync
+      setExpiresIn(expiresInRef.current);
 
       if (remainingTime <= refreshBeforeExpiry && remainingTime > 0) {
         refresh();
@@ -164,12 +172,12 @@ export function useTokenRefresh(options: UseTokenRefreshOptions = {}): UseTokenR
     };
   }, [enabled, isAuthenticated, refreshBeforeExpiry, refresh]);
 
-  const isExpiringSoon = expiresInRef.current !== null && expiresInRef.current <= refreshBeforeExpiry;
+  const isExpiringSoon = expiresIn !== null && expiresIn <= refreshBeforeExpiry;
 
   return {
-    expiresIn: expiresInRef.current,
+    expiresIn,
     isExpiringSoon,
     refresh,
-    lastRefresh: lastRefreshRef.current,
+    lastRefresh,
   };
 }
